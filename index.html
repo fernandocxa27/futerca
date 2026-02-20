@@ -3,109 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pelada de Terça - Escalação</title>
+    <title>Pelada de Terça</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        body { font-family: sans-serif; background: #222; color: white; margin: 0; padding: 10px; overflow-x: hidden; touch-action: manipulation; }
-        h2 { text-align: center; color: #4CAF50; margin-bottom: 5px; text-transform: uppercase; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 10px; overflow-x: hidden; }
+        h2 { text-align: center; color: #4CAF50; margin: 5px 0; text-transform: uppercase; font-size: 1.2rem; }
         
-        /* O Campinho */
         #campo-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 550px;
-            background: #2e7d32;
-            border: 3px solid white;
-            border-radius: 10px;
-            margin: 0 auto 20px;
-            background-image: 
-                radial-gradient(circle at 50% 50%, transparent 15%, white 15.5%, transparent 16%),
-                linear-gradient(white, white);
-            background-size: 100% 100%, 100% 2px;
-            background-repeat: no-repeat;
-            background-position: center center, center center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative; width: 100%; max-width: 400px; height: 530px;
+            background: #2e7d32; border: 3px solid white; border-radius: 12px;
+            margin: 0 auto 15px;
+            background-image: radial-gradient(circle at 50% 50%, transparent 15%, white 15.5%, transparent 16%),
+                              linear-gradient(white, white);
+            background-size: 100% 100%, 100% 2px; background-repeat: no-repeat; background-position: center;
         }
 
         .area-time {
-            position: absolute;
-            width: 90%;
-            height: 44%; /* Ajustado para dar mais espaço */
-            left: 5%;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-content: flex-start;
-            gap: 10px;
-            padding: 20px 10px;
-            box-sizing: border-box;
-            z-index: 2;
+            position: absolute; width: 94%; height: 46%; left: 3%;
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start;
+            gap: 10px; padding: 25px 5px; box-sizing: border-box; z-index: 2;
         }
 
-        #time-a { top: 2%; border-bottom: 1px dashed rgba(255,255,255,0.2); }
-        #time-b { bottom: 2%; border-top: 1px dashed rgba(255,255,255,0.2); }
+        #time-a { top: 1%; border-bottom: 1px dashed rgba(255,255,255,0.2); }
+        #time-b { bottom: 1%; border-top: 1px dashed rgba(255,255,255,0.2); }
 
-        /* Estilo dos Jogadores */
-        .jogador {
-            width: 65px;
-            text-align: center;
-            cursor: grab;
-            transition: transform 0.1s;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        .jogador { width: 65px; text-align: center; cursor: grab; -webkit-tap-highlight-color: transparent; }
         .foto-moldura {
-            width: 52px;
-            height: 52px;
-            background: #444;
-            border-radius: 50%;
-            border: 3px solid gold;
-            margin: 0 auto;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+            width: 52px; height: 52px; border-radius: 50%; border: 3px solid gold;
+            background: #444; margin: 0 auto; overflow: hidden;
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
         }
-
-        .nome-jogador { 
-            font-size: 10px; 
-            margin-top: 4px; 
-            font-weight: bold;
-            text-shadow: 1px 1px 2px black;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Banco de Reservas */
-        #reserva-container {
-            background: #333;
-            padding: 15px;
-            border-radius: 10px;
-            min-height: 120px;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        #banco {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            min-height: 50px;
-            justify-content: center;
-        }
-
-        .secao-titulo { font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .nome-jogador { font-size: 10px; margin-top: 4px; font-weight: bold; text-shadow: 1px 1px 2px black; line-height: 1.1; }
         
-        /* Goleiro: Moldura diferenciada */
-        .goleiro .foto-moldura { border-color: #ff5722; background-color: #ffe0b2; }
+        /* Destaque para Goleiros */
+        .goleiro .foto-moldura { border-color: #ff5722; background-color: #222; }
 
-        .placeholder { opacity: 0.2; background: #fff; border-radius: 50%; }
+        #reserva-container { background: #262626; padding: 15px; border-radius: 10px; max-width: 400px; margin: 0 auto; border: 1px solid #444; }
+        #banco { display: flex; flex-wrap: wrap; gap: 12px; min-height: 100px; justify-content: center; }
+        .secao-titulo { font-size: 11px; font-weight: bold; margin-bottom: 10px; color: #888; text-transform: uppercase; }
+        .placeholder { opacity: 0.1; background: #fff; border-radius: 50%; }
     </style>
 </head>
 <body>
@@ -113,65 +52,71 @@
     <h2>⚽ Futebol de Terça</h2>
     
     <div id="campo-container">
-        <div class="secao-titulo" style="position:absolute; top:5px; left:10px; z-index:1;">Time A</div>
+        <div class="secao-titulo" style="position:absolute; top:8px; left:12px;">Time A</div>
         <div id="time-a" class="area-time"></div>
-
-        <div class="secao-titulo" style="position:absolute; bottom:5px; left:10px; z-index:1;">Time B</div>
+        <div class="secao-titulo" style="position:absolute; bottom:8px; left:12px;">Time B</div>
         <div id="time-b" class="area-time"></div>
     </div>
 
     <div id="reserva-container">
-        <div class="secao-titulo">Banco de Reservas (Arraste os nomes)</div>
-        <div id="banco">
-            </div>
+        <div class="secao-titulo">Banco de Reservas</div>
+        <div id="banco"></div>
     </div>
 
     <script>
-        // Função para carregar os jogadores do arquivo CSV
-       function carregarJogadores() {
+        // Função para converter links do Google Drive para link direto
+        function converterFoto(url) {
+            if (!url || !url.includes("drive.google.com")) return "";
+            try {
+                let id = "";
+                if (url.includes("id=")) {
+                    id = url.split("id=")[1].split("&")[0];
+                } else {
+                    id = url.split("/d/")[1].split("/")[0];
+                }
+                return `https://drive.google.com/uc?export=view&id=${id}`;
+            } catch (e) { return ""; }
+        }
+
+        function carregarApp() {
             Papa.parse("jogadores.csv", {
                 download: true,
                 header: true,
-                delimiter: ",", // Força a leitura por vírgula
+                delimiter: ";", // O ponto e vírgula que está no seu arquivo
                 skipEmptyLines: true,
                 complete: function(results) {
-                    const listaReservas = document.getElementById('banco');
-                    listaReservas.innerHTML = ""; 
+                    const banco = document.getElementById('banco');
+                    results.data.forEach(p => {
+                        const nome = p.Jogador;
+                        if (nome && nome.trim() !== "") {
+                            // Verifica se é goleiro pela posição ou pelo nome
+                            const ehGoleiro = (p.Posição && p.Posição.toUpperCase().includes("GOL")) || 
+                                              (nome.toUpperCase().includes("GOL"));
 
-                    results.data.forEach(player => {
-                        // Ajuste para aceitar "Jogador" ou "JOGADOR"
-                        const nome = player.JOGADOR || player.Jogador;
-                        const fotoOriginal = player.Foto || player.FOTO || "";
-
-                        if(nome && nome !== "-") {
-                            const eGoleiro = nome.toUpperCase().includes("GOL");
                             const div = document.createElement('div');
-                            div.className = `jogador ${eGoleiro ? 'goleiro' : ''}`;
+                            div.className = `jogador ${ehGoleiro ? 'goleiro' : ''}`;
                             
-                            // Converte link do Drive para link direto de imagem
-                            let fotoUrl = fotoOriginal.replace("file/d/", "uc?id=").replace("/view?usp=drive_link", "").replace("/view?usp=sharing", "");
-
+                            const fotoFinal = converterFoto(p.Foto);
+                            
                             div.innerHTML = `
-                                <div class="foto-moldura" style="background-image: url('${fotoUrl}')">
-                                    ${fotoUrl === "" ? nome.substring(0,2).toUpperCase() : ""}
+                                <div class="foto-moldura" style="background-image: url('${fotoFinal}')">
+                                    ${!fotoFinal ? nome.substring(0,2).toUpperCase() : ""}
                                 </div>
                                 <div class="nome-jogador">${nome}</div>
                             `;
-                            listaReservas.appendChild(div);
+                            banco.appendChild(div);
                         }
                     });
-                    
-                    // Re-inicializa o Drag & Drop
-                    const containers = [document.getElementById('time-a'), document.getElementById('time-b'), document.getElementById('banco')];
-                    containers.forEach(el => {
-                        new Sortable(el, { group: 'pelada', animation: 150, ghostClass: 'placeholder', forceFallback: true });
-                    });
+
+                    // Ativa o arraste
+                    const config = { group: 'pelada', animation: 150, ghostClass: 'placeholder', forceFallback: true };
+                    new Sortable(document.getElementById('time-a'), config);
+                    new Sortable(document.getElementById('time-b'), config);
+                    new Sortable(document.getElementById('banco'), config);
                 }
             });
         }
-
-        // Inicia o processo
-        window.onload = carregarJogadores;
+        window.onload = carregarApp;
     </script>
 </body>
 </html>
