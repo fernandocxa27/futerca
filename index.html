@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pelada de Terça - Escalação</title>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #222; color: white; margin: 0; padding: 10px; overflow-x: hidden; touch-action: manipulation; }
+        h2 { text-align: center; color: #4CAF50; margin-bottom: 5px; text-transform: uppercase; }
+        
+        /* O Campinho */
+        #campo-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 550px;
+            background: #2e7d32;
+            border: 3px solid white;
+            border-radius: 10px;
+            margin: 0 auto 20px;
+            background-image: 
+                radial-gradient(circle at 50% 50%, transparent 15%, white 15.5%, transparent 16%),
+                linear-gradient(white, white);
+            background-size: 100% 100%, 100% 2px;
+            background-repeat: no-repeat;
+            background-position: center center, center center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .area-time {
+            position: absolute;
+            width: 90%;
+            height: 44%; /* Ajustado para dar mais espaço */
+            left: 5%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-start;
+            gap: 10px;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            z-index: 2;
+        }
+
+        #time-a { top: 2%; border-bottom: 1px dashed rgba(255,255,255,0.2); }
+        #time-b { bottom: 2%; border-top: 1px dashed rgba(255,255,255,0.2); }
+
+        /* Estilo dos Jogadores */
+        .jogador {
+            width: 65px;
+            text-align: center;
+            cursor: grab;
+            transition: transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .foto-moldura {
+            width: 52px;
+            height: 52px;
+            background: #444;
+            border-radius: 50%;
+            border: 3px solid gold;
+            margin: 0 auto;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+
+        .nome-jogador { 
+            font-size: 10px; 
+            margin-top: 4px; 
+            font-weight: bold;
+            text-shadow: 1px 1px 2px black;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Banco de Reservas */
+        #reserva-container {
+            background: #333;
+            padding: 15px;
+            border-radius: 10px;
+            min-height: 120px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        #banco {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            min-height: 50px;
+            justify-content: center;
+        }
+
+        .secao-titulo { font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Goleiro: Moldura diferenciada */
+        .goleiro .foto-moldura { border-color: #ff5722; background-color: #ffe0b2; }
+
+        .placeholder { opacity: 0.2; background: #fff; border-radius: 50%; }
+    </style>
+</head>
+<body>
+
+    <h2>⚽ Futebol de Terça</h2>
+    
+    <div id="campo-container">
+        <div class="secao-titulo" style="position:absolute; top:5px; left:10px; z-index:1;">Time A</div>
+        <div id="time-a" class="area-time"></div>
+
+        <div class="secao-titulo" style="position:absolute; bottom:5px; left:10px; z-index:1;">Time B</div>
+        <div id="time-b" class="area-time"></div>
+    </div>
+
+    <div id="reserva-container">
+        <div class="secao-titulo">Banco de Reservas (Arraste os nomes)</div>
+        <div id="banco">
+            </div>
+    </div>
+
+    <script>
+        // Função para carregar os jogadores do arquivo CSV
+        function carregarJogadores() {
+            Papa.parse("jogadores.csv", {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const listaReservas = document.getElementById('banco');
+                    listaReservas.innerHTML = ""; // Limpa o banco antes de carregar
+
+                    results.data.forEach(player => {
+                        if(player.JOGADOR && player.JOGADOR !== "-") {
+                            const eGoleiro = player.JOGADOR.toUpperCase().includes("GOL");
+                            
+                            const div = document.createElement('div');
+                            div.className = `jogador ${eGoleiro ? 'goleiro' : ''}`;
+                            
+                            // Define a foto ou um ícone padrão
+                            const fotoUrl = player.Foto && player.Foto.trim() !== "" ? player.Foto : "";
+                            const iniciais = player.JOGADOR.substring(0, 2).toUpperCase();
+
+                            div.innerHTML = `
+                                <div class="foto-moldura" style="background-image: url('${fotoUrl}')">
+                                    ${fotoUrl === "" ? iniciais : ""}
+                                </div>
+                                <div class="nome-jogador">${player.JOGADOR}</div>
+                            `;
+                            listaReservas.appendChild(div);
+                        }
+                    });
+                    
+                    // Inicializa o Drag & Drop após carregar os jogadores
+                    const containers = [
+                        document.getElementById('time-a'), 
+                        document.getElementById('time-b'), 
+                        document.getElementById('banco')
+                    ];
+                    
+                    containers.forEach(el => {
+                        new Sortable(el, {
+                            group: 'pelada',
+                            animation: 150,
+                            ghostClass: 'placeholder',
+                            forceFallback: true, // Melhora o uso no celular
+                            fallbackTolerance: 3 // Evita arrastar por erro ao apenas clicar
+                        });
+                    });
+                }
+            });
+        }
+
+        // Inicia o processo
+        window.onload = carregarJogadores;
+    </script>
+</body>
+</html>
