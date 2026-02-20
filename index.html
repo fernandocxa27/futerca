@@ -128,51 +128,43 @@
 
     <script>
         // Função para carregar os jogadores do arquivo CSV
-        function carregarJogadores() {
+       function carregarJogadores() {
             Papa.parse("jogadores.csv", {
                 download: true,
                 header: true,
+                delimiter: ",", // Força a leitura por vírgula
                 skipEmptyLines: true,
                 complete: function(results) {
                     const listaReservas = document.getElementById('banco');
-                    listaReservas.innerHTML = ""; // Limpa o banco antes de carregar
+                    listaReservas.innerHTML = ""; 
 
                     results.data.forEach(player => {
-                        if(player.JOGADOR && player.JOGADOR !== "-") {
-                            const eGoleiro = player.JOGADOR.toUpperCase().includes("GOL");
-                            
+                        // Ajuste para aceitar "Jogador" ou "JOGADOR"
+                        const nome = player.JOGADOR || player.Jogador;
+                        const fotoOriginal = player.Foto || player.FOTO || "";
+
+                        if(nome && nome !== "-") {
+                            const eGoleiro = nome.toUpperCase().includes("GOL");
                             const div = document.createElement('div');
                             div.className = `jogador ${eGoleiro ? 'goleiro' : ''}`;
                             
-                            // Define a foto ou um ícone padrão
-                            const fotoUrl = player.Foto && player.Foto.trim() !== "" ? player.Foto : "";
-                            const iniciais = player.JOGADOR.substring(0, 2).toUpperCase();
+                            // Converte link do Drive para link direto de imagem
+                            let fotoUrl = fotoOriginal.replace("file/d/", "uc?id=").replace("/view?usp=drive_link", "").replace("/view?usp=sharing", "");
 
                             div.innerHTML = `
                                 <div class="foto-moldura" style="background-image: url('${fotoUrl}')">
-                                    ${fotoUrl === "" ? iniciais : ""}
+                                    ${fotoUrl === "" ? nome.substring(0,2).toUpperCase() : ""}
                                 </div>
-                                <div class="nome-jogador">${player.JOGADOR}</div>
+                                <div class="nome-jogador">${nome}</div>
                             `;
                             listaReservas.appendChild(div);
                         }
                     });
                     
-                    // Inicializa o Drag & Drop após carregar os jogadores
-                    const containers = [
-                        document.getElementById('time-a'), 
-                        document.getElementById('time-b'), 
-                        document.getElementById('banco')
-                    ];
-                    
+                    // Re-inicializa o Drag & Drop
+                    const containers = [document.getElementById('time-a'), document.getElementById('time-b'), document.getElementById('banco')];
                     containers.forEach(el => {
-                        new Sortable(el, {
-                            group: 'pelada',
-                            animation: 150,
-                            ghostClass: 'placeholder',
-                            forceFallback: true, // Melhora o uso no celular
-                            fallbackTolerance: 3 // Evita arrastar por erro ao apenas clicar
-                        });
+                        new Sortable(el, { group: 'pelada', animation: 150, ghostClass: 'placeholder', forceFallback: true });
                     });
                 }
             });
