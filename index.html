@@ -3,7 +3,7 @@
 <html lang="pt-br"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Futebol de Terça</title>
+<title>Futebol de TerÃ§a</title>
 <style>
 :root {
     --green: #2e7d32;
@@ -213,7 +213,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 /* ===== ETIQUETAS TIME A / B / C ===== */
 .team-label {
     position: absolute;
-    /* Por padrão (desktop): topo, horizontal */
+    /* Por padrÃ£o (desktop): topo, horizontal */
     top: 8px;
     left: 50%;
     transform: translateX(-50%);
@@ -228,14 +228,14 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
     box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
-/* Time A – amarelo / preto */
+/* Time A â amarelo / preto */
 .team-zone[data-team="A"] .team-label { background: #FFD600; color: #000; }
-/* Time B – vermelho / branco */
+/* Time B â vermelho / branco */
 .team-zone[data-team="B"] .team-label { background: #d50000; color: #fff; }
-/* Time C – azul / branco */
+/* Time C â azul / branco */
 .team-zone[data-team="C"] .team-label { background: #1a73e8; color: #fff; }
 
-/* ── MOBILE: vertical, FORA da linha branca, na faixa de gramado esquerda ── */
+/* ââ MOBILE: vertical, FORA da linha branca, na faixa de gramado esquerda ââ */
 @media (max-width: 767px) {
     .team-label {
         /* Fica na faixa de gramado entre borda do campo e linha branca (~12% da largura) */
@@ -252,7 +252,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
         overflow: visible;
     }
 
-    /* Compensa visualmente: adiciona margem esquerda para a label não ficar cortada */
+    /* Compensa visualmente: adiciona margem esquerda para a label nÃ£o ficar cortada */
     #panelField .pitch-wrap {
         margin-left: 48px;
         width: calc(100% - 52px);
@@ -264,7 +264,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <body>
 
 <header>
-    <div class="header-title">⚽ Futebol de Terça</div>
+    <div class="header-title">â½ Futebol de TerÃ§a</div>
     <div class="header-controls">
         <div class="csv-desktop">
             <input type="text" id="csvUrlDesktop" placeholder="URL Raw do CSV (GitHub)" style="width:220px">
@@ -275,9 +275,9 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </header>
 
 <div class="tabs">
-    <button class="tab-btn active" onclick="showTab(&#39;panelCadastro&#39;,this)">👥 Jogadores</button>
-    <button class="tab-btn" onclick="showTab(&#39;panelField&#39;,this)">⚽ Campo</button>
-    <button class="tab-btn" onclick="showTab(&#39;panelCSV&#39;,this)">📎 CSV</button>
+    <button class="tab-btn active" onclick="showTab(&#39;panelCadastro&#39;,this)">ð¥ Jogadores</button>
+    <button class="tab-btn" onclick="showTab(&#39;panelField&#39;,this)">â½ Campo</button>
+    <button class="tab-btn" onclick="showTab(&#39;panelCSV&#39;,this)">ð CSV</button>
 </div>
 
 <div class="app-body">
@@ -285,14 +285,14 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
     <!-- CADASTRO -->
     <div id="panelCadastro" class="panel active">
         <div class="card">
-            <h4 id="formTitle">➕ Cadastrar Jogador</h4>
+            <h4 id="formTitle">â Cadastrar Jogador</h4>
             <input type="hidden" id="editId">
             <div class="form-group" style="margin-bottom:6px">
                 <label>Nome</label>
                 <input type="text" id="pName" placeholder="Nome do jogador">
             </div>
             <div class="form-group" style="margin-bottom:6px">
-                <label>Posição</label>
+                <label>PosiÃ§Ã£o</label>
                 <select id="pPos">
                     <option>Goleiro</option><option>Zagueiro</option><option>Lateral</option>
                     <option>Volante</option><option>Meio-campo</option><option>Atacante</option>
@@ -308,7 +308,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
             </div>
         </div>
         <div class="card">
-            <h4>📋 Jogadores (<span id="playerCount">0</span>)</h4>
+            <h4>ð Jogadores (<span id="playerCount">0</span>)</h4>
             <div id="playerList"></div>
         </div>
     </div>
@@ -339,7 +339,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
   <!-- Gramado -->
   <rect width="400" height="560" fill="url(#stripeV)" rx="8"></rect>
 
-  <!-- Linhas brancas (sem meia-lua e sem área pequena) -->
+  <!-- Linhas brancas (sem meia-lua e sem Ã¡rea pequena) -->
   <g fill="none" stroke="white" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="translate(20,28) scale(0.9)">
     <!-- Borda -->
     <rect x="10" y="10" width="380" height="540" rx="6"></rect>
@@ -347,18 +347,18 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
     <!-- Linha do meio -->
     <line x1="10" y1="280" x2="390" y2="280"></line>
 
-    <!-- Círculo central + ponto -->
+    <!-- CÃ­rculo central + ponto -->
     <circle cx="200" cy="280" r="55"></circle>
     <circle cx="200" cy="280" r="2" fill="white" stroke="none"></circle>
 
-    <!-- Área grande (cima) -->
+    <!-- Ãrea grande (cima) -->
     <rect x="90" y="10" width="220" height="90"></rect>
-    <!-- Ponto pênalti (cima) -->
+    <!-- Ponto pÃªnalti (cima) -->
     <circle cx="200" cy="75" r="2.5" fill="white" stroke="none"></circle>
 
-    <!-- Área grande (baixo) -->
+    <!-- Ãrea grande (baixo) -->
     <rect x="90" y="460" width="220" height="90"></rect>
-    <!-- Ponto pênalti (baixo) -->
+    <!-- Ponto pÃªnalti (baixo) -->
     <circle cx="200" cy="485" r="2.5" fill="white" stroke="none"></circle>
 
     <!-- Gols -->
@@ -386,7 +386,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
   <!-- Gramado -->
   <rect width="700" height="435" fill="url(#stripeD)" rx="8"></rect>
 
-  <!-- Linhas brancas (sem meia-lua e sem área pequena) -->
+  <!-- Linhas brancas (sem meia-lua e sem Ã¡rea pequena) -->
   <g fill="none" stroke="white" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="translate(35,21.75) scale(0.9)">
     <!-- Borda -->
     <rect x="10" y="10" width="680" height="415" rx="6"></rect>
@@ -394,18 +394,18 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
     <!-- Linha do meio -->
     <line x1="350" y1="10" x2="350" y2="425"></line>
 
-    <!-- Círculo central + ponto -->
+    <!-- CÃ­rculo central + ponto -->
     <circle cx="350" cy="217" r="60"></circle>
     <circle cx="350" cy="217" r="2.5" fill="white" stroke="none"></circle>
 
-    <!-- Área grande esquerda -->
+    <!-- Ãrea grande esquerda -->
     <rect x="10" y="107" width="120" height="221"></rect>
-    <!-- Ponto pênalti esq -->
+    <!-- Ponto pÃªnalti esq -->
     <circle cx="95" cy="217" r="2.5" fill="white" stroke="none"></circle>
 
-    <!-- Área grande direita -->
+    <!-- Ãrea grande direita -->
     <rect x="570" y="107" width="120" height="221"></rect>
-    <!-- Ponto pênalti dir -->
+    <!-- Ponto pÃªnalti dir -->
     <circle cx="605" cy="217" r="2.5" fill="white" stroke="none"></circle>
 
     <!-- Gols -->
@@ -435,7 +435,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
         </div>
 
         <div class="bench-wrap">
-            <h5>🪑 Banco de Reservas</h5>
+            <h5>ðª Banco de Reservas</h5>
             <div class="bench-slots" id="bench" data-team="bench"></div>
         </div>
     </div>
@@ -443,7 +443,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
     <!-- CSV MOBILE -->
     <div id="panelCSV" class="panel">
         <div class="card">
-            <h4>📥 Carregar CSV do GitHub</h4>
+            <h4>ð¥ Carregar CSV do GitHub</h4>
             <div class="form-group" style="margin-bottom:8px">
                 <label>URL Raw do CSV</label>
                 <input type="text" id="csvUrlMobile" placeholder="https://raw.githubusercontent.com/...">
@@ -451,7 +451,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
             <button class="btn btn-primary" style="width:100%" onclick="importCSV(&#39;csvUrlMobile&#39;)">Carregar CSV</button>
         </div>
         <div class="card">
-            <h4>📤 Exportar CSV</h4>
+            <h4>ð¤ Exportar CSV</h4>
             <p style="font-size:0.82rem;color:#666;margin-bottom:8px">Baixa jogadores.csv com todos os jogadores.</p>
             <button class="btn btn-green" style="width:100%" onclick="exportCSV()">Exportar CSV</button>
         </div>
@@ -544,7 +544,7 @@ function editPlayer(id) {
     document.getElementById('pPos').value   = p.position;
     document.getElementById('pFoto').value  = p.photoUrl;
     document.getElementById('btnSave').innerText = 'Salvar';
-    document.getElementById('formTitle').innerText = '✏️ Editar Jogador';
+    document.getElementById('formTitle').innerText = '\u270f\ufe0f Editar Jogador';
     document.getElementById('btnCancel').classList.remove('hidden');
     document.getElementById('panelCadastro').scrollIntoView({behavior:'smooth'});
 }
@@ -554,7 +554,7 @@ function cancelEdit() {
     document.getElementById('pName').value  = '';
     document.getElementById('pFoto').value  = '';
     document.getElementById('btnSave').innerText = 'Adicionar';
-    document.getElementById('formTitle').innerText = '➕ Cadastrar Jogador';
+    document.getElementById('formTitle').innerText = '\u2795 Cadastrar Jogador';
     document.getElementById('btnCancel').classList.add('hidden');
 }
 
@@ -575,16 +575,16 @@ function renderSidebar() {
     players.forEach(p => {
         const d = document.createElement('div');
         d.className = 'player-item';
-        d.innerHTML = `
-            <img class="avatar-sm" src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'">
-            <div class="player-info">
-                <strong>${p.name}</strong>
-                <small>${p.position} ${p.team !== 'bench' ? '· Time '+p.team : '· Banco'}</small>
-            </div>
-            <div class="player-actions">
-                <button class="btn btn-outline btn-icon" onclick="editPlayer(${p.id})">✏️</button>
-                <button class="btn btn-danger btn-icon"  onclick="deletePlayer(${p.id})">🗑️</button>
-            </div>`;
+        d.innerHTML =
+            '<img class="avatar-sm" src="' + imgSrc(p.photoUrl) + '" onerror="this.onerror=null;this.src=\'' + FALLBACK + '\'">' +
+            '<div class="player-info">' +
+                '<strong>' + p.name + '</strong>' +
+                '<small>' + p.position + (p.team !== 'bench' ? ' \u00b7 Time ' + p.team : ' \u00b7 Banco') + '</small>' +
+            '</div>' +
+            '<div class="player-actions">' +
+                '<button class="btn btn-outline btn-icon" onclick="editPlayer(' + p.id + ')">\u270f\ufe0f</button>' +
+                '<button class="btn btn-danger btn-icon"  onclick="deletePlayer(' + p.id + ')">\uD83D\uDDD1\uFE0F</button>' +
+            '</div>';
         list.appendChild(d);
     });
 }
@@ -595,15 +595,11 @@ function renderBench() {
     players.filter(p => p.team === 'bench').forEach(p => bench.appendChild(makeBCard(p)));
 }
 
+/* ALTERADO: renderField agora coloca todos os pcards no pitchInner (campo inteiro) */
 function renderField() {
-    ['A','B','C'].forEach(t => {
-        const z = document.getElementById('zone'+t);
-        z.querySelectorAll('.pcard').forEach(c => c.remove());
-    });
-    players.filter(p => p.team !== 'bench').forEach(p => {
-        const z = document.getElementById('zone'+p.team);
-        if (z) z.appendChild(makePCard(p));
-    });
+    const inner = document.getElementById('pitchInner');
+    inner.querySelectorAll('.pcard').forEach(c => c.remove());
+    players.filter(p => p.team !== 'bench').forEach(p => inner.appendChild(makePCard(p)));
 }
 
 /* ---- CARDS ---- */
@@ -613,10 +609,10 @@ function makePCard(p) {
     c.dataset.id = p.id;
     c.style.left = (p.x || 10) + 'px';
     c.style.top  = (p.y || 30) + 'px';
-    c.innerHTML = `
-        <div class="pcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'"></div>
-        <div class="pcard-name">${p.name}</div>
-        <div class="pcard-pos">${p.position.substring(0,3).toUpperCase()}</div>`;
+    c.innerHTML =
+        '<div class="pcard-photo"><img src="' + imgSrc(p.photoUrl) + '" onerror="this.onerror=null;this.src=\'' + FALLBACK + '\'"></div>' +
+        '<div class="pcard-name">' + p.name + '</div>' +
+        '<div class="pcard-pos">' + p.position.substring(0,3).toUpperCase() + '</div>';
     enableDrag(c);
     return c;
 }
@@ -624,10 +620,10 @@ function makePCard(p) {
 function makeBCard(p) {
     const c = document.createElement('div');
     c.className = 'bcard'; c.dataset.id = p.id;
-    c.innerHTML = `
-        <div class="bcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'"></div>
-        <div class="bcard-name">${p.name}</div>
-        <div class="bcard-pos">${p.position.substring(0,3).toUpperCase()}</div>`;
+    c.innerHTML =
+        '<div class="bcard-photo"><img src="' + imgSrc(p.photoUrl) + '" onerror="this.onerror=null;this.src=\'' + FALLBACK + '\'"></div>' +
+        '<div class="bcard-name">' + p.name + '</div>' +
+        '<div class="bcard-pos">' + p.position.substring(0,3).toUpperCase() + '</div>';
     enableDrag(c); return c;
 }
 
@@ -660,8 +656,8 @@ function startDragTouch(e) {
 function beginDrag(el, cx, cy) {
     dragging = el;
     dragClone = el.cloneNode(true);
-    dragClone.style.cssText = `position:fixed;z-index:9999;pointer-events:none;opacity:0.85;
-        left:${cx-dragOffX}px;top:${cy-dragOffY}px;width:${el.offsetWidth}px;`;
+    dragClone.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;opacity:0.85;' +
+        'left:' + (cx-dragOffX) + 'px;top:' + (cy-dragOffY) + 'px;width:' + el.offsetWidth + 'px;';
     document.body.appendChild(dragClone);
     el.style.opacity = '0.3';
 }
@@ -673,6 +669,7 @@ function moveClone(cx,cy) { if(dragClone){ dragClone.style.left=(cx-dragOffX)+'p
 function onDragEnd(e)  { finishDrag(e.clientX,e.clientY); document.removeEventListener('mousemove',onDragMove); document.removeEventListener('mouseup',onDragEnd); }
 function onTouchEnd(e) { const t=e.changedTouches[0]; finishDrag(t.clientX,t.clientY); document.removeEventListener('touchmove',onTouchMove); document.removeEventListener('touchend',onTouchEnd); }
 
+/* ALTERADO: drop no campo inteiro — posiciona livremente e define time pelo eixo horizontal */
 function finishDrag(cx, cy) {
     if (!dragging) return;
     if (dragClone) { dragClone.remove(); dragClone = null; }
@@ -682,41 +679,50 @@ function finishDrag(cx, cy) {
     const player = players.find(p => p.id == pid);
     const el     = document.elementFromPoint(cx, cy);
     const zone   = el ? el.closest('[data-team]') : null;
-    const team   = zone ? zone.dataset.team : null;
+    const tag    = zone ? zone.dataset.team : null;
     dragging = null;
 
-    if (!team) return;
+    if (!tag || !player) { renderAll(); return; }
 
-    if (team !== 'bench') {
-        const count = players.filter(p => p.team === team && p.id != pid).length;
-        if (count >= config.limitPerTeam) {
-            alert(`Time ${team} já tem ${config.limitPerTeam} jogadores!`);
-            renderAll();
-            return;
-        }
-
-        const zoneEl = document.getElementById('zone' + team);
-        const rect   = zoneEl.getBoundingClientRect();
-
-        // Tamanho do card no campo (pcard)
-        const CARD_W = 54;
-        const CARD_H = 68;
-
-        // Em vez de usar dragOffX/dragOffY (que varia conforme onde você clicou no card),
-        // centralizamos o card no ponto onde você SOLTOU.
-        const rawX = (cx - rect.left) - (CARD_W / 2);
-        const rawY = (cy - rect.top)  - (CARD_H / 2);
-
-        player.x = Math.min(Math.max(rawX, 4), rect.width  - (CARD_W + 4));
-        player.y = Math.min(Math.max(rawY, 4), rect.height - (CARD_H + 4));
+    /* Soltou no banco */
+    if (tag === 'bench') {
+        player.team = 'bench';
+        save(); renderAll();
+        return;
     }
 
-    player.team = team;
-    save();
-    renderAll();
+    /* Soltou no campo (tag === 'field'): posicionamento livre */
+    const fieldEl = document.getElementById('pitchInner');
+    const rect    = fieldEl.getBoundingClientRect();
+    const CARD_W  = 54;
+    const CARD_H  = 68;
+
+    const rawX = cx - rect.left - dragOffX;
+    const rawY = cy - rect.top  - dragOffY;
+
+    player.x = Math.min(Math.max(rawX, 0), Math.max(0, rect.width  - CARD_W));
+    player.y = Math.min(Math.max(rawY, 0), Math.max(0, rect.height - CARD_H));
+
+    /* Define time pelo eixo horizontal */
+    const rel = rect.width > 0 ? (cx - rect.left) / rect.width : 0;
+    let logicalTeam;
+    if (config.teamsCount === 2) {
+        logicalTeam = rel < 0.5 ? 'A' : 'B';
+    } else {
+        logicalTeam = rel < 1/3 ? 'A' : rel < 2/3 ? 'B' : 'C';
+    }
+
+    const count = players.filter(p => p.team === logicalTeam && p.id != pid).length;
+    if (count >= config.limitPerTeam) {
+        alert('Time ' + logicalTeam + ' j\u00e1 tem ' + config.limitPerTeam + ' jogadores!');
+        renderAll(); return;
+    }
+
+    player.team = logicalTeam;
+    save(); renderAll();
 }
 
-/* ---- DROP ZONES/* ---- DROP ZONES/* ---- DROP ZONES ---- */
+/* ---- DROP ZONES ---- */
 function initDropZones() {
     document.querySelectorAll('[data-team]').forEach(z => {
         z.addEventListener('dragover', e=>{e.preventDefault();z.classList.add('dragover');});
@@ -737,13 +743,13 @@ async function importCSV(inputId) {
             const [nome,posicao,foto_url]=ln.split(',');
             np.push({id:Date.now()+i,name:(nome||'').trim(),position:(posicao||'Atacante').trim(),photoUrl:(foto_url||'').trim(),team:'bench',x:10,y:30});
         }
-        if (np.length) { players=np; save(); renderAll(); alert(`✅ ${np.length} jogadores carregados!`); }
+        if (np.length) { players=np; save(); renderAll(); alert('\u2705 ' + np.length + ' jogadores carregados!'); }
     } catch(err) { alert('Erro ao carregar CSV. Verifique a URL.'); console.error(err); }
 }
 
 function exportCSV() {
     let csv='nome,posicao,foto_url\n';
-    players.forEach(p=>{csv+=`${p.name},${p.position},${p.photoUrl}\n`;});
+    players.forEach(p=>{csv+=p.name+','+p.position+','+p.photoUrl+'\n';});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
     a.download='jogadores.csv';
