@@ -19,7 +19,6 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { margin: 0; background-color: var(--bg-color); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Topo */
         header { background: #fff; padding: 15px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .controls { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
@@ -31,10 +30,8 @@
         .btn-success { background: #28a745; color: white; }
         input[type="text"], input[type="number"], select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
 
-        /* Layout Principal */
         main { display: flex; flex: 1; padding: 20px; gap: 20px; overflow: hidden; }
 
-        /* Lateral Esquerda - Cadastro */
         aside { width: 320px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 15px; max-height: calc(100vh - 180px); }
         .form-group { display: flex; flex-direction: column; gap: 5px; }
         .player-list-container { overflow-y: auto; border-top: 1px solid #eee; padding-top: 10px; }
@@ -44,12 +41,11 @@
         .player-actions { display: flex; gap: 5px; }
         .btn-sm { padding: 4px 8px; font-size: 0.75em; }
 
-        /* Campo de Futebol */
         .pitch-container { flex: 1; display: flex; flex-direction: column; gap: 20px; }
         .soccer-pitch {
             position: relative;
             background-color: var(--pitch-green);
-            background-image: 
+            background-image:
                 linear-gradient(90deg, var(--pitch-line) 2px, transparent 2px),
                 linear-gradient(var(--pitch-line) 2px, transparent 2px),
                 linear-gradient(90deg, rgba(255,255,255,0.1) 50%, transparent 50%);
@@ -60,7 +56,6 @@
             display: flex;
             transition: all 0.3s ease;
         }
-        /* Linhas do campo */
         .soccer-pitch::before {
             content: ''; position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%); width: 100px; height: 100px;
@@ -73,13 +68,9 @@
         }
 
         .team-area {
-            position: relative;
-            flex: 1;
-            height: 100%;
+            position: relative; flex: 1; height: 100%;
             border-right: 1px dashed rgba(255,255,255,0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex; flex-direction: column; align-items: center;
         }
         .team-area:last-child { border-right: none; }
         .team-title {
@@ -88,36 +79,23 @@
             pointer-events: none;
         }
 
-        /* Banco de Reservas */
-        .bench-container {
-            background: #fff; padding: 15px; border-radius: 8px; min-height: 120px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .bench-slots {
-            display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; min-height: 60px;
-        }
+        .bench-container { background: #fff; padding: 15px; border-radius: 8px; min-height: 120px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .bench-slots { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; min-height: 60px; }
 
-        /* Player Card (Drag) */
         .player-card {
-            width: 70px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: move;
-            text-align: center;
-            position: relative;
-            user-select: none;
+            width: 70px; display: flex; flex-direction: column; align-items: center;
+            cursor: move; text-align: center; position: relative; user-select: none;
         }
         .player-card.absolute { position: absolute; }
         .photo-frame {
             width: 50px; height: 50px; border-radius: 50%; border: 3px solid white;
-            overflow: hidden; background: #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            margin-bottom: 4px;
+            overflow: hidden; background: #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 4px; display: flex; align-items: center; justify-content: center;
         }
         .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
         .player-card-name { font-size: 11px; font-weight: bold; color: #fff; text-shadow: 1px 1px 1px #000; width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         .player-card-pos { font-size: 9px; color: #eee; text-shadow: 1px 1px 1px #000; }
-        
+
         .bench-slots .player-card .player-card-name { color: #333; text-shadow: none; }
         .bench-slots .player-card .player-card-pos { color: #666; text-shadow: none; }
         .bench-slots .photo-frame { border-color: var(--primary); }
@@ -180,53 +158,45 @@
 
         <div class="player-list-container">
             <h4 style="margin:0 0 10px 0;">Jogadores Cadastrados</h4>
-            <div id="playerList">
-                <!-- Lista via JS -->
-            </div>
+            <div id="playerList"></div>
         </div>
     </aside>
 
     <div class="pitch-container">
         <div class="soccer-pitch" id="pitch">
-            <div class="team-area" id="teamA" ondrop="drop(event, 'A')" ondragover="allowDrop(event)">
+            <div class="team-area" id="teamA" ondrop="drop(event,'A')" ondragover="allowDrop(event)">
                 <div class="team-title">TIME A</div>
             </div>
-            <div class="team-area" id="teamB" ondrop="drop(event, 'B')" ondragover="allowDrop(event)">
+            <div class="team-area" id="teamB" ondrop="drop(event,'B')" ondragover="allowDrop(event)">
                 <div class="team-title">TIME B</div>
             </div>
-            <div class="team-area hidden" id="teamC" ondrop="drop(event, 'C')" ondragover="allowDrop(event)">
+            <div class="team-area hidden" id="teamC" ondrop="drop(event,'C')" ondragover="allowDrop(event)">
                 <div class="team-title">TIME C</div>
             </div>
         </div>
 
         <div class="bench-container">
             <h4 style="margin:0;">Banco de Reservas</h4>
-            <div class="bench-slots" id="bench" ondrop="drop(event, 'bench')" ondragover="allowDrop(event)">
-                <!-- Cards via JS -->
-            </div>
+            <div class="bench-slots" id="bench" ondrop="drop(event,'bench')" ondragover="allowDrop(event)"></div>
         </div>
     </div>
 </main>
 
 <script>
-    let players = [];
-    let config = {
-        teamsCount: 2,
-        limitPerTeam: 7
-    };
+    const FALLBACK_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%23aaa'/%3E%3Ccircle cx='25' cy='19' r='9' fill='%23fff'/%3E%3Cellipse cx='25' cy='40' rx='14' ry='10' fill='%23fff'/%3E%3C/svg%3E";
 
-    // Inicialização
+    let players = [];
+    let config = { teamsCount: 2, limitPerTeam: 7 };
+
     window.onload = () => {
         const savedPlayers = localStorage.getItem('ft_players');
-        const savedConfig = localStorage.getItem('ft_config');
-        
-        if(savedPlayers) players = JSON.parse(savedPlayers);
-        if(savedConfig) {
+        const savedConfig  = localStorage.getItem('ft_config');
+        if (savedPlayers) players = JSON.parse(savedPlayers);
+        if (savedConfig) {
             config = JSON.parse(savedConfig);
             document.getElementById('limitPerTeam').value = config.limitPerTeam;
             setTeamsMode(config.teamsCount);
         }
-        
         renderAll();
     };
 
@@ -239,12 +209,10 @@
         config.teamsCount = n;
         document.getElementById('btn2Times').classList.toggle('active', n === 2);
         document.getElementById('btn3Times').classList.toggle('active', n === 3);
-        
         const teamC = document.getElementById('teamC');
         if (n === 2) {
             teamC.classList.add('hidden');
-            // Mover quem estava no C para o banco
-            players.forEach(p => { if(p.team === 'C') p.team = 'bench'; });
+            players.forEach(p => { if (p.team === 'C') p.team = 'bench'; });
         } else {
             teamC.classList.remove('hidden');
         }
@@ -254,33 +222,22 @@
 
     function saveToStorage() {
         localStorage.setItem('ft_players', JSON.stringify(players));
-        localStorage.setItem('ft_config', JSON.stringify(config));
+        localStorage.setItem('ft_config',  JSON.stringify(config));
     }
 
-    // CRUD Jogadores
     function savePlayer() {
-        const id = document.getElementById('editId').value;
-        const name = document.getElementById('pName').value;
-        const pos = document.getElementById('pPos').value;
-        const foto = document.getElementById('pFoto').value;
+        const id   = document.getElementById('editId').value;
+        const name = document.getElementById('pName').value.trim();
+        const pos  = document.getElementById('pPos').value;
+        const foto = document.getElementById('pFoto').value.trim();
+        if (!name) return alert("Digite o nome");
 
-        if(!name) return alert("Digite o nome");
-
-        if(id) {
+        if (id) {
             const idx = players.findIndex(p => p.id == id);
             players[idx] = { ...players[idx], name, position: pos, photoUrl: foto };
         } else {
-            players.push({
-                id: Date.now(),
-                name,
-                position: pos,
-                photoUrl: foto,
-                team: 'bench',
-                x: 0,
-                y: 0
-            });
+            players.push({ id: Date.now(), name, position: pos, photoUrl: foto, team: 'bench', x: 0, y: 0 });
         }
-
         cancelEdit();
         saveToStorage();
         renderAll();
@@ -289,9 +246,9 @@
     function editPlayer(id) {
         const p = players.find(p => p.id == id);
         document.getElementById('editId').value = p.id;
-        document.getElementById('pName').value = p.name;
-        document.getElementById('pPos').value = p.position;
-        document.getElementById('pFoto').value = p.photoUrl;
+        document.getElementById('pName').value  = p.name;
+        document.getElementById('pPos').value   = p.position;
+        document.getElementById('pFoto').value  = p.photoUrl;
         document.getElementById('btnSave').innerText = "Salvar Alterações";
         document.getElementById('formTitle').innerText = "Editar Jogador";
         document.getElementById('btnCancel').classList.remove('hidden');
@@ -299,26 +256,25 @@
 
     function cancelEdit() {
         document.getElementById('editId').value = "";
-        document.getElementById('pName').value = "";
-        document.getElementById('pFoto').value = "";
+        document.getElementById('pName').value  = "";
+        document.getElementById('pFoto').value  = "";
         document.getElementById('btnSave').innerText = "Adicionar";
         document.getElementById('formTitle').innerText = "Cadastrar Jogador";
         document.getElementById('btnCancel').classList.add('hidden');
     }
 
     function deletePlayer(id) {
-        if(confirm("Deseja excluir este jogador?")) {
+        if (confirm("Deseja excluir este jogador?")) {
             players = players.filter(p => p.id != id);
             saveToStorage();
             renderAll();
         }
     }
 
-    // Renderização
-    function renderAll() {
-        renderSidebar();
-        renderBench();
-        renderField();
+    function renderAll() { renderSidebar(); renderBench(); renderField(); }
+
+    function imgSrc(url) {
+        return (url && url.trim() !== '') ? url.trim() : FALLBACK_SVG;
     }
 
     function renderSidebar() {
@@ -328,14 +284,14 @@
             const div = document.createElement('div');
             div.className = "player-item";
             div.innerHTML = `
-                <img src="${p.photoUrl || 'https://via.placeholder.com/30'}" onerror="this.src='https://via.placeholder.com/30'">
+                <img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK_SVG}';">
                 <div class="player-item-info">
                     <strong>${p.name}</strong><br>
                     <small>${p.position}</small>
                 </div>
                 <div class="player-actions">
                     <button class="btn btn-sm btn-outline" onclick="editPlayer(${p.id})">Ed.</button>
-                    <button class="btn btn-sm btn-danger" onclick="deletePlayer(${p.id})">X</button>
+                    <button class="btn btn-sm btn-danger"  onclick="deletePlayer(${p.id})">X</button>
                 </div>
             `;
             list.appendChild(div);
@@ -345,23 +301,17 @@
     function renderBench() {
         const bench = document.getElementById('bench');
         bench.innerHTML = "";
-        players.filter(p => p.team === 'bench').forEach(p => {
-            bench.appendChild(createPlayerCard(p, false));
-        });
+        players.filter(p => p.team === 'bench').forEach(p => bench.appendChild(createPlayerCard(p, false)));
     }
 
     function renderField() {
-        // Limpar áreas (mantendo o título)
-        ['A', 'B', 'C'].forEach(t => {
+        ['A','B','C'].forEach(t => {
             const area = document.getElementById('team' + t);
-            Array.from(area.querySelectorAll('.player-card')).forEach(card => card.remove());
+            Array.from(area.querySelectorAll('.player-card')).forEach(c => c.remove());
         });
-
         players.filter(p => p.team !== 'bench').forEach(p => {
             const area = document.getElementById('team' + p.team);
-            if(area) {
-                area.appendChild(createPlayerCard(p, true));
-            }
+            if (area) area.appendChild(createPlayerCard(p, true));
         });
     }
 
@@ -370,15 +320,12 @@
         card.className = `player-card ${isAbsolute ? 'absolute' : ''}`;
         card.draggable = true;
         card.dataset.id = p.id;
-        
-        if(isAbsolute) {
-            card.style.left = p.x + 'px';
-            card.style.top = p.y + 'px';
-        }
+        if (isAbsolute) { card.style.left = p.x + 'px'; card.style.top = p.y + 'px'; }
 
+        const src = imgSrc(p.photoUrl);
         card.innerHTML = `
             <div class="photo-frame">
-                <img src="${p.photoUrl || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">
+                <img src="${src}" onerror="this.onerror=null;this.src='${FALLBACK_SVG}';">
             </div>
             <div class="player-card-name">${p.name}</div>
             <div class="player-card-pos">${p.position.substring(0,3).toUpperCase()}</div>
@@ -386,46 +333,32 @@
 
         card.ondragstart = (e) => {
             e.dataTransfer.setData("playerId", p.id);
-            // Salvar offset do clique dentro do card para soltar no local exato
             const rect = card.getBoundingClientRect();
             e.dataTransfer.setData("offsetX", e.clientX - rect.left);
             e.dataTransfer.setData("offsetY", e.clientY - rect.top);
         };
-
         return card;
     }
 
-    // Drag and Drop
-    function allowDrop(e) {
-        e.preventDefault();
-    }
+    function allowDrop(e) { e.preventDefault(); }
 
     function drop(e, team) {
         e.preventDefault();
-        const id = e.dataTransfer.getData("playerId");
+        const id   = e.dataTransfer.getData("playerId");
         const offX = parseFloat(e.dataTransfer.getData("offsetX"));
         const offY = parseFloat(e.dataTransfer.getData("offsetY"));
-        
         const playerIdx = players.findIndex(p => p.id == id);
-        const player = players[playerIdx];
+        const player    = players[playerIdx];
 
         if (team !== 'bench') {
-            const playersInTeam = players.filter(p => p.team === team && p.id != id).length;
-            if (playersInTeam >= config.limitPerTeam) {
-                alert(`O time ${team} já atingiu o limite de ${config.limitPerTeam} jogadores.`);
+            const count = players.filter(p => p.team === team && p.id != id).length;
+            if (count >= config.limitPerTeam) {
+                alert(`O Time ${team} já atingiu o limite de ${config.limitPerTeam} jogadores.`);
                 return;
             }
-
-            // Calcular posição dentro da div do time
             const rect = document.getElementById('team' + team).getBoundingClientRect();
-            player.x = e.clientX - rect.left - offX;
-            player.y = e.clientY - rect.top - offY;
-            
-            // Garantir que não saia muito da área
-            if(player.x < 0) player.x = 0;
-            if(player.y < 20) player.y = 20;
-            if(player.x > rect.width - 60) player.x = rect.width - 60;
-            if(player.y > rect.height - 80) player.y = rect.height - 80;
+            player.x = Math.min(Math.max(e.clientX - rect.left - offX, 0), rect.width  - 60);
+            player.y = Math.min(Math.max(e.clientY - rect.top  - offY, 20), rect.height - 80);
         }
 
         player.team = team;
@@ -433,59 +366,46 @@
         renderAll();
     }
 
-    // CSV Import / Export
     async function importCSV() {
-        const url = document.getElementById('csvUrl').value;
-        if(!url) return alert("Cole a URL Raw do GitHub");
-
+        const url = document.getElementById('csvUrl').value.trim();
+        if (!url) return alert("Cole a URL Raw do GitHub");
         try {
-            const response = await fetch(url);
-            const text = await response.text();
+            const text  = await (await fetch(url)).text();
             const lines = text.split('\n');
             const newPlayers = [];
-
-            // Pular cabeçalho
-            for(let i = 1; i < lines.length; i++) {
+            for (let i = 1; i < lines.length; i++) {
                 const line = lines[i].trim();
-                if(!line) continue;
-                
+                if (!line) continue;
                 const [nome, posicao, foto_url] = line.split(',');
                 newPlayers.push({
                     id: Date.now() + i,
-                    name: nome.trim(),
-                    position: posicao ? posicao.trim() : 'Atacante',
+                    name:     nome     ? nome.trim()     : '',
+                    position: posicao  ? posicao.trim()  : 'Atacante',
                     photoUrl: foto_url ? foto_url.trim() : '',
-                    team: 'bench',
-                    x: 0, y: 0
+                    team: 'bench', x: 0, y: 0
                 });
             }
-
-            if(newPlayers.length > 0) {
+            if (newPlayers.length > 0) {
                 players = newPlayers;
                 saveToStorage();
                 renderAll();
-                alert("CSV carregado com sucesso!");
+                alert("CSV carregado! " + newPlayers.length + " jogadores.");
             }
         } catch (err) {
-            alert("Erro ao carregar CSV. Verifique se a URL é válida e se permite CORS.");
+            alert("Erro ao carregar CSV. Verifique a URL.");
             console.error(err);
         }
     }
 
     function exportCSV() {
-        let csvContent = "nome,posicao,foto_url\n";
-        players.forEach(p => {
-            csvContent += `${p.name},${p.position},${p.photoUrl}\n`;
-        });
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", "jogadores_pelada.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        let csv = "nome,posicao,foto_url\n";
+        players.forEach(p => { csv += `${p.name},${p.position},${p.photoUrl}\n`; });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+        a.download = "jogadores.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 </script>
 
