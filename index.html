@@ -2,121 +2,492 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pelada de Terça</title>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futebol de Terça - Organizador</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; margin: 0; padding: 10px; overflow-x: hidden; }
-        h2 { text-align: center; color: #4CAF50; margin: 5px 0; text-transform: uppercase; font-size: 1.2rem; }
+        :root {
+            --pitch-green: #388e3c;
+            --pitch-line: rgba(255, 255, 255, 0.8);
+            --dark-green: #2e7d32;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --primary: #1a73e8;
+            --danger: #d93025;
+            --text: #333;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; background-color: var(--bg-color); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* Topo */
+        header { background: #fff; padding: 15px 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 100; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .controls { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
+        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: white; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-outline.active { background: var(--primary); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: #28a745; color: white; }
+        input[type="text"], input[type="number"], select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+
+        /* Layout Principal */
+        main { display: flex; flex: 1; padding: 20px; gap: 20px; overflow: hidden; }
+
+        /* Lateral Esquerda - Cadastro */
+        aside { width: 320px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 15px; max-height: calc(100vh - 180px); }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .player-list-container { overflow-y: auto; border-top: 1px solid #eee; padding-top: 10px; }
+        .player-item { display: flex; align-items: center; gap: 10px; padding: 8px; border-bottom: 1px solid #f9f9f9; font-size: 0.9em; }
+        .player-item img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: #eee; }
+        .player-item-info { flex: 1; }
+        .player-actions { display: flex; gap: 5px; }
+        .btn-sm { padding: 4px 8px; font-size: 0.75em; }
+
+        /* Campo de Futebol */
+        .pitch-container { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .soccer-pitch {
+            position: relative;
+            background-color: var(--pitch-green);
+            background-image: 
+                linear-gradient(90deg, var(--pitch-line) 2px, transparent 2px),
+                linear-gradient(var(--pitch-line) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255,255,255,0.1) 50%, transparent 50%);
+            background-size: 100% 100%, 100% 100%, 10% 100%;
+            border: 4px solid white;
+            border-radius: 5px;
+            height: 500px;
+            display: flex;
+            transition: all 0.3s ease;
+        }
+        /* Linhas do campo */
+        .soccer-pitch::before {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); width: 100px; height: 100px;
+            border: 2px solid white; border-radius: 50%; pointer-events: none;
+        }
+        .soccer-pitch::after {
+            content: ''; position: absolute; top: 0; left: 50%;
+            transform: translateX(-50%); width: 2px; height: 100%;
+            background: white; pointer-events: none;
+        }
+
+        .team-area {
+            position: relative;
+            flex: 1;
+            height: 100%;
+            border-right: 1px dashed rgba(255,255,255,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .team-area:last-child { border-right: none; }
+        .team-title {
+            color: white; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.2); padding: 5px 20px; border-radius: 0 0 10px 10px;
+            pointer-events: none;
+        }
+
+        /* Banco de Reservas */
+        .bench-container {
+            background: #fff; padding: 15px; border-radius: 8px; min-height: 120px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .bench-slots {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; min-height: 60px;
+        }
+
+        /* Player Card (Drag) */
+        .player-card {
+            width: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: move;
+            text-align: center;
+            position: relative;
+            user-select: none;
+        }
+        .player-card.absolute { position: absolute; }
+        .photo-frame {
+            width: 50px; height: 50px; border-radius: 50%; border: 3px solid white;
+            overflow: hidden; background: #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 4px;
+        }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .player-card-name { font-size: 11px; font-weight: bold; color: #fff; text-shadow: 1px 1px 1px #000; width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .player-card-pos { font-size: 9px; color: #eee; text-shadow: 1px 1px 1px #000; }
         
-        #campo-container {
-            position: relative; width: 100%; max-width: 400px; height: 530px;
-            background: #2e7d32; border: 3px solid white; border-radius: 12px;
-            margin: 0 auto 15px;
-            background-image: radial-gradient(circle at 50% 50%, transparent 15%, white 15.5%, transparent 16%),
-                              linear-gradient(white, white);
-            background-size: 100% 100%, 100% 2px; background-repeat: no-repeat; background-position: center;
+        .bench-slots .player-card .player-card-name { color: #333; text-shadow: none; }
+        .bench-slots .player-card .player-card-pos { color: #666; text-shadow: none; }
+        .bench-slots .photo-frame { border-color: var(--primary); }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 900px) {
+            main { flex-direction: column; overflow: visible; }
+            aside { width: 100%; max-height: none; }
+            .soccer-pitch { height: 400px; }
         }
-
-        .area-time {
-            position: absolute; width: 94%; height: 46%; left: 3%;
-            display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start;
-            gap: 10px; padding: 25px 5px; box-sizing: border-box; z-index: 2;
-        }
-
-        #time-a { top: 1%; border-bottom: 1px dashed rgba(255,255,255,0.2); }
-        #time-b { bottom: 1%; border-top: 1px dashed rgba(255,255,255,0.2); }
-
-        .jogador { width: 65px; text-align: center; cursor: grab; -webkit-tap-highlight-color: transparent; }
-        .foto-moldura {
-            width: 52px; height: 52px; border-radius: 50%; border: 3px solid gold;
-            background: #444; margin: 0 auto; overflow: hidden;
-            background-size: cover; background-position: center;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-        }
-        .nome-jogador { font-size: 10px; margin-top: 4px; font-weight: bold; text-shadow: 1px 1px 2px black; line-height: 1.1; }
-        
-        /* Destaque para Goleiros */
-        .goleiro .foto-moldura { border-color: #ff5722; background-color: #222; }
-
-        #reserva-container { background: #262626; padding: 15px; border-radius: 10px; max-width: 400px; margin: 0 auto; border: 1px solid #444; }
-        #banco { display: flex; flex-wrap: wrap; gap: 12px; min-height: 100px; justify-content: center; }
-        .secao-titulo { font-size: 11px; font-weight: bold; margin-bottom: 10px; color: #888; text-transform: uppercase; }
-        .placeholder { opacity: 0.1; background: #fff; border-radius: 50%; }
     </style>
 </head>
 <body>
 
-    <h2>⚽ Futebol de Terça</h2>
-    
-    <div id="campo-container">
-        <div class="secao-titulo" style="position:absolute; top:8px; left:12px;">Time A</div>
-        <div id="time-a" class="area-time"></div>
-        <div class="secao-titulo" style="position:absolute; bottom:8px; left:12px;">Time B</div>
-        <div id="time-b" class="area-time"></div>
+<header>
+    <div class="header-top">
+        <h2 style="margin:0; color: var(--dark-green);">⚽ Futebol de Terça</h2>
+        <div style="display:flex; gap: 10px; align-items:center;">
+            <input type="text" id="csvUrl" placeholder="URL do CSV (GitHub raw)" style="width: 250px;">
+            <button class="btn btn-outline" onclick="importCSV()">Carregar CSV</button>
+            <button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
+        </div>
     </div>
-
-    <div id="reserva-container">
-        <div class="secao-titulo">Banco de Reservas</div>
-        <div id="banco"></div>
+    <div class="controls">
+        <span>Times:</span>
+        <button id="btn2Times" class="btn btn-outline active" onclick="setTeamsMode(2)">2 Times</button>
+        <button id="btn3Times" class="btn btn-outline" onclick="setTeamsMode(3)">3 Times</button>
+        <span style="margin-left: 20px;">Jogadores por time:</span>
+        <input type="number" id="limitPerTeam" value="7" min="1" style="width: 50px;" onchange="updateSettings()">
     </div>
+</header>
 
-    <script>
-        // Função para converter links do Google Drive para link direto
-        function converterFoto(url) {
-            if (!url || !url.includes("drive.google.com")) return "";
-            try {
-                let id = "";
-                if (url.includes("id=")) {
-                    id = url.split("id=")[1].split("&")[0];
-                } else {
-                    id = url.split("/d/")[1].split("/")[0];
-                }
-                return `https://drive.google.com/uc?export=view&id=${id}`;
-            } catch (e) { return ""; }
+<main>
+    <aside>
+        <div id="playerForm">
+            <h4 id="formTitle" style="margin:0 0 10px 0;">Cadastrar Jogador</h4>
+            <input type="hidden" id="editId">
+            <div class="form-group">
+                <input type="text" id="pName" placeholder="Nome do Jogador">
+            </div>
+            <div class="form-group">
+                <select id="pPos">
+                    <option value="Goleiro">Goleiro</option>
+                    <option value="Zagueiro">Zagueiro</option>
+                    <option value="Lateral">Lateral</option>
+                    <option value="Volante">Volante</option>
+                    <option value="Meio-campo">Meio-campo</option>
+                    <option value="Atacante">Atacante</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="pFoto" placeholder="URL da Foto (Google Drive)">
+            </div>
+            <div style="display:flex; gap: 5px;">
+                <button id="btnSave" class="btn btn-primary" style="flex:1" onclick="savePlayer()">Adicionar</button>
+                <button id="btnCancel" class="btn btn-outline hidden" onclick="cancelEdit()">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="player-list-container">
+            <h4 style="margin:0 0 10px 0;">Jogadores Cadastrados</h4>
+            <div id="playerList">
+                <!-- Lista via JS -->
+            </div>
+        </div>
+    </aside>
+
+    <div class="pitch-container">
+        <div class="soccer-pitch" id="pitch">
+            <div class="team-area" id="teamA" ondrop="drop(event, 'A')" ondragover="allowDrop(event)">
+                <div class="team-title">TIME A</div>
+            </div>
+            <div class="team-area" id="teamB" ondrop="drop(event, 'B')" ondragover="allowDrop(event)">
+                <div class="team-title">TIME B</div>
+            </div>
+            <div class="team-area hidden" id="teamC" ondrop="drop(event, 'C')" ondragover="allowDrop(event)">
+                <div class="team-title">TIME C</div>
+            </div>
+        </div>
+
+        <div class="bench-container">
+            <h4 style="margin:0;">Banco de Reservas</h4>
+            <div class="bench-slots" id="bench" ondrop="drop(event, 'bench')" ondragover="allowDrop(event)">
+                <!-- Cards via JS -->
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    let players = [];
+    let config = {
+        teamsCount: 2,
+        limitPerTeam: 7
+    };
+
+    // Inicialização
+    window.onload = () => {
+        const savedPlayers = localStorage.getItem('ft_players');
+        const savedConfig = localStorage.getItem('ft_config');
+        
+        if(savedPlayers) players = JSON.parse(savedPlayers);
+        if(savedConfig) {
+            config = JSON.parse(savedConfig);
+            document.getElementById('limitPerTeam').value = config.limitPerTeam;
+            setTeamsMode(config.teamsCount);
         }
+        
+        renderAll();
+    };
 
-        function carregarApp() {
-            Papa.parse("jogadores.csv", {
-                download: true,
-                header: true,
-                delimiter: ";", // O ponto e vírgula que está no seu arquivo
-                skipEmptyLines: true,
-                complete: function(results) {
-                    const banco = document.getElementById('banco');
-                    results.data.forEach(p => {
-                        const nome = p.Jogador;
-                        if (nome && nome.trim() !== "") {
-                            // Verifica se é goleiro pela posição ou pelo nome
-                            const ehGoleiro = (p.Posição && p.Posição.toUpperCase().includes("GOL")) || 
-                                              (nome.toUpperCase().includes("GOL"));
+    function updateSettings() {
+        config.limitPerTeam = parseInt(document.getElementById('limitPerTeam').value) || 7;
+        saveToStorage();
+    }
 
-                            const div = document.createElement('div');
-                            div.className = `jogador ${ehGoleiro ? 'goleiro' : ''}`;
-                            
-                            const fotoFinal = converterFoto(p.Foto);
-                            
-                            div.innerHTML = `
-                                <div class="foto-moldura" style="background-image: url('${fotoFinal}')">
-                                    ${!fotoFinal ? nome.substring(0,2).toUpperCase() : ""}
-                                </div>
-                                <div class="nome-jogador">${nome}</div>
-                            `;
-                            banco.appendChild(div);
-                        }
-                    });
+    function setTeamsMode(n) {
+        config.teamsCount = n;
+        document.getElementById('btn2Times').classList.toggle('active', n === 2);
+        document.getElementById('btn3Times').classList.toggle('active', n === 3);
+        
+        const teamC = document.getElementById('teamC');
+        if (n === 2) {
+            teamC.classList.add('hidden');
+            // Mover quem estava no C para o banco
+            players.forEach(p => { if(p.team === 'C') p.team = 'bench'; });
+        } else {
+            teamC.classList.remove('hidden');
+        }
+        saveToStorage();
+        renderAll();
+    }
 
-                    // Ativa o arraste
-                    const config = { group: 'pelada', animation: 150, ghostClass: 'placeholder', forceFallback: true };
-                    new Sortable(document.getElementById('time-a'), config);
-                    new Sortable(document.getElementById('time-b'), config);
-                    new Sortable(document.getElementById('banco'), config);
-                }
+    function saveToStorage() {
+        localStorage.setItem('ft_players', JSON.stringify(players));
+        localStorage.setItem('ft_config', JSON.stringify(config));
+    }
+
+    // CRUD Jogadores
+    function savePlayer() {
+        const id = document.getElementById('editId').value;
+        const name = document.getElementById('pName').value;
+        const pos = document.getElementById('pPos').value;
+        const foto = document.getElementById('pFoto').value;
+
+        if(!name) return alert("Digite o nome");
+
+        if(id) {
+            const idx = players.findIndex(p => p.id == id);
+            players[idx] = { ...players[idx], name, position: pos, photoUrl: foto };
+        } else {
+            players.push({
+                id: Date.now(),
+                name,
+                position: pos,
+                photoUrl: foto,
+                team: 'bench',
+                x: 0,
+                y: 0
             });
         }
-        window.onload = carregarApp;
-    </script>
+
+        cancelEdit();
+        saveToStorage();
+        renderAll();
+    }
+
+    function editPlayer(id) {
+        const p = players.find(p => p.id == id);
+        document.getElementById('editId').value = p.id;
+        document.getElementById('pName').value = p.name;
+        document.getElementById('pPos').value = p.position;
+        document.getElementById('pFoto').value = p.photoUrl;
+        document.getElementById('btnSave').innerText = "Salvar Alterações";
+        document.getElementById('formTitle').innerText = "Editar Jogador";
+        document.getElementById('btnCancel').classList.remove('hidden');
+    }
+
+    function cancelEdit() {
+        document.getElementById('editId').value = "";
+        document.getElementById('pName').value = "";
+        document.getElementById('pFoto').value = "";
+        document.getElementById('btnSave').innerText = "Adicionar";
+        document.getElementById('formTitle').innerText = "Cadastrar Jogador";
+        document.getElementById('btnCancel').classList.add('hidden');
+    }
+
+    function deletePlayer(id) {
+        if(confirm("Deseja excluir este jogador?")) {
+            players = players.filter(p => p.id != id);
+            saveToStorage();
+            renderAll();
+        }
+    }
+
+    // Renderização
+    function renderAll() {
+        renderSidebar();
+        renderBench();
+        renderField();
+    }
+
+    function renderSidebar() {
+        const list = document.getElementById('playerList');
+        list.innerHTML = "";
+        players.forEach(p => {
+            const div = document.createElement('div');
+            div.className = "player-item";
+            div.innerHTML = `
+                <img src="${p.photoUrl || 'https://via.placeholder.com/30'}" onerror="this.src='https://via.placeholder.com/30'">
+                <div class="player-item-info">
+                    <strong>${p.name}</strong><br>
+                    <small>${p.position}</small>
+                </div>
+                <div class="player-actions">
+                    <button class="btn btn-sm btn-outline" onclick="editPlayer(${p.id})">Ed.</button>
+                    <button class="btn btn-sm btn-danger" onclick="deletePlayer(${p.id})">X</button>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    function renderBench() {
+        const bench = document.getElementById('bench');
+        bench.innerHTML = "";
+        players.filter(p => p.team === 'bench').forEach(p => {
+            bench.appendChild(createPlayerCard(p, false));
+        });
+    }
+
+    function renderField() {
+        // Limpar áreas (mantendo o título)
+        ['A', 'B', 'C'].forEach(t => {
+            const area = document.getElementById('team' + t);
+            Array.from(area.querySelectorAll('.player-card')).forEach(card => card.remove());
+        });
+
+        players.filter(p => p.team !== 'bench').forEach(p => {
+            const area = document.getElementById('team' + p.team);
+            if(area) {
+                area.appendChild(createPlayerCard(p, true));
+            }
+        });
+    }
+
+    function createPlayerCard(p, isAbsolute) {
+        const card = document.createElement('div');
+        card.className = `player-card ${isAbsolute ? 'absolute' : ''}`;
+        card.draggable = true;
+        card.dataset.id = p.id;
+        
+        if(isAbsolute) {
+            card.style.left = p.x + 'px';
+            card.style.top = p.y + 'px';
+        }
+
+        card.innerHTML = `
+            <div class="photo-frame">
+                <img src="${p.photoUrl || 'https://via.placeholder.com/50'}" onerror="this.src='https://via.placeholder.com/50'">
+            </div>
+            <div class="player-card-name">${p.name}</div>
+            <div class="player-card-pos">${p.position.substring(0,3).toUpperCase()}</div>
+        `;
+
+        card.ondragstart = (e) => {
+            e.dataTransfer.setData("playerId", p.id);
+            // Salvar offset do clique dentro do card para soltar no local exato
+            const rect = card.getBoundingClientRect();
+            e.dataTransfer.setData("offsetX", e.clientX - rect.left);
+            e.dataTransfer.setData("offsetY", e.clientY - rect.top);
+        };
+
+        return card;
+    }
+
+    // Drag and Drop
+    function allowDrop(e) {
+        e.preventDefault();
+    }
+
+    function drop(e, team) {
+        e.preventDefault();
+        const id = e.dataTransfer.getData("playerId");
+        const offX = parseFloat(e.dataTransfer.getData("offsetX"));
+        const offY = parseFloat(e.dataTransfer.getData("offsetY"));
+        
+        const playerIdx = players.findIndex(p => p.id == id);
+        const player = players[playerIdx];
+
+        if (team !== 'bench') {
+            const playersInTeam = players.filter(p => p.team === team && p.id != id).length;
+            if (playersInTeam >= config.limitPerTeam) {
+                alert(`O time ${team} já atingiu o limite de ${config.limitPerTeam} jogadores.`);
+                return;
+            }
+
+            // Calcular posição dentro da div do time
+            const rect = document.getElementById('team' + team).getBoundingClientRect();
+            player.x = e.clientX - rect.left - offX;
+            player.y = e.clientY - rect.top - offY;
+            
+            // Garantir que não saia muito da área
+            if(player.x < 0) player.x = 0;
+            if(player.y < 20) player.y = 20;
+            if(player.x > rect.width - 60) player.x = rect.width - 60;
+            if(player.y > rect.height - 80) player.y = rect.height - 80;
+        }
+
+        player.team = team;
+        saveToStorage();
+        renderAll();
+    }
+
+    // CSV Import / Export
+    async function importCSV() {
+        const url = document.getElementById('csvUrl').value;
+        if(!url) return alert("Cole a URL Raw do GitHub");
+
+        try {
+            const response = await fetch(url);
+            const text = await response.text();
+            const lines = text.split('\n');
+            const newPlayers = [];
+
+            // Pular cabeçalho
+            for(let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if(!line) continue;
+                
+                const [nome, posicao, foto_url] = line.split(',');
+                newPlayers.push({
+                    id: Date.now() + i,
+                    name: nome.trim(),
+                    position: posicao ? posicao.trim() : 'Atacante',
+                    photoUrl: foto_url ? foto_url.trim() : '',
+                    team: 'bench',
+                    x: 0, y: 0
+                });
+            }
+
+            if(newPlayers.length > 0) {
+                players = newPlayers;
+                saveToStorage();
+                renderAll();
+                alert("CSV carregado com sucesso!");
+            }
+        } catch (err) {
+            alert("Erro ao carregar CSV. Verifique se a URL é válida e se permite CORS.");
+            console.error(err);
+        }
+    }
+
+    function exportCSV() {
+        let csvContent = "nome,posicao,foto_url\n";
+        players.forEach(p => {
+            csvContent += `${p.name},${p.position},${p.photoUrl}\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "jogadores_pelada.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
 </body>
 </html>
