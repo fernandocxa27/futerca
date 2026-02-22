@@ -239,26 +239,16 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 /* ── MOBILE: vertical, FORA da linha branca, na faixa de gramado esquerda ── */
 @media (max-width: 767px) {
     .team-label {
-        /* Fica na faixa de gramado entre borda do campo e linha branca (~12% da largura) */
+        /* Mobile: etiqueta vertical na faixa verde (fora da linha branca, encostada nela) */
         top: 50%;
-        left: -42px;          /* sai para fora da zone, na faixa verde da borda */
+        left: clamp(10px, 4vw, 18px);
         transform: translateY(-50%) rotate(-90deg);
         transform-origin: center center;
         font-size: 0.62rem;
         padding: 3px 8px;
     }
-
-    /* O pitch-wrap precisa de overflow visible para a label aparecer fora */
-    .pitch-wrap {
-        overflow: visible;
-    }
-
-    /* Compensa visualmente: adiciona margem esquerda para a label não ficar cortada */
-    #panelField .pitch-wrap {
-        margin-left: 48px;
-        width: calc(100% - 52px);
-    }
 }
+
 
 </style>
 </head>
