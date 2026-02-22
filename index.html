@@ -139,10 +139,6 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 }
 .team-zone.dragover { background: rgba(255,255,255,0.12); }
 
-
-
-}
-
 /* ===== PLAYER CARDS NO CAMPO ===== */
 .pcard {
     position: absolute; width: 54px;
@@ -615,6 +611,7 @@ function renderField() {
 function makePCard(p) {
     const c = document.createElement('div');
     c.className = 'pcard'; c.dataset.id = p.id;
+    c.style.position = 'absolute';
     c.style.left = ((p.x ?? 10))+'px'; c.style.top = ((p.y ?? 30))+'px';
     c.innerHTML = `
         <div class="pcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'"></div>
@@ -709,8 +706,12 @@ function finishDrag(cx,cy) {
         const count=players.filter(p=>p.team===team&&p.id!=pid).length;
         if (count>=config.limitPerTeam) { alert(`Time ${team} já tem ${config.limitPerTeam} jogadores!`); renderAll(); return; }
         const rect=document.getElementById('zone'+team).getBoundingClientRect();
-        player.x=Math.min(Math.max(cx-rect.left-27,0),rect.width-58);
-        player.y=Math.min(Math.max(cy-rect.top-21,0),rect.height-68);
+        const cardW = (window.innerWidth >= 768) ? 62 : 54;
+        const cardH = (window.innerWidth >= 768) ? 74 : 68;
+        const halfW = cardW/2;
+        const halfH = cardH/2;
+        player.x=Math.min(Math.max(cx-rect.left-halfW,0),rect.width-cardW);
+        player.y=Math.min(Math.max(cy-rect.top-halfH,0),rect.height-cardH);
     }
     player.team=team; save(); renderAll();
 }
