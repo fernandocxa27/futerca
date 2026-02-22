@@ -461,6 +461,8 @@ window.onload = () => {
     const sp = localStorage.getItem('ft_players');
     const sc = localStorage.getItem('ft_config');
     if (sp) players = JSON.parse(sp);
+    // garante que todos tenham flag de presença (por padrão, presente)
+    players.forEach(p => { if (typeof p.present === 'undefined') p.present = true; });
     if (sc) { config = JSON.parse(sc); document.getElementById('limitPerTeam').value = config.limitPerTeam; }
     applyTeamsMode(config.teamsCount);
     adaptSVG();
@@ -523,7 +525,7 @@ function savePlayer() {
         const i = players.findIndex(p => p.id == id);
         players[i] = { ...players[i], name, position: pos, photoUrl: foto };
     } else {
-        players.push({ id: Date.now(), name, position: pos, photoUrl: foto, team: 'bench', x: 10, y: 30 });
+        players.push({ id: Date.now(), name, position: pos, photoUrl: foto, team: 'bench', x: 10, y: 30, present: true });
     }
     cancelEdit(); save(); renderAll();
 }
@@ -555,6 +557,23 @@ function deletePlayer(id) {
     save(); renderAll();
 }
 
+
+
+/* ---- PRESENÇA ---- */
+function togglePresence(id) {
+    const p = players.find(pl => pl.id == id);
+    if (!p) return;
+    if (typeof p.present === 'undefined') p.present = true;
+    p.present = !p.present;
+    if (!p.present) {
+        p.team = 'bench';
+        p.x = 10;
+        p.y = 30;
+    }
+    save();
+    renderAll();
+}
+
 /* ---- RENDER ---- */
 function renderAll() { renderSidebar(); renderBench(); renderField(); }
 function imgSrc(url) { return (url && url.trim()) ? url.trim() : FALLBACK; }
@@ -566,13 +585,18 @@ function renderSidebar() {
     players.forEach(p => {
         const d = document.createElement('div');
         d.className = 'player-item';
+        const isPresent = (p.present !== false);
+        const statusText = isPresent ? (p.team !== 'bench' ? '· Time '+p.team : '· Banco') : '· Ausente';
+        const presLabel = isPresent ? 'Vem' : 'Falta';
+        const presClass = isPresent ? 'btn btn-green btn-icon' : 'btn btn-outline btn-icon';
         d.innerHTML = `
             <img class="avatar-sm" src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'">
             <div class="player-info">
                 <strong>${p.name}</strong>
-                <small>${p.position} ${p.team !== 'bench' ? '· Time '+p.team : '· Banco'}</small>
+                <small>${p.position} ${statusText}</small>
             </div>
             <div class="player-actions">
+                <button class="${presClass}" onclick="togglePresence(${p.id})">${presLabel}</button>
                 <button class="btn btn-outline btn-icon" onclick="editPlayer(${p.id})">✏️</button>
                 <button class="btn btn-danger btn-icon"  onclick="deletePlayer(${p.id})">🗑️</button>
             </div>`;
@@ -583,7 +607,7 @@ function renderSidebar() {
 function renderBench() {
     const bench = document.getElementById('bench');
     bench.innerHTML = '';
-    players.filter(p => p.team === 'bench').forEach(p => bench.appendChild(makeBCard(p)));
+    players.filter(p => p.team === 'bench' && p.present !== false).forEach(p => bench.appendChild(makeBCard(p)));
 }
 
 function renderField() {
@@ -591,7 +615,7 @@ function renderField() {
         const z = document.getElementById('zone'+t);
         z.querySelectorAll('.pcard').forEach(c => c.remove());
     });
-    players.filter(p => p.team !== 'bench').forEach(p => {
+    players.filter(p => p.team !== 'bench' && p.present !== false).forEach(p => {
         const z = document.getElementById('zone'+p.team);
         if (z) z.appendChild(makePCard(p));
     });
@@ -725,7 +749,7 @@ async function importCSV(inputId) {
         for (let i=1;i<lines.length;i++) {
             const ln=lines[i].trim(); if(!ln) continue;
             const [nome,posicao,foto_url]=ln.split(',');
-            np.push({id:Date.now()+i,name:(nome||'').trim(),position:(posicao||'Atacante').trim(),photoUrl:(foto_url||'').trim(),team:'bench',x:10,y:30});
+            np.push({id:Date.now()+i,name:(nome||'').trim(),position:(posicao||'Atacante').trim(),photoUrl:(foto_url||'').trim(),team:'bench',x:10,y:30,present:true});
         }
         if (np.length) { players=np; save(); renderAll(); alert(`✅ ${np.length} jogadores carregados!`); }
     } catch(err) { alert('Erro ao carregar CSV. Verifique a URL.'); console.error(err); }
