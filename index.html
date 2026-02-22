@@ -675,23 +675,42 @@ function moveClone(cx,cy) { if(dragClone){ dragClone.style.left=(cx-dragOffX)+'p
 function onDragEnd(e)  { finishDrag(e.clientX,e.clientY); document.removeEventListener('mousemove',onDragMove); document.removeEventListener('mouseup',onDragEnd); }
 function onTouchEnd(e) { const t=e.changedTouches[0]; finishDrag(t.clientX,t.clientY); document.removeEventListener('touchmove',onTouchMove); document.removeEventListener('touchend',onTouchEnd); }
 
+
+
+function teamAtPoint(cx, cy) {
+    const targets = [
+        { team: 'bench', el: document.getElementById('bench') },
+        { team: 'A',     el: document.getElementById('zoneA') },
+        { team: 'B',     el: document.getElementById('zoneB') },
+        { team: 'C',     el: document.getElementById('zoneC') },
+    ];
+    for (const t of targets) {
+        if (!t.el) continue;
+        if (t.el.classList && t.el.classList.contains('hidden')) continue;
+        const r = t.el.getBoundingClientRect();
+        if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) return t.team;
+    }
+    return null;
+}
 function finishDrag(cx,cy) {
     if (!dragging) return;
     if (dragClone) { dragClone.remove(); dragClone=null; }
     dragging.style.opacity='1';
     const pid=dragging.dataset.id;
     const player=players.find(p=>p.id==pid);
-    const el=document.elementFromPoint(cx,cy);
-    const zone=el?el.closest('[data-team]'):null;
-    const team=zone?zone.dataset.team:null;
+    const team = teamAtPoint(cx, cy) || (() => {
+        const el = document.elementFromPoint(cx, cy);
+        const zone = el ? el.closest('[data-team]') : null;
+        return zone ? zone.dataset.team : null;
+    })();
     dragging=null;
     if (!team) return;
     if (team!=='bench') {
         const count=players.filter(p=>p.team===team&&p.id!=pid).length;
         if (count>=config.limitPerTeam) { alert(`Time ${team} já tem ${config.limitPerTeam} jogadores!`); renderAll(); return; }
         const rect=document.getElementById('zone'+team).getBoundingClientRect();
-        player.x=Math.min(Math.max(cx-rect.left-dragOffX,0),rect.width-58);
-        player.y=Math.min(Math.max(cy-rect.top-dragOffY,20),rect.height-68);
+        player.x=Math.min(Math.max(cx-rect.left-27,0),rect.width-58);
+        player.y=Math.min(Math.max(cy-rect.top-21,0),rect.height-68);
     }
     player.team=team; save(); renderAll();
 }
