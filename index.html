@@ -473,6 +473,16 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 #financeSummary .kpi-value.kpi-cash.neg{ color:#c62828 !important; }
 #financeSummary .kpi-value.kpi-recv{ color:#1a73e8 !important; }
 #financeSummary .kpi-value.kpi-meta{ color:#6b7280 !important; } /* cinza médio */
+
+
+/* ===== BACKUP / RESTORE ===== */
+.backup-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto}
+.backup-controls .btn{padding:7px 10px}
+#backupCard .btn-row{display:flex;gap:10px;flex-wrap:wrap}
+#backupCard .btn-row .btn{flex:1;min-width:180px}
+@media (max-width: 767px){
+  .backup-controls{width:100%;margin-left:0;justify-content:flex-start}
+}
 </style>
 </head>
 <body>
@@ -484,6 +494,12 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-outline" onclick="importCSV('csvUrlDesktop')">Carregar CSV</button>
 <button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
 </div>
+</div>
+
+<div class="backup-controls">
+<button class="btn btn-outline" onclick="exportBackup()" type="button">💾 Backup</button>
+<button class="btn btn-outline" onclick="triggerImportBackup()" type="button">📤 Restaurar</button>
+<input accept="application/json" id="backupFile" onchange="importBackup(event)" style="display:none" type="file"/>
 </div>
 </header>
 <div class="tabs">
@@ -636,6 +652,16 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 <!-- CSV MOBILE -->
 <div class="panel" id="panelCSV">
+<div class="card" id="backupCard">
+<h4>💾 Backup / Restaurar</h4>
+<p class="small">Baixe um arquivo .json com tudo que está salvo neste aparelho (jogadores, times, posições e configurações). Para compartilhar, envie o arquivo e restaure no outro aparelho.</p>
+<div class="btn-row">
+<button class="btn btn-primary" onclick="exportBackup()" type="button">Baixar backup (.json)</button>
+<button class="btn btn-outline" onclick="triggerImportBackup()" type="button">Restaurar backup</button>
+</div>
+<div class="small" style="margin-top:8px">Atenção: restaurar substitui os dados deste navegador (apenas dados do app).</div>
+</div>
+
 <div class="card">
 <h4>📥 Carregar CSV do GitHub</h4>
 <div class="form-group" style="margin-bottom:8px">
@@ -2575,6 +2601,59 @@ th{color:#444;font-size:11px}
         console.error(err);
         alert('Erro ao gerar relatório para impressão.');
     }
+}
+
+
+/* ---- BACKUP / RESTORE (localStorage ft_*) ---- */
+function triggerImportBackup(){
+  const inp=document.getElementById('backupFile');
+  if(!inp) return alert('Input de backup não encontrado.');
+  inp.value='';
+  inp.click();
+}
+
+function exportBackup(){
+  try{
+    const payload={_meta:{app:'Futebol de Terça',version:1,exportedAt:new Date().toISOString()},storage:{}};
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.startsWith('ft_')) payload.storage[k]=localStorage.getItem(k);
+    }
+    const stamp=new Date().toISOString().slice(0,19).replaceAll(':','-');
+    const name=`ft_backup_${stamp}.json`;
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>{try{URL.revokeObjectURL(a.href);}catch(e){}},3000);
+  }catch(err){console.error(err);alert('Erro ao gerar backup.');}
+}
+
+async function importBackup(ev){
+  try{
+    const file=ev && ev.target && ev.target.files ? ev.target.files[0] : null;
+    if(!file) return;
+    const text=await file.text();
+    const obj=JSON.parse(text);
+    const storage=obj && obj.storage ? obj.storage : null;
+    if(!storage || typeof storage!=='object') return alert('Arquivo de backup inválido.');
+    const keys=Object.keys(storage).filter(k=>k && k.startsWith('ft_'));
+    if(!keys.length) return alert('Backup não contém dados do app (ft_*).');
+    const ok=confirm('Restaurar backup vai SUBSTITUIR os dados deste navegador (apenas do app).\n\nDeseja continuar?');
+    if(!ok) return;
+    const toRemove=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.startsWith('ft_')) toRemove.push(k);
+    }
+    toRemove.forEach(k=>localStorage.removeItem(k));
+    keys.forEach(k=>localStorage.setItem(k, storage[k]));
+    alert('✅ Backup restaurado! Vou recarregar a página.');
+    location.reload();
+  }catch(err){console.error(err);alert('Erro ao restaurar backup. Verifique se o arquivo é um .json válido.');}
 }
 </script>
 </div></body>
