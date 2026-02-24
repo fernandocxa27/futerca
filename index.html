@@ -250,6 +250,31 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 }
 
 
+
+
+/* ===== FINANCEIRO ===== */
+.finance-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.finance-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.finance-row .form-group { min-width: 140px; }
+.finance-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.finance-table th, .finance-table td { padding: 8px 6px; border-bottom: 1px solid #eee; text-align: left; }
+.finance-table th { font-size: 0.78rem; color: #555; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
+.badge-green { background: #e7f6ea; color: #1b5e20; }
+.badge-red { background: #fde7e7; color: #b71c1c; }
+.badge-blue { background: #e8f0fe; color: #1a73e8; }
+.mono { font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }
+.small { font-size: 0.78rem; color: #666; }
+.hr { height: 1px; background: #eee; margin: 8px 0; }
+
+/* Desktop: empilha Cadastro + Financeiro na coluna esquerda e Campo ocupa toda a direita */
+@media (min-width: 768px) {
+  #panelFinance { padding: 0; }
+  #panelCadastro { grid-column: 1; grid-row: 1; }
+  #panelFinance { grid-column: 1; grid-row: 2; display: block !important; }
+  #panelField { grid-column: 2; grid-row: 1 / span 2; }
+  .app-body { grid-template-columns: 340px 1fr; grid-auto-rows: auto; }
+}
 </style>
 </head>
 <body>
@@ -287,6 +312,14 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
                 <select id="pPos">
                     <option>Goleiro</option><option>Zagueiro</option><option>Lateral</option>
                     <option>Volante</option><option>Meio-campo</option><option>Atacante</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:6px">
+                <label>Cobrança</label>
+                <select id="pBilling">
+                    <option value="mensalista">Mensalista (R$ 60/mês)</option>
+                    <option value="avulso">Avulso/Convidado (R$ 15/pelada)</option>
+                    <option value="goleiro">Goleiro (isento)</option>
                 </select>
             </div>
             <div class="form-group" style="margin-bottom:6px">
@@ -448,6 +481,144 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
         </div>
     </div>
 
+
+
+    <!-- FINANCEIRO -->
+    <div id="panelFinance" class="panel">
+        <div class="card">
+            <h4>💰 Financeiro</h4>
+            <div class="finance-row">
+                <div class="form-group">
+                    <label>Mensalista (R$ / mês)</label>
+                    <input type="number" id="feeMonthly" value="60" min="0" step="1" onchange="saveFinanceConfig()">
+                </div>
+                <div class="form-group">
+                    <label>Avulso (R$ / pelada)</label>
+                    <input type="number" id="feeSingle" value="15" min="0" step="1" onchange="saveFinanceConfig()">
+                </div>
+            </div>
+            <div class="small" style="margin-top:6px">Dica: isso fica salvo no seu celular/PC (localStorage).</div>
+        </div>
+
+        <div class="card">
+            <h4>🗓️ Pelada (por data)</h4>
+            <div class="finance-row">
+                <div class="form-group" style="flex:1">
+                    <label>Data</label>
+                    <input type="date" id="sessionDate">
+                </div>
+                <button class="btn btn-outline" onclick="loadOrCreateSession()">Carregar</button>
+            </div>
+            <div class="finance-row" style="margin-top:8px">
+                <button class="btn btn-outline btn-sm" onclick="sessionMarkAll(true)">Marcar todos presentes</button>
+                <button class="btn btn-outline btn-sm" onclick="sessionMarkAll(false)">Marcar todos ausentes</button>
+                <button class="btn btn-primary btn-sm" onclick="generateAvulsoCharges()">Gerar cobranças avulsos</button>
+            </div>
+            <div class="finance-row" style="margin-top:8px">
+                <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#444">
+                    <input type="checkbox" id="autoAvulso" onchange="toggleAutoAvulso()">
+                    Cobrar avulso automaticamente ao marcar Presente
+                </label>
+            </div>
+            <div id="sessionInfo" class="small" style="margin-top:8px"></div>
+            <div id="sessionAttendance" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
+            <h4>📆 Mensalidades</h4>
+            <div class="finance-row">
+                <div class="form-group" style="flex:1">
+                    <label>Mês</label>
+                    <input type="month" id="billingMonth">
+                </div>
+                <button class="btn btn-primary" onclick="generateMonthlyCharges()">Gerar cobranças</button>
+            </div>
+            <div class="small" style="margin-top:6px">Gera 1 cobrança por mensalista no mês escolhido (evita duplicar).</div>
+            <div class="finance-row" style="margin-top:8px">
+                <button class="btn btn-green btn-sm" onclick="markAllMonthlyPaid()">Marcar todos pagos</button>
+            </div>
+            <div id="monthlyList" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
+            <h4>✅ Registrar pagamento</h4>
+            <div class="finance-row">
+                <div class="form-group" style="flex:1">
+                    <label>Jogador</label>
+                    <select id="payPlayer"></select>
+                </div>
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="payAmount" min="0" step="1" value="15">
+                </div>
+            </div>
+            <div class="finance-row" style="margin-top:8px">
+                <div class="form-group" style="flex:1">
+                    <label>Obs (Pix, dinheiro, etc.)</label>
+                    <input type="text" id="payNote" placeholder="Ex: Pix, fulano pagou pra ciclano">
+                </div>
+                <button class="btn btn-green" onclick="addPayment()">Salvar pagamento</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4>🧾 Despesas do caixa</h4>
+            <div class="finance-row">
+                <div class="form-group" style="flex:1">
+                    <label>Categoria</label>
+                    <select id="expCategory">
+                        <option value="goleiro_alugado">Goleiro de fora</option>
+                        <option value="bola">Bola / material</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="expAmount" min="0" step="1" value="0">
+                </div>
+            </div>
+            <div class="finance-row" style="margin-top:8px">
+                <div class="form-group" style="flex:1">
+                    <label>Obs</label>
+                    <input type="text" id="expNote" placeholder="Ex: pagamos goleiro X, bola nova Nike">
+                </div>
+                <button class="btn btn-danger" onclick="addExpense()">Salvar despesa</button>
+            </div>
+            <div class="hr"></div>
+            <div class="finance-row">
+                <div class="form-group" style="flex:1">
+                    <label>Ratear compra (gera cobranças)</label>
+                    <select id="splitMode">
+                        <option value="session_present">Entre presentes da pelada carregada</option>
+                        <option value="all_non_goalie">Entre todos (exceto goleiros isentos)</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="splitLastExpense()">Ratear última despesa</button>
+            </div>
+            <div class="small" style="margin-top:6px">Use: salve uma despesa de Bola/Outros e depois clique em ratear.</div>
+        </div>
+
+        <div class="card">
+            <h4>📌 Pendências</h4>
+            <div id="financeSummary" class="small" style="margin-bottom:8px"></div>
+            <table class="finance-table">
+                <thead>
+                    <tr>
+                        <th>Jogador</th>
+                        <th class="mono">Saldo</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="debtsTable"></tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h4>📤 Exportar financeiro</h4>
+            <button class="btn btn-outline" style="width:100%" onclick="exportFinanceCSV()">Baixar financeiro.csv</button>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -456,14 +627,25 @@ const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 let players = [];
 let config  = { teamsCount: 2, limitPerTeam: 7 };
 
+// ===== FINANCEIRO (local) =====
+let financeConfig = { feeMonthly: 60, feeSingle: 15, autoAvulso: true };
+let ledger = []; // {id, kind:'charge'|'payment'|'expense', date, amount, playerId?, category, note, sessionId?, refMonth?}
+let sessions = []; // {id, date, notes, attendance: { [playerId]: true/false } }
+let currentSessionId = null;
+
+
 /* ---- INIT ---- */
 window.onload = () => {
     const sp = localStorage.getItem('ft_players');
     const sc = localStorage.getItem('ft_config');
     if (sp) players = JSON.parse(sp);
     // garante que todos tenham flag de presença (por padrão, presente)
-    players.forEach(p => { if (typeof p.present === 'undefined') p.present = true; });
+    players.forEach(p => {
+        if (typeof p.present === 'undefined') p.present = true;
+        if (!p.billingType) p.billingType = (p.position === 'Goleiro') ? 'goleiro' : 'avulso';
+    });
     if (sc) { config = JSON.parse(sc); document.getElementById('limitPerTeam').value = config.limitPerTeam; }
+    loadFinance();
     applyTeamsMode(config.teamsCount);
     adaptSVG();
     renderAll();
@@ -514,18 +696,63 @@ function save() {
     localStorage.setItem('ft_config',  JSON.stringify(config));
 }
 
+
+function saveFinance() {
+    localStorage.setItem('ft_finance_config', JSON.stringify(financeConfig));
+    localStorage.setItem('ft_ledger', JSON.stringify(ledger));
+    localStorage.setItem('ft_sessions', JSON.stringify(sessions));
+}
+
+function loadFinance() {
+    const fc = localStorage.getItem('ft_finance_config');
+    const lg = localStorage.getItem('ft_ledger');
+    const ss = localStorage.getItem('ft_sessions');
+    if (fc) financeConfig = { ...financeConfig, ...JSON.parse(fc) };
+    if (lg) ledger = JSON.parse(lg);
+    if (ss) sessions = JSON.parse(ss);
+
+    // migração: garante campos básicos
+    if (!Array.isArray(ledger)) ledger = [];
+    if (!Array.isArray(sessions)) sessions = [];
+}
+
+function saveFinanceConfig() {
+    financeConfig.feeMonthly = parseFloat(document.getElementById('feeMonthly').value) || 0;
+    financeConfig.feeSingle  = parseFloat(document.getElementById('feeSingle').value) || 0;
+    saveFinance();
+    if (financeConfig.autoAvulso) syncAvulsoChargeForPlayerInSession(pid, getCurrentSession());
+    renderFinance();
+}
+
+function money(n) {
+    const v = (Math.round((Number(n)||0)*100)/100).toFixed(2);
+    return 'R$ ' + v.replace('.', ',');
+}
+
+function todayISO() {
+    const d = new Date();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return d.getFullYear() + '-' + m + '-' + day;
+}
+
+function uuid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+}
+
 /* ---- CRUD ---- */
 function savePlayer() {
     const id   = document.getElementById('editId').value;
     const name = document.getElementById('pName').value.trim();
     const pos  = document.getElementById('pPos').value;
+    const bill = document.getElementById('pBilling') ? document.getElementById('pBilling').value : 'avulso';
     const foto = document.getElementById('pFoto').value.trim();
     if (!name) return alert('Digite o nome do jogador');
     if (id) {
         const i = players.findIndex(p => p.id == id);
-        players[i] = { ...players[i], name, position: pos, photoUrl: foto };
+        players[i] = { ...players[i], name, position: pos, photoUrl: foto, billingType: bill };
     } else {
-        players.push({ id: Date.now(), name, position: pos, photoUrl: foto, team: 'bench', x: 10, y: 30, present: true });
+        players.push({ id: Date.now(), name, position: pos, photoUrl: foto, team: 'bench', x: 10, y: 30, present: true, billingType: bill });
     }
     cancelEdit(); save(); renderAll();
 }
@@ -535,6 +762,7 @@ function editPlayer(id) {
     document.getElementById('editId').value = p.id;
     document.getElementById('pName').value  = p.name;
     document.getElementById('pPos').value   = p.position;
+    if (document.getElementById('pBilling')) document.getElementById('pBilling').value = (p.billingType || ((p.position==='Goleiro')?'goleiro':'avulso'));
     document.getElementById('pFoto').value  = p.photoUrl;
     document.getElementById('btnSave').innerText = 'Salvar';
     document.getElementById('formTitle').innerText = '✏️ Editar Jogador';
@@ -546,6 +774,7 @@ function cancelEdit() {
     document.getElementById('editId').value = '';
     document.getElementById('pName').value  = '';
     document.getElementById('pFoto').value  = '';
+    if (document.getElementById('pBilling')) document.getElementById('pBilling').value = 'avulso';
     document.getElementById('btnSave').innerText = 'Adicionar';
     document.getElementById('formTitle').innerText = '➕ Cadastrar Jogador';
     document.getElementById('btnCancel').classList.add('hidden');
@@ -587,13 +816,14 @@ function renderSidebar() {
         d.className = 'player-item';
         const isPresent = (p.present !== false);
         const statusText = isPresent ? (p.team !== 'bench' ? '· Time '+p.team : '· Banco') : '· Ausente';
+        const billingText = (p.billingType==='mensalista'?'Mensalista':(p.billingType==='goleiro'?'Goleiro (isento)':'Avulso'));
         const presLabel = isPresent ? 'Vem' : 'Falta';
         const presClass = isPresent ? 'btn btn-green btn-icon' : 'btn btn-outline btn-icon';
         d.innerHTML = `
             <img class="avatar-sm" src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'">
             <div class="player-info">
                 <strong>${p.name}</strong>
-                <small>${p.position} ${statusText}</small>
+                <small>${p.position} ${statusText} · ${billingText}</small>
             </div>
             <div class="player-actions">
                 <button class="${presClass}" onclick="togglePresence(${p.id})">${presLabel}</button>
@@ -626,7 +856,7 @@ function makePCard(p) {
     const c = document.createElement('div');
     c.className = 'pcard'; c.dataset.id = p.id;
     c.style.position = 'absolute';
-    c.style.left = ((p.x ?? 10))+'px'; c.style.top = ((p.y ?? 30))+'px';
+    c.style.left = ((typeof p.x === 'number') ? p.x : 10)+'px'; c.style.top = ((typeof p.y === 'number') ? p.y : 30)+'px';
     c.innerHTML = `
         <div class="pcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'"></div>
         <div class="pcard-name">${p.name}</div>
@@ -739,6 +969,458 @@ function initDropZones() {
     });
 }
 
+
+
+// ===== FINANCE UI =====
+function initFinanceUI() {
+    // defaults for date inputs
+    const sd = document.getElementById('sessionDate');
+    if (sd && !sd.value) sd.value = todayISO();
+    const bm = document.getElementById('billingMonth');
+    if (bm && !bm.value) bm.value = todayISO().slice(0,7);
+
+    // config inputs
+    const fm = document.getElementById('feeMonthly');
+    const fs = document.getElementById('feeSingle');
+    if (fm) fm.value = financeConfig.feeMonthly;
+    if (fs) fs.value = financeConfig.feeSingle;
+    const aa = document.getElementById('autoAvulso');
+    if (aa) aa.checked = (financeConfig.autoAvulso !== false);
+
+    // ensure players have billing type
+    players.forEach(p => {
+        if (!p.billingType) {
+            p.billingType = (p.position === 'Goleiro') ? 'goleiro' : 'avulso';
+        }
+    });
+    save();
+}
+
+function getPlayerName(id) {
+    const p = players.find(x => x.id == id);
+    return p ? p.name : '(removido)';
+}
+
+function addLedger(entry) {
+    ledger.push({ id: uuid(), date: todayISO(), note: '', ...entry });
+    saveFinance();
+    if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
+    renderFinance();
+}
+
+function playerDue(playerId) {
+    let charges = 0, payments = 0;
+    ledger.forEach(e => {
+        if (e.playerId == playerId) {
+            if (e.kind === 'charge') charges += Number(e.amount)||0;
+            if (e.kind === 'payment') payments += Number(e.amount)||0;
+        }
+    });
+    return charges - payments;
+}
+
+function cashBalance() {
+    let pay = 0, exp = 0;
+    ledger.forEach(e => {
+        if (e.kind === 'payment') pay += Number(e.amount)||0;
+        if (e.kind === 'expense') exp += Number(e.amount)||0;
+    });
+    return pay - exp;
+}
+
+function loadOrCreateSession() {
+    const date = document.getElementById('sessionDate').value || todayISO();
+    let s = sessions.find(x => x.date === date);
+    if (!s) {
+        s = { id: uuid(), date, notes: '', attendance: {} };
+        // default: usa flag global de presença (Vem/Falta) como sugestão
+        players.forEach(p => { s.attendance[p.id] = (p.present !== false); });
+        sessions.push(s);
+        saveFinance();
+    }
+    currentSessionId = s.id;
+    if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
+    renderFinance();
+}
+
+function getCurrentSession() {
+    if (!currentSessionId) return null;
+    return sessions.find(s => s.id === currentSessionId) || null;
+}
+
+function toggleSessionAttendance(pid) {
+    const s = getCurrentSession();
+    if (!s) return alert('Carregue uma pelada primeiro.');
+    s.attendance[pid] = !s.attendance[pid];
+    saveFinance();
+    if (financeConfig.autoAvulso) syncAvulsoChargeForPlayerInSession(pid, getCurrentSession());
+    renderFinance();
+}
+
+function sessionMarkAll(val) {
+    const s = getCurrentSession();
+    if (!s) return alert('Carregue uma pelada primeiro.');
+    players.forEach(p => { s.attendance[p.id] = !!val; });
+    saveFinance();
+    if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
+    renderFinance();
+}
+
+function generateAvulsoCharges() {
+    const s = getCurrentSession();
+    if (!s) return alert('Carregue uma pelada primeiro.');
+    const fee = Number(financeConfig.feeSingle) || 0;
+    let created = 0;
+    players.forEach(p => {
+        if (p.billingType !== 'avulso') return;
+        if (!s.attendance[p.id]) return;
+        const exists = ledger.some(e => e.kind==='charge' && e.category==='avulso' && e.sessionId===s.id && e.playerId==p.id);
+        if (exists) return;
+        ledger.push({ id: uuid(), kind:'charge', category:'avulso', playerId: p.id, amount: fee, date: s.date, note: 'Pelada ' + s.date, sessionId: s.id });
+        created++;
+    });
+    saveFinance();
+    renderFinance();
+    alert('✅ Cobranças avulsos geradas: ' + created);
+}
+
+
+
+function toggleAutoAvulso() {
+    financeConfig.autoAvulso = !!document.getElementById('autoAvulso').checked;
+    saveFinance();
+    // se ligar agora, sincroniza a pelada atual
+    if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
+}
+
+function syncAvulsoChargeForPlayerInSession(playerId, session) {
+    if (!session) return;
+    const p = players.find(x => x.id == playerId);
+    if (!p || p.billingType !== 'avulso') return;
+    const fee = Number(financeConfig.feeSingle) || 0;
+    const isPresent = !!session.attendance[playerId];
+
+    const charge = ledger.find(e => e.kind==='charge' && e.category==='avulso' && e.sessionId===session.id && e.playerId==playerId);
+    const estorno = ledger.find(e => e.kind==='charge' && e.category==='avulso_estorno' && e.sessionId===session.id && e.playerId==playerId);
+
+    if (isPresent) {
+        // cria cobrança se não existir
+        if (!charge) {
+            ledger.push({ id: uuid(), kind:'charge', category:'avulso', playerId, amount: fee, date: session.date, note: 'Pelada ' + session.date, sessionId: session.id });
+            saveFinance();
+        }
+        // se tinha estorno e voltou a presente, não remove histórico; cria uma nova cobrança de ajuste
+        // (opcional: poderia remover estorno, mas manter histórico é mais seguro)
+    } else {
+        // se estava presente e virou ausente, cria estorno (remove a cobrança no saldo)
+        if (charge && !estorno) {
+            ledger.push({ id: uuid(), kind:'charge', category:'avulso_estorno', playerId, amount: -fee, date: session.date, note: 'Estorno (não compareceu) ' + session.date, sessionId: session.id });
+            saveFinance();
+        }
+    }
+}
+
+function syncAvulsoChargesForCurrentSession() {
+    const s = getCurrentSession();
+    if (!s) return;
+    players.forEach(p => syncAvulsoChargeForPlayerInSession(p.id, s));
+    saveFinance();
+    renderFinance();
+}
+
+function monthlyPaidAmount(playerId, month) {
+    let paid = 0;
+    ledger.forEach(e => {
+        if (e.kind==='payment' && e.category==='mensalidade_pag' && e.refMonth===month && e.playerId==playerId) {
+            paid += Number(e.amount)||0;
+        }
+    });
+    return paid;
+}
+
+function monthlyChargeAmount(playerId, month) {
+    let ch = 0;
+    ledger.forEach(e => {
+        if (e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month && e.playerId==playerId) {
+            ch += Number(e.amount)||0;
+        }
+    });
+    return ch;
+}
+
+function markMonthlyPaid(playerId) {
+    const month = document.getElementById('billingMonth').value || todayISO().slice(0,7);
+    const total = monthlyChargeAmount(playerId, month);
+    if (total <= 0) return alert('Não há cobrança de mensalidade para este mês. Clique em “Gerar cobranças”.');
+    const paid  = monthlyPaidAmount(playerId, month);
+    const remain = Math.round((total - paid) * 100) / 100;
+    if (remain <= 0) return; // já pago
+    ledger.push({ id: uuid(), kind:'payment', category:'mensalidade_pag', playerId, amount: remain, date: todayISO(), note: 'Mensalidade paga ' + month, refMonth: month });
+    saveFinance();
+    renderFinance();
+}
+
+function markAllMonthlyPaid() {
+    const month = document.getElementById('billingMonth').value || todayISO().slice(0,7);
+    let count = 0;
+    players.filter(p => p.billingType==='mensalista').forEach(p => {
+        const total = monthlyChargeAmount(p.id, month);
+        const paid = monthlyPaidAmount(p.id, month);
+        const remain = Math.round((total - paid) * 100) / 100;
+        if (remain > 0) {
+            ledger.push({ id: uuid(), kind:'payment', category:'mensalidade_pag', playerId: p.id, amount: remain, date: todayISO(), note: 'Mensalidade paga ' + month, refMonth: month });
+            count++;
+        }
+    });
+    saveFinance();
+    renderFinance();
+    if (count) alert('✅ Mensalidades marcadas como pagas: ' + count);
+}
+function generateMonthlyCharges() {
+    const month = document.getElementById('billingMonth').value || todayISO().slice(0,7);
+    const fee = Number(financeConfig.feeMonthly) || 0;
+    let created = 0;
+    players.forEach(p => {
+        if (p.billingType !== 'mensalista') return;
+        const exists = ledger.some(e => e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month && e.playerId==p.id);
+        if (exists) return;
+        ledger.push({ id: uuid(), kind:'charge', category:'mensalidade', playerId: p.id, amount: fee, date: month + '-01', note: 'Mensalidade ' + month, refMonth: month });
+        created++;
+    });
+    saveFinance();
+    renderFinance();
+    alert('✅ Cobranças mensalistas geradas: ' + created);
+}
+
+function addPayment() {
+    const pid = document.getElementById('payPlayer').value;
+    const amount = parseFloat(document.getElementById('payAmount').value) || 0;
+    const note = (document.getElementById('payNote').value||'').trim();
+    if (!pid) return alert('Selecione um jogador.');
+    if (amount <= 0) return alert('Digite um valor válido.');
+    addLedger({ kind:'payment', category:'pagamento', playerId: pid, amount, note, date: todayISO() });
+    document.getElementById('payNote').value='';
+}
+
+function addExpense() {
+    const cat = document.getElementById('expCategory').value;
+    const amount = parseFloat(document.getElementById('expAmount').value) || 0;
+    const note = (document.getElementById('expNote').value||'').trim();
+    if (amount <= 0) return alert('Digite um valor válido.');
+    addLedger({ kind:'expense', category: cat, amount, note, date: todayISO() });
+    document.getElementById('expAmount').value = 0;
+    document.getElementById('expNote').value = '';
+}
+
+function splitLastExpense() {
+    const mode = document.getElementById('splitMode').value;
+    // pega a última despesa
+    const last = [...ledger].reverse().find(e => e.kind==='expense');
+    if (!last) return alert('Nenhuma despesa encontrada.');
+    const total = Number(last.amount)||0;
+    if (total <= 0) return alert('Despesa inválida.');
+
+    let targets = [];
+    if (mode === 'all_non_goalie') {
+        targets = players.filter(p => p.billingType !== 'goleiro');
+    } else {
+        const s = getCurrentSession();
+        if (!s) return alert('Carregue uma pelada para ratear entre presentes.');
+        targets = players.filter(p => p.billingType !== 'goleiro' && s.attendance[p.id]);
+    }
+    if (!targets.length) return alert('Nenhum jogador para ratear.');
+
+    // evita duplicar rateio para a mesma despesa
+    const already = ledger.some(e => e.kind==='charge' && e.category==='rateio' && e.note && e.note.includes(last.id));
+    if (already) return alert('Esse rateio já foi gerado para a última despesa.');
+
+    const per = Math.round((total / targets.length) * 100) / 100;
+    targets.forEach(p => {
+        ledger.push({ id: uuid(), kind:'charge', category:'rateio', playerId: p.id, amount: per, date: last.date, note: `Rateio: ${last.category} (${last.id})` });
+    });
+    saveFinance();
+    renderFinance();
+    alert(`✅ Rateio gerado: ${targets.length} jogadores x ${money(per)}`);
+}
+
+function quickPay(pid, amount) {
+    const a = Number(amount)||0;
+    if (a<=0) return;
+    ledger.push({ id: uuid(), kind:'payment', category:'pagamento', playerId: pid, amount: a, date: todayISO(), note: 'Pagamento rápido' });
+    saveFinance();
+    renderFinance();
+}
+
+function exportFinanceCSV() {
+    var csv = 'tipo,data,categoria,jogador_id,jogador_nome,valor,obs\n';
+    ledger.forEach(function(e){
+        var pid = e.playerId || '';
+        var nm  = e.playerId ? getPlayerName(e.playerId) : '';
+        var val = (Number(e.amount)||0).toString().replace('.', ',');
+        var obs = (e.note||'').split('\n').join(' ').split(',').join(';');
+        csv += e.kind + ',' + (e.date||'') + ',' + (e.category||'') + ',' + pid + ',' + nm + ',' + val + ',' + obs + '\n';
+    });
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+    a.download='financeiro.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function renderFinance() {
+    // config inputs
+    const fm = document.getElementById('feeMonthly');
+    const fs = document.getElementById('feeSingle');
+    if (fm) fm.value = financeConfig.feeMonthly;
+    if (fs) fs.value = financeConfig.feeSingle;
+    const aa = document.getElementById('autoAvulso');
+    if (aa) aa.checked = (financeConfig.autoAvulso !== false);
+
+    // player select for payments
+    const sel = document.getElementById('payPlayer');
+    if (sel) {
+        sel.innerHTML = '<option value="">Selecione...</option>';
+        players.forEach(p => {
+            const opt=document.createElement('option');
+            opt.value=p.id;
+            opt.textContent = p.name + (p.billingType==='mensalista'?' (Mensalista)':(p.billingType==='goleiro'?' (Goleiro)':' (Avulso)'));
+            sel.appendChild(opt);
+        });
+    }
+
+    // session rendering
+    const info = document.getElementById('sessionInfo');
+    const att  = document.getElementById('sessionAttendance');
+    const s = getCurrentSession();
+    if (info && att) {
+        if (!s) {
+            info.textContent = 'Carregue uma data para controlar presença e gerar cobranças de avulsos.';
+            att.innerHTML = '';
+        } else {
+            const presentCount = players.filter(p => s.attendance[p.id]).length;
+            const charged = ledger.filter(e => e.kind==='charge' && e.category==='avulso' && e.sessionId===s.id).length;
+            info.textContent = `Pelada ${s.date} • Presentes: ${presentCount} • Cobranças avulsos já geradas: ${charged}`;
+            att.innerHTML = '';
+            players.forEach(p => {
+                const wrap=document.createElement('div');
+                wrap.style.display='flex';
+                wrap.style.alignItems='center';
+                wrap.style.justifyContent='space-between';
+                wrap.style.gap='8px';
+                wrap.style.padding='6px 0';
+                wrap.style.borderBottom='1px solid #f0f0f0';
+                const left=document.createElement('div');
+                left.innerHTML = `<strong style="font-size:0.88rem">${p.name}</strong><div class="small">${p.billingType==='mensalista'?'Mensalista':(p.billingType==='goleiro'?'Goleiro (isento)':'Avulso')}</div>`;
+                const btn=document.createElement('button');
+                const isOn = !!s.attendance[p.id];
+                btn.className = isOn ? 'btn btn-green btn-sm' : 'btn btn-outline btn-sm';
+                btn.textContent = isOn ? 'Presente' : 'Ausente';
+                btn.onclick = () => toggleSessionAttendance(p.id);
+                wrap.appendChild(left);
+                wrap.appendChild(btn);
+                att.appendChild(wrap);
+            });
+        }
+    }
+
+
+
+    // mensalidades: lista de mensalistas e botão 1-clique
+    const ml = document.getElementById('monthlyList');
+    const month = document.getElementById('billingMonth') ? (document.getElementById('billingMonth').value || todayISO().slice(0,7)) : todayISO().slice(0,7);
+    if (ml) {
+        ml.innerHTML = '';
+        const mensalistas = players.filter(p => p.billingType==='mensalista');
+        if (!mensalistas.length) {
+            ml.innerHTML = '<div class="small">Nenhum mensalista cadastrado.</div>';
+        } else {
+            mensalistas.forEach(p => {
+                const total = monthlyChargeAmount(p.id, month);
+                const paid  = monthlyPaidAmount(p.id, month);
+                const remain = Math.round((total - paid) * 100) / 100;
+
+                const row = document.createElement('div');
+                row.style.display='flex';
+                row.style.alignItems='center';
+                row.style.justifyContent='space-between';
+                row.style.gap='8px';
+                row.style.padding='6px 0';
+                row.style.borderBottom='1px solid #f0f0f0';
+
+                const left = document.createElement('div');
+                left.innerHTML = `<strong style="font-size:0.88rem">${p.name}</strong><div class="small">${total>0 ? ('Mensalidade ' + month + ': ' + money(total)) : 'Sem cobrança (clique em Gerar cobranças)'}</div>`;
+
+                const right = document.createElement('div');
+
+                const badge = document.createElement('span');
+                badge.className = 'badge ' + (remain>0 ? 'badge-red' : 'badge-green');
+                badge.textContent = remain>0 ? ('Devendo ' + money(remain)) : 'Pago';
+
+                const btn = document.createElement('button');
+                btn.className = (remain>0 ? 'btn btn-green btn-sm' : 'btn btn-outline btn-sm');
+                btn.textContent = 'Marcar pago';
+                btn.disabled = !(remain>0);
+                btn.onclick = () => markMonthlyPaid(p.id);
+
+                right.appendChild(badge);
+                right.appendChild(btn);
+                right.style.display='flex';
+                right.style.alignItems='center';
+                right.style.gap='6px';
+
+                row.appendChild(left);
+                row.appendChild(right);
+                ml.appendChild(row);
+            });
+        }
+    }
+
+    // debts table
+    const tbody = document.getElementById('debtsTable');
+    const sumEl = document.getElementById('financeSummary');
+    if (tbody) {
+        tbody.innerHTML = '';
+        const rows = players.map(p => ({ p, due: playerDue(p.id) }))
+                            .filter(x => Math.abs(x.due) > 0.001)
+                            .sort((a,b) => b.due - a.due);
+        rows.forEach(r => {
+            const tr=document.createElement('tr');
+            const nameTd=document.createElement('td');
+            nameTd.textContent = r.p.name;
+            const dueTd=document.createElement('td');
+            dueTd.className='mono';
+            const badge = document.createElement('span');
+            badge.className = 'badge ' + (r.due>0 ? 'badge-red' : 'badge-green');
+            badge.textContent = (r.due>0 ? ('Devendo ' + money(r.due)) : ('Crédito ' + money(-r.due)));
+            dueTd.appendChild(badge);
+            const actTd=document.createElement('td');
+            if (r.due>0) {
+                const b15=document.createElement('button');
+                b15.className='btn btn-outline btn-sm';
+                b15.textContent = 'Receber 15';
+                b15.onclick = () => quickPay(r.p.id, 15);
+                const ball=document.createElement('button');
+                ball.className='btn btn-outline btn-sm';
+                ball.style.marginLeft='6px';
+                ball.textContent = 'Receber tudo';
+                ball.onclick = () => quickPay(r.p.id, r.due);
+                actTd.appendChild(b15);
+                actTd.appendChild(ball);
+            } else {
+                actTd.innerHTML = '<span class="small">OK</span>';
+            }
+            tr.appendChild(nameTd);
+            tr.appendChild(dueTd);
+            tr.appendChild(actTd);
+            tbody.appendChild(tr);
+        });
+
+        if (sumEl) {
+            const debtTotal = rows.filter(r=>r.due>0).reduce((a,r)=>a+r.due,0);
+            const cash = cashBalance();
+            sumEl.textContent = `Caixa: ${money(cash)} • Total a receber: ${money(debtTotal)} • Lançamentos: ${ledger.length}`;
+        }
+    }
+}
+
 /* ---- CSV ---- */
 async function importCSV(inputId) {
     const url=document.getElementById(inputId).value.trim();
@@ -749,7 +1431,7 @@ async function importCSV(inputId) {
         for (let i=1;i<lines.length;i++) {
             const ln=lines[i].trim(); if(!ln) continue;
             const [nome,posicao,foto_url]=ln.split(',');
-            np.push({id:Date.now()+i,name:(nome||'').trim(),position:(posicao||'Atacante').trim(),photoUrl:(foto_url||'').trim(),team:'bench',x:10,y:30,present:true});
+            np.push({id:Date.now()+i,name:(nome||'').trim(),position:(posicao||'Atacante').trim(),photoUrl:(foto_url||'').trim(),team:'bench',x:10,y:30,present:true,billingType: ((posicao||'').trim()==='Goleiro'?'goleiro':'avulso')});
         }
         if (np.length) { players=np; save(); renderAll(); alert(`✅ ${np.length} jogadores carregados!`); }
     } catch(err) { alert('Erro ao carregar CSV. Verifique a URL.'); console.error(err); }
