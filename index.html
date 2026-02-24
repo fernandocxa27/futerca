@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<!-- saved from url=(0103)https://tess-workflows-files.storage.googleapis.com/fad7d88331bf02728926fdb381977e79ec94ee5e/index.html -->
-<html lang="pt-br"><head><meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- saved from url=(0103)https://tess-workflows-files.storage.googleapis.com/fad7d88331bf02728926fdb381977e79ec94ee5e/index.html -->
+<html lang="pt-br"><head><meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <title>Futebol de Terça</title>
 <style>
 :root {
@@ -321,424 +321,524 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 .audit-misc{background:#455a64}
 .audit-grid{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .audit-grid .form-group{min-width:160px}
+
+
+/* ===== AJUSTE: KPIs em Pendências (Caixa / Total a receber / Lançamentos) ===== */
+#financeSummary .kpi-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+    justify-content:flex-start;
+}
+#financeSummary .kpi{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    width:auto;
+    flex:0 0 auto;
+    padding:6px 10px;
+    border-radius:8px;
+    border:2px solid #000;
+}
+#financeSummary .kpi small{
+    font-weight:800;
+    font-size:0.72rem;
+    opacity:0.95;
+}
+
+
+/* ===== KPI-MODERN (Pendências) ===== */
+#financeSummary .kpi-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:flex-end;
+    justify-content:flex-start;
+}
+#financeSummary .kpi-item{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    width:auto;
+    flex:0 0 auto;
+}
+#financeSummary .kpi-label{
+    font-weight:900;
+    font-size:0.80rem;
+    color: var(--green);
+    line-height:1;
+}
+#financeSummary .kpi-box{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px 14px;
+    border-radius:10px;
+    border:2px solid #000;
+    color:#fff;
+    font-weight:900;
+    letter-spacing:.2px;
+    width:auto;
+    min-width: 140px;
+}
+#financeSummary .kpi-box .mono{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-weight:900;
+}
+#financeSummary .kpi-box.kpi-cash.pos{ background:#1b8f3a; }
+#financeSummary .kpi-box.kpi-cash.neg{ background:#c62828; }
+#financeSummary .kpi-box.kpi-recv{ background:#1a73e8; }
+#financeSummary .kpi-box.kpi-meta{ background:#455a64; }
+
+
+/* ===== KPI polish (shadow + hover + bigger numbers) ===== */
+#financeSummary .kpi-box{
+    box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+    transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+}
+#financeSummary .kpi-box:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.20);
+    filter: brightness(1.02);
+}
+#financeSummary .kpi-box .mono{
+    font-size: 1.18rem;
+    font-weight: 950;
+}
+@media (max-width: 420px){
+  #financeSummary .kpi-box .mono{ font-size: 1.06rem; }
+}
+
+
+/* ===== KPI-FLAT (Pendências) ===== */
+#financeSummary .kpi-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:24px;
+    align-items:flex-end;
+    justify-content:center;
+    margin: 6px 0 10px;
+}
+#financeSummary .kpi-item{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    align-items:center;
+    justify-content:flex-end;
+    text-align:center;
+    flex: 0 0 auto;
+    min-width: 140px;
+}
+#financeSummary .kpi-label{
+    font-weight:900;
+    font-size:0.82rem;
+    color: var(--green);
+    line-height:1;
+}
+#financeSummary .kpi-value{
+    font-weight:950;
+    letter-spacing:0.2px;
+    line-height:1.05;
+}
+#financeSummary .kpi-value .mono{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-size: 1.8rem;
+    font-weight: 950;
+}
+
+/* Colors on numbers */
+#financeSummary .kpi-value.kpi-cash.pos{ color:#1b8f3a; }
+#financeSummary .kpi-value.kpi-cash.neg{ color:#c62828; }
+#financeSummary .kpi-value.kpi-recv{ color:#1a73e8; }
+#financeSummary .kpi-value.kpi-meta{ color:#455a64; }
+
+@media (max-width: 520px){
+  #financeSummary .kpi-row{ gap:16px; }
+  #financeSummary .kpi-item{ min-width: 120px; }
+  #financeSummary .kpi-value .mono{ font-size: 1.25rem; }
+}
+
+
+/* ===== KPI-FLAT OVERRIDES (no colored backgrounds; colors only on numbers) ===== */
+#financeSummary .kpi-value{
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Only text colors */
+#financeSummary .kpi-value.kpi-cash.pos{ color:#1b8f3a !important; }
+#financeSummary .kpi-value.kpi-cash.neg{ color:#c62828 !important; }
+#financeSummary .kpi-value.kpi-recv{ color:#1a73e8 !important; }
+#financeSummary .kpi-value.kpi-meta{ color:#6b7280 !important; } /* cinza médio */
 </style>
 </head>
 <body>
-
 <header>
-    <div class="header-title">⚽ Futebol de Terça</div>
-    <div class="header-controls">
-        <div class="csv-desktop">
-            <input type="text" id="csvUrlDesktop" placeholder="URL Raw do CSV (GitHub)" style="width:220px">
-            <button class="btn btn-outline" onclick="importCSV(&#39;csvUrlDesktop&#39;)">Carregar CSV</button>
-            <button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
-        </div>
-    </div>
+<div class="header-title">⚽ Futebol de Terça</div>
+<div class="header-controls">
+<div class="csv-desktop">
+<input id="csvUrlDesktop" placeholder="URL Raw do CSV (GitHub)" style="width:220px" type="text"/>
+<button class="btn btn-outline" onclick="importCSV('csvUrlDesktop')">Carregar CSV</button>
+<button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
+</div>
+</div>
 </header>
-
 <div class="tabs">
-    <button class="tab-btn" onclick="showTab(&#39;panelCadastro&#39;,this)">👥 Jogadores</button>
-    <button class="tab-btn active" onclick="showTab(&#39;panelField&#39;,this)">⚽ Campo</button>
-    <button class="tab-btn" onclick="showTab(&#39;panelCSV&#39;,this)">📎 CSV</button>
-
-    <button class="tab-btn" onclick="showTab('panelFinance',this)">💰 Financeiro</button></div>
-
+<button class="tab-btn" onclick="showTab('panelCadastro',this)">👥 Jogadores</button>
+<button class="tab-btn active" onclick="showTab('panelField',this)">⚽ Campo</button>
+<button class="tab-btn" onclick="showTab('panelCSV',this)">📎 CSV</button>
+<button class="tab-btn" onclick="showTab('panelFinance',this)">💰 Financeiro</button></div>
 <div class="app-body">
-
-    <!-- CADASTRO -->
-    <div id="panelCadastro" class="panel">
-        <div class="card">
-            <h4 id="formTitle">➕ Cadastrar Jogador</h4>
-            <input type="hidden" id="editId">
-            <div class="form-group" style="margin-bottom:6px">
-                <label>Nome</label>
-                <input type="text" id="pName" placeholder="Nome do jogador">
-            </div>
-            <div class="form-group" style="margin-bottom:6px">
-                <label>Posição</label>
-                <select id="pPos">
-                    <option>Goleiro</option><option>Zagueiro</option><option>Lateral</option>
-                    <option>Volante</option><option>Meio-campo</option><option>Atacante</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-bottom:6px">
-                <label>Cobrança</label>
-                <select id="pBilling">
-                    <option value="mensalista">Mensalista (R$ 60/mês)</option>
-                    <option value="avulso">Avulso/Convidado (R$ 15/pelada)</option>
-                    <option value="goleiro">Goleiro (isento)</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin-bottom:6px">
-                <label>URL da Foto</label>
-                <input type="text" id="pFoto" placeholder="https://lh3.googleusercontent.com/d/...">
-            </div>
-            <div class="btn-row">
-                <button id="btnSave" class="btn btn-primary" style="flex:1" onclick="savePlayer()">Adicionar</button>
-                <button id="btnCancel" class="btn btn-outline hidden" onclick="cancelEdit()">Cancelar</button>
-            </div>
-        </div>
-        <div class="card">
-            <h4>📋 Jogadores (<span id="playerCount">0</span>)</h4>
-            <div id="playerList"></div>
-        </div>
-    </div>
-
-    <!-- CAMPO -->
-    <div id="panelField" class="panel active">
-
-        <div class="field-controls">
-            <span>Times:</span>
-            <button id="btn2Times" class="btn btn-outline active btn-sm" onclick="setTeamsMode(2)">2 Times</button>
-            <button id="btn3Times" class="btn btn-outline btn-sm" onclick="setTeamsMode(3)">3 Times</button>
-            <span style="margin-left:8px">Por time:</span>
-            <input type="number" id="limitPerTeam" value="7" min="1" max="15" style="width:48px" onchange="updateSettings()">
-        </div>
-
-        <div class="pitch-wrap">
-
-            <!-- ===== SVG DO CAMPO VERTICAL (mobile) ===== -->
-            <svg id="svgMobile" class="pitch-svg" viewBox="0 0 400 560" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <defs>
-    <!-- Faixas verticais (mais contraste, estilo exemplo) -->
-    <pattern id="stripeV" x="0" y="0" width="400" height="56" patternUnits="userSpaceOnUse">
-      <rect width="400" height="56" fill="#0d5b2a"></rect>
-      <rect width="400" height="28" fill="#179347"></rect>
-    </pattern>
-  </defs>
-
-  <!-- Gramado -->
-  <rect width="400" height="560" fill="url(#stripeV)" rx="8"></rect>
-
-  <!-- Linhas brancas (sem meia-lua e sem área pequena) -->
-  <g fill="none" stroke="white" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="translate(20,28) scale(0.9)">
-    <!-- Borda -->
-    <rect x="10" y="10" width="380" height="540" rx="6"></rect>
-
-    <!-- Linha do meio -->
-    <line x1="10" y1="280" x2="390" y2="280"></line>
-
-    <!-- Círculo central + ponto -->
-    <circle cx="200" cy="280" r="55"></circle>
-    <circle cx="200" cy="280" r="2" fill="white" stroke="none"></circle>
-
-    <!-- Área grande (cima) -->
-    <rect x="90" y="10" width="220" height="90"></rect>
-    <!-- Ponto pênalti (cima) -->
-    <circle cx="200" cy="75" r="2.5" fill="white" stroke="none"></circle>
-
-    <!-- Área grande (baixo) -->
-    <rect x="90" y="460" width="220" height="90"></rect>
-    <!-- Ponto pênalti (baixo) -->
-    <circle cx="200" cy="485" r="2.5" fill="white" stroke="none"></circle>
-
-    <!-- Gols -->
-    <rect x="168" y="4" width="64" height="14" stroke="white" stroke-width="2"></rect>
-    <rect x="168" y="542" width="64" height="14" stroke="white" stroke-width="2"></rect>
-
-    <!-- Escanteios -->
-    <path d="M 10 22 A 12 12 0 0 1 22 10"></path>
-    <path d="M 378 10 A 12 12 0 0 1 390 22"></path>
-    <path d="M 10 538 A 12 12 0 0 0 22 550"></path>
-    <path d="M 390 538 A 12 12 0 0 1 378 550"></path>
-  </g>
+<!-- CADASTRO -->
+<div class="panel" id="panelCadastro">
+<div class="card">
+<h4 id="formTitle">➕ Cadastrar Jogador</h4>
+<input id="editId" type="hidden"/>
+<div class="form-group" style="margin-bottom:6px">
+<label>Nome</label>
+<input id="pName" placeholder="Nome do jogador" type="text"/>
+</div>
+<div class="form-group" style="margin-bottom:6px">
+<label>Posição</label>
+<select id="pPos">
+<option>Goleiro</option><option>Zagueiro</option><option>Lateral</option>
+<option>Volante</option><option>Meio-campo</option><option>Atacante</option>
+</select>
+</div>
+<div class="form-group" style="margin-bottom:6px">
+<label>Cobrança</label>
+<select id="pBilling">
+<option value="mensalista">Mensalista (R$ 60/mês)</option>
+<option value="avulso">Avulso/Convidado (R$ 15/pelada)</option>
+<option value="goleiro">Goleiro (isento)</option>
+</select>
+</div>
+<div class="form-group" style="margin-bottom:6px">
+<label>URL da Foto</label>
+<input id="pFoto" placeholder="https://lh3.googleusercontent.com/d/..." type="text"/>
+</div>
+<div class="btn-row">
+<button class="btn btn-primary" id="btnSave" onclick="savePlayer()" style="flex:1">Adicionar</button>
+<button class="btn btn-outline hidden" id="btnCancel" onclick="cancelEdit()">Cancelar</button>
+</div>
+</div>
+<div class="card">
+<h4>📋 Jogadores (<span id="playerCount">0</span>)</h4>
+<div id="playerList"></div>
+</div>
+</div>
+<!-- CAMPO -->
+<div class="panel active" id="panelField">
+<div class="field-controls">
+<span>Times:</span>
+<button class="btn btn-outline active btn-sm" id="btn2Times" onclick="setTeamsMode(2)">2 Times</button>
+<button class="btn btn-outline btn-sm" id="btn3Times" onclick="setTeamsMode(3)">3 Times</button>
+<span style="margin-left:8px">Por time:</span>
+<input id="limitPerTeam" max="15" min="1" onchange="updateSettings()" style="width:48px" type="number" value="7"/>
+</div>
+<div class="pitch-wrap">
+<!-- ===== SVG DO CAMPO VERTICAL (mobile) ===== -->
+<svg class="pitch-svg" id="svgMobile" preserveaspectratio="none" style="display: none;" viewbox="0 0 400 560" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<!-- Faixas verticais (mais contraste, estilo exemplo) -->
+<pattern height="56" id="stripeV" patternunits="userSpaceOnUse" width="400" x="0" y="0">
+<rect fill="#0d5b2a" height="56" width="400"></rect>
+<rect fill="#179347" height="28" width="400"></rect>
+</pattern>
+</defs>
+<!-- Gramado -->
+<rect fill="url(#stripeV)" height="560" rx="8" width="400"></rect>
+<!-- Linhas brancas (sem meia-lua e sem área pequena) -->
+<g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" transform="translate(20,28) scale(0.9)">
+<!-- Borda -->
+<rect height="540" rx="6" width="380" x="10" y="10"></rect>
+<!-- Linha do meio -->
+<line x1="10" x2="390" y1="280" y2="280"></line>
+<!-- Círculo central + ponto -->
+<circle cx="200" cy="280" r="55"></circle>
+<circle cx="200" cy="280" fill="white" r="2" stroke="none"></circle>
+<!-- Área grande (cima) -->
+<rect height="90" width="220" x="90" y="10"></rect>
+<!-- Ponto pênalti (cima) -->
+<circle cx="200" cy="75" fill="white" r="2.5" stroke="none"></circle>
+<!-- Área grande (baixo) -->
+<rect height="90" width="220" x="90" y="460"></rect>
+<!-- Ponto pênalti (baixo) -->
+<circle cx="200" cy="485" fill="white" r="2.5" stroke="none"></circle>
+<!-- Gols -->
+<rect height="14" stroke="white" stroke-width="2" width="64" x="168" y="4"></rect>
+<rect height="14" stroke="white" stroke-width="2" width="64" x="168" y="542"></rect>
+<!-- Escanteios -->
+<path d="M 10 22 A 12 12 0 0 1 22 10"></path>
+<path d="M 378 10 A 12 12 0 0 1 390 22"></path>
+<path d="M 10 538 A 12 12 0 0 0 22 550"></path>
+<path d="M 390 538 A 12 12 0 0 1 378 550"></path>
+</g>
 </svg>
-
-            <!-- ===== SVG DO CAMPO HORIZONTAL (desktop) ===== -->
-            <svg id="svgDesktop" class="pitch-svg" viewBox="0 0 700 435" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
-  <defs>
-    <!-- Faixas verticais (mais contraste, estilo exemplo) -->
-    <pattern id="stripeD" x="0" y="0" width="80" height="435" patternUnits="userSpaceOnUse">
-      <rect width="80" height="435" fill="#0d5b2a"></rect>
-      <rect width="40" height="435" fill="#179347"></rect>
-    </pattern>
-  </defs>
-
-  <!-- Gramado -->
-  <rect width="700" height="435" fill="url(#stripeD)" rx="8"></rect>
-
-  <!-- Linhas brancas (sem meia-lua e sem área pequena) -->
-  <g fill="none" stroke="white" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" transform="translate(35,21.75) scale(0.9)">
-    <!-- Borda -->
-    <rect x="10" y="10" width="680" height="415" rx="6"></rect>
-
-    <!-- Linha do meio -->
-    <line x1="350" y1="10" x2="350" y2="425"></line>
-
-    <!-- Círculo central + ponto -->
-    <circle cx="350" cy="217" r="60"></circle>
-    <circle cx="350" cy="217" r="2.5" fill="white" stroke="none"></circle>
-
-    <!-- Área grande esquerda -->
-    <rect x="10" y="107" width="120" height="221"></rect>
-    <!-- Ponto pênalti esq -->
-    <circle cx="95" cy="217" r="2.5" fill="white" stroke="none"></circle>
-
-    <!-- Área grande direita -->
-    <rect x="570" y="107" width="120" height="221"></rect>
-    <!-- Ponto pênalti dir -->
-    <circle cx="605" cy="217" r="2.5" fill="white" stroke="none"></circle>
-
-    <!-- Gols -->
-    <rect x="0" y="177" width="12" height="81" stroke="white" stroke-width="2"></rect>
-    <rect x="688" y="177" width="12" height="81" stroke="white" stroke-width="2"></rect>
-
-    <!-- Escanteios -->
-    <path d="M 10 22 A 12 12 0 0 1 22 10"></path>
-    <path d="M 678 10 A 12 12 0 0 1 690 22"></path>
-    <path d="M 10 413 A 12 12 0 0 0 22 425"></path>
-    <path d="M 690 413 A 12 12 0 0 1 678 425"></path>
-  </g>
+<!-- ===== SVG DO CAMPO HORIZONTAL (desktop) ===== -->
+<svg class="pitch-svg" id="svgDesktop" preserveaspectratio="none" style="display: block;" viewbox="0 0 700 435" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<!-- Faixas verticais (mais contraste, estilo exemplo) -->
+<pattern height="435" id="stripeD" patternunits="userSpaceOnUse" width="80" x="0" y="0">
+<rect fill="#0d5b2a" height="435" width="80"></rect>
+<rect fill="#179347" height="435" width="40"></rect>
+</pattern>
+</defs>
+<!-- Gramado -->
+<rect fill="url(#stripeD)" height="435" rx="8" width="700"></rect>
+<!-- Linhas brancas (sem meia-lua e sem área pequena) -->
+<g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" transform="translate(35,21.75) scale(0.9)">
+<!-- Borda -->
+<rect height="415" rx="6" width="680" x="10" y="10"></rect>
+<!-- Linha do meio -->
+<line x1="350" x2="350" y1="10" y2="425"></line>
+<!-- Círculo central + ponto -->
+<circle cx="350" cy="217" r="60"></circle>
+<circle cx="350" cy="217" fill="white" r="2.5" stroke="none"></circle>
+<!-- Área grande esquerda -->
+<rect height="221" width="120" x="10" y="107"></rect>
+<!-- Ponto pênalti esq -->
+<circle cx="95" cy="217" fill="white" r="2.5" stroke="none"></circle>
+<!-- Área grande direita -->
+<rect height="221" width="120" x="570" y="107"></rect>
+<!-- Ponto pênalti dir -->
+<circle cx="605" cy="217" fill="white" r="2.5" stroke="none"></circle>
+<!-- Gols -->
+<rect height="81" stroke="white" stroke-width="2" width="12" x="0" y="177"></rect>
+<rect height="81" stroke="white" stroke-width="2" width="12" x="688" y="177"></rect>
+<!-- Escanteios -->
+<path d="M 10 22 A 12 12 0 0 1 22 10"></path>
+<path d="M 678 10 A 12 12 0 0 1 690 22"></path>
+<path d="M 10 413 A 12 12 0 0 0 22 425"></path>
+<path d="M 690 413 A 12 12 0 0 1 678 425"></path>
+</g>
 </svg>
-
-            <!-- Zonas dos times (transparentes, por cima do SVG) -->
-            <div class="pitch-inner" id="pitchInner">
-                <div class="team-zone" id="zoneA" data-team="A">
-                    <div class="team-label">TIME A</div>
-                </div>
-                <div class="team-zone" id="zoneB" data-team="B">
-                    <div class="team-label">TIME B</div>
-                </div>
-                <div class="team-zone hidden" id="zoneC" data-team="C">
-                    <div class="team-label">TIME C</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bench-wrap">
-            <h5>🪑 Banco de Reservas</h5>
-            <div class="bench-slots" id="bench" data-team="bench"></div>
-        </div>
-    </div>
-
-    <!-- CSV MOBILE -->
-    <div id="panelCSV" class="panel">
-        <div class="card">
-            <h4>📥 Carregar CSV do GitHub</h4>
-            <div class="form-group" style="margin-bottom:8px">
-                <label>URL Raw do CSV</label>
-                <input type="text" id="csvUrlMobile" placeholder="https://raw.githubusercontent.com/...">
-            </div>
-            <button class="btn btn-primary" style="width:100%" onclick="importCSV(&#39;csvUrlMobile&#39;)">Carregar CSV</button>
-        </div>
-        <div class="card">
-            <h4>📤 Exportar CSV</h4>
-            <p style="font-size:0.82rem;color:#666;margin-bottom:8px">Baixa jogadores.csv com todos os jogadores.</p>
-            <button class="btn btn-green" style="width:100%" onclick="exportCSV()">Exportar CSV</button>
-        </div>
-    </div>
-
-
-
-    <!-- FINANCEIRO -->
-    <div id="panelFinance" class="panel">
-        <div class="card">
-            <h4>💰 Financeiro</h4>
-            <div class="finance-row">
-                <div class="form-group">
-                    <label>Mensalista (R$ / mês)</label>
-                    <input type="number" id="feeMonthly" value="60" min="0" step="1" onchange="saveFinanceConfig()">
-                </div>
-                <div class="form-group">
-                    <label>Avulso (R$ / pelada)</label>
-                    <input type="number" id="feeSingle" value="15" min="0" step="1" onchange="saveFinanceConfig()">
-                </div>
-            </div>
-            <div class="small" style="margin-top:6px">Dica: isso fica salvo no seu celular/PC (localStorage).</div>
-        </div>
-
-        <div class="card">
-            <h4>🗓️ Pelada (por data)</h4>
-            <div class="finance-row">
-                <div class="form-group" style="flex:1">
-                    <label>Data</label>
-                    <input type="date" id="sessionDate">
-                </div>
-                <button class="btn btn-outline" onclick="loadOrCreateSession()">Carregar</button>
-            </div>
-            <div class="finance-row" style="margin-top:8px">
-                <button class="btn btn-outline btn-sm" onclick="sessionMarkAll(true)">Marcar todos presentes</button>
-                <button class="btn btn-outline btn-sm" onclick="sessionMarkAll(false)">Marcar todos ausentes</button>
-                <button class="btn btn-primary btn-sm" onclick="generateAvulsoCharges()">Gerar cobranças avulsos</button>
-            </div>
-            <div class="finance-row" style="margin-top:8px">
-                <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#444">
-                    <input type="checkbox" id="autoAvulso" onchange="toggleAutoAvulso()">
+<!-- Zonas dos times (transparentes, por cima do SVG) -->
+<div class="pitch-inner" id="pitchInner">
+<div class="team-zone" data-team="A" id="zoneA">
+<div class="team-label">TIME A</div>
+</div>
+<div class="team-zone" data-team="B" id="zoneB">
+<div class="team-label">TIME B</div>
+</div>
+<div class="team-zone hidden" data-team="C" id="zoneC">
+<div class="team-label">TIME C</div>
+</div>
+</div>
+</div>
+<div class="bench-wrap">
+<h5>🪑 Banco de Reservas</h5>
+<div class="bench-slots" data-team="bench" id="bench"></div>
+</div>
+</div>
+<!-- CSV MOBILE -->
+<div class="panel" id="panelCSV">
+<div class="card">
+<h4>📥 Carregar CSV do GitHub</h4>
+<div class="form-group" style="margin-bottom:8px">
+<label>URL Raw do CSV</label>
+<input id="csvUrlMobile" placeholder="https://raw.githubusercontent.com/..." type="text"/>
+</div>
+<button class="btn btn-primary" onclick="importCSV('csvUrlMobile')" style="width:100%">Carregar CSV</button>
+</div>
+<div class="card">
+<h4>📤 Exportar CSV</h4>
+<p style="font-size:0.82rem;color:#666;margin-bottom:8px">Baixa jogadores.csv com todos os jogadores.</p>
+<button class="btn btn-green" onclick="exportCSV()" style="width:100%">Exportar CSV</button>
+</div>
+</div>
+<!-- FINANCEIRO -->
+<div class="panel" id="panelFinance">
+<div class="card">
+<h4>💰 Financeiro</h4>
+<div class="finance-row">
+<div class="form-group">
+<label>Mensalista (R$ / mês)</label>
+<input id="feeMonthly" min="0" onchange="saveFinanceConfig()" step="1" type="number" value="60"/>
+</div>
+<div class="form-group">
+<label>Avulso (R$ / pelada)</label>
+<input id="feeSingle" min="0" onchange="saveFinanceConfig()" step="1" type="number" value="15"/>
+</div>
+</div>
+<div class="small" style="margin-top:6px">Dica: isso fica salvo no seu celular/PC (localStorage).</div>
+</div>
+<div class="card">
+<h4>🗓️ Pelada (por data)</h4>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Data</label>
+<input id="sessionDate" type="date"/>
+</div>
+<button class="btn btn-outline" onclick="loadOrCreateSession()">Carregar</button>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<button class="btn btn-outline btn-sm" onclick="sessionMarkAll(true)">Marcar todos presentes</button>
+<button class="btn btn-outline btn-sm" onclick="sessionMarkAll(false)">Marcar todos ausentes</button>
+<button class="btn btn-primary btn-sm" onclick="generateAvulsoCharges()">Gerar cobranças avulsos</button>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#444">
+<input id="autoAvulso" onchange="toggleAutoAvulso()" type="checkbox"/>
                     Cobrar avulso automaticamente ao marcar Presente
                 </label>
-            </div>
-            <div id="sessionInfo" class="small" style="margin-top:8px"></div>
-            <div id="sessionAttendance" style="margin-top:8px"></div>
-        </div>
-
-        <div class="card">
-            <h4>📆 Mensalidades</h4>
-            <div class="finance-row">
-                <div class="form-group" style="flex:1">
-                    <label>Mês</label>
-                    <input type="month" id="billingMonth">
-                </div>
-                <button class="btn btn-primary" onclick="generateMonthlyCharges()">Gerar cobranças</button>
-            </div>
-            <div class="small" style="margin-top:6px">Gera 1 cobrança por mensalista no mês escolhido (evita duplicar).</div>
-            <div class="finance-row" style="margin-top:8px">
-                <button class="btn btn-green btn-sm" onclick="markAllMonthlyPaid()">Marcar todos pagos</button>
-            </div>
-            <div id="monthlyList" style="margin-top:8px"></div>
-        </div>
-
-        <div class="card">
-            <h4>✅ Registrar pagamento</h4>
-            <div class="finance-row">
-                <div class="form-group" style="flex:1">
-                    <label>Jogador</label>
-                    <select id="payPlayer"></select>
-                </div>
-                <div class="form-group">
-                    <label>Valor (R$)</label>
-                    <input type="number" id="payAmount" min="0" step="1" value="15">
-                </div>
-            </div>
-            <div class="finance-row" style="margin-top:8px">
-                <div class="form-group" style="flex:1">
-                    <label>Obs (Pix, dinheiro, etc.)</label>
-                    <input type="text" id="payNote" placeholder="Ex: Pix, fulano pagou pra ciclano">
-                </div>
-                <button class="btn btn-green" onclick="addPayment()">Salvar pagamento</button>
-            </div>
-        </div>
-
-        <div class="card">
-            <h4>🧾 Despesas do caixa</h4>
-            <div class="finance-row">
-                <div class="form-group" style="flex:1">
-                    <label>Categoria</label>
-                    <select id="expCategory" onchange="onExpenseCategoryChange()">
-                        <option value="goleiro_alugado">Goleiro de fora</option>
-                        <option value="quadra">Aluguel da quadra</option>
-                        <option value="bola">Bola / material</option>
-                        <option value="outros">Outros</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Valor (R$)</label>
-                    <input type="number" id="expAmount" min="0" step="1" value="0">
-                </div>
-            </div>
-            <div class="finance-row" style="margin-top:8px">
-                <div class="form-group" style="flex:1">
-                    <label>Obs</label>
-                    <input type="text" id="expNote" placeholder="Ex: pagamos goleiro X, bola nova Nike">
-                </div>
-                <button class="btn btn-danger" onclick="addExpense()">Salvar despesa</button>
-            </div>
-            <div class="hr"></div>
-            <div class="finance-row">
-                <div class="form-group" style="flex:1">
-                    <label>Ratear compra (gera cobranças)</label>
-                    <select id="splitMode">
-                        <option value="none">Não ratear (sai do caixa)</option>
-                        <option value="mensal_all">Entre mensalistas (todos)</option>
-                        <option value="mensal_present">Entre mensalistas presentes (pelada carregada)</option>
-                        <option value="session_present">Entre presentes da pelada carregada</option>
-                        <option value="all_non_goalie">Entre todos (exceto goleiros isentos)</option>
-</select>
-                </div>
-                <button class="btn btn-primary" onclick="splitLastExpense()">Ratear última despesa</button>
-            </div>
-            <div class="small" style="margin-top:6px">Use: salve uma despesa de Bola/Outros e depois clique em ratear.</div>
-        </div>
-
-        
-        <div class="card">
-            <h4>⏳ Despesas pendentes de rateio</h4>
-            <div id="pendingSplits" class="pending-splits"></div>
-            <div class="small" style="margin-top:6px">Mostra despesas (Bola/Outros) que ainda no foram rateadas.</div>
-        </div>
-
-
-        <div class="card">
-            <h4>✅ Rateios realizados</h4>
-            <div id="doneSplits" class="pending-splits"></div>
-            <div class="small" style="margin-top:6px">Aqui voc consegue desfazer um rateio (remove as cobranas geradas, mas mantm a despesa no caixa).<\/div>
-        </div>
-
-<div class="card">
-            <h4>📌 Pendências</h4>
-            <div id="financeSummary" class="small" style="margin-bottom:8px"></div>
-            <table class="finance-table">
-                <thead>
-                    <tr>
-                        <th>Jogador</th>
-                        <th class="mono">Saldo</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="debtsTable"></tbody>
-            </table>
-            <div class="hr"></div>
-            <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">🧾 Últimos pagamentos</h4>
-            <table class="finance-table">
-                <thead>
-                    <tr><th>Data</th><th>Jogador</th><th>Valor</th><th>Ação</th></tr>
-                </thead>
-                <tbody id="paymentsTable"></tbody>
-            </table>
-            <div class="hr"></div>
-            <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Últimas despesas</h4>
-            <table class="finance-table">
-                <thead>
-                    <tr><th>Data</th><th>Categoria</th><th>Valor</th><th>Ação</th></tr>
-                </thead>
-                <tbody id="expensesTable"></tbody>
-            </table>
-
-
-        </div>
-
-        
-        <div class="card">
-            <h4>🗑️ Histórico / Auditoria</h4>
-            
-            <div class="audit-grid" style="margin-bottom:10px">
-                <div class="form-group">
-                    <label>Filtro</label>
-                    <select id="auditFilter" onchange="renderTrashLog()">
-                        <option value="all">Tudo</option>
-                        <option value="add_payment">Pagamentos</option>
-                        <option value="add_expense">Despesas</option>
-                        <option value="do_split">Rateios</option>
-                        <option value="gen_monthly_charges">Mensalidades (gerar cobranças)</option>
-                        <option value="undo">Desfazer (pagamento/rateio/despesa)</option>
-                    </select>
-                </div>
-                <div class="form-group" style="flex:1;min-width:220px">
-                    <label>Buscar</label>
-                    <input type="text" id="auditSearch" placeholder="Ex: Alisson, quadra, Pix..." oninput="renderTrashLog()">
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="exportTrashCSV()">Baixar historico.csv</button>
-                <button class="btn btn-outline btn-sm" onclick="exportGeneralReportCSV()">Baixar relatorio_geral.csv</button>
-                <div class="form-group" style="min-width:170px"><label>PDF: itens</label><select id="printLimit"><option value="200" selected>Últimos 200</option><option value="500">Últimos 500</option><option value="1000">Últimos 1000</option><option value="all">Tudo</option></select></div><div class="form-group" style="min-width:160px"><label>PDF: de</label><input type="date" id="printFrom"></div><div class="form-group" style="min-width:160px"><label>PDF: até</label><input type="date" id="printTo"></div>
-                <button class="btn btn-outline btn-sm" onclick="setPdfPeriodFromMonthlyMonth()">PDF = mês das mensalidades</button><button class="btn btn-outline btn-sm" onclick="openPrintReport()">Imprimir / PDF</button>
-                <button class="btn btn-danger btn-sm" onclick="clearTrashLog()">Limpar histórico</button>
-            </div>
-
-                <thead>
-                    <tr><th>Quando</th><th>Tipo</th><th>Detalhes</th></tr>
-                </thead>
-                <tbody id="trashTable"></tbody>
-            </table>
-            <div class="small" style="margin-top:6px">Obs: isso é apenas um log para auditoria. Não restaura automaticamente os itens.</div>
-        </div>
-
-<div class="card">
-            <h4>📤 Exportar financeiro</h4>
-            <button class="btn btn-outline" style="width:100%" onclick="exportFinanceCSV()">Baixar financeiro.csv</button>
-        </div>
-    </div>
-
 </div>
-
+<div class="small" id="sessionInfo" style="margin-top:8px"></div>
+<div id="sessionAttendance" style="margin-top:8px"></div>
+</div>
+<div class="card">
+<h4>📆 Mensalidades</h4>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Mês</label>
+<input id="billingMonth" type="month"/>
+</div>
+<button class="btn btn-primary" onclick="generateMonthlyCharges()">Gerar cobranças</button>
+</div>
+<div class="small" style="margin-top:6px">Gera 1 cobrança por mensalista no mês escolhido (evita duplicar).</div>
+<div class="finance-row" style="margin-top:8px">
+<button class="btn btn-green btn-sm" onclick="markAllMonthlyPaid()">Marcar todos pagos</button>
+</div>
+<div id="monthlyList" style="margin-top:8px"></div>
+</div>
+<div class="card">
+<h4>✅ Registrar pagamento</h4>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Jogador</label>
+<select id="payPlayer"></select>
+</div>
+<div class="form-group">
+<label>Valor (R$)</label>
+<input id="payAmount" min="0" step="1" type="number" value="15"/>
+</div>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<div class="form-group" style="flex:1">
+<label>Obs (Pix, dinheiro, etc.)</label>
+<input id="payNote" placeholder="Ex: Pix, fulano pagou pra ciclano" type="text"/>
+</div>
+<button class="btn btn-green" onclick="addPayment()">Salvar pagamento</button>
+</div>
+</div>
+<div class="card">
+<h4>🧾 Despesas do caixa</h4>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Categoria</label>
+<select id="expCategory" onchange="onExpenseCategoryChange()">
+<option value="goleiro_alugado">Goleiro de fora</option>
+<option value="quadra">Aluguel da quadra</option>
+<option value="bola">Bola / material</option>
+<option value="outros">Outros</option>
+</select>
+</div>
+<div class="form-group">
+<label>Valor (R$)</label>
+<input id="expAmount" min="0" step="1" type="number" value="0"/>
+</div>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<div class="form-group" style="flex:1">
+<label>Obs</label>
+<input id="expNote" placeholder="Ex: pagamos goleiro X, bola nova Nike" type="text"/>
+</div>
+<button class="btn btn-danger" onclick="addExpense()">Salvar despesa</button>
+</div>
+<div class="hr"></div>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Ratear compra (gera cobranças)</label>
+<select id="splitMode">
+<option value="none">Não ratear (sai do caixa)</option>
+<option value="mensal_all">Entre mensalistas (todos)</option>
+<option value="mensal_present">Entre mensalistas presentes (pelada carregada)</option>
+<option value="session_present">Entre presentes da pelada carregada</option>
+<option value="all_non_goalie">Entre todos (exceto goleiros isentos)</option>
+</select>
+</div>
+<button class="btn btn-primary" onclick="splitLastExpense()">Ratear última despesa</button>
+</div>
+<div class="small" style="margin-top:6px">Use: salve uma despesa de Bola/Outros e depois clique em ratear.</div>
+</div>
+<div class="card">
+<h4>⏳ Despesas pendentes de rateio</h4>
+<div class="pending-splits" id="pendingSplits"></div>
+<div class="small" style="margin-top:6px">Mostra despesas (Bola/Outros) que ainda não foram rateadas.</div>
+</div>
+<div class="card">
+<h4>✅ Rateios realizados</h4>
+<div class="pending-splits" id="doneSplits"></div>
+<div class="small" style="margin-top:6px">Aqui você consegue desfazer um rateio (remove as cobranças geradas, mas mantém a despesa no caixa).</div>
+<div class="card">
+<h4>📌 Pendências</h4>
+<div class="small" id="financeSummary" style="margin-bottom:8px"></div>
+<table class="finance-table">
+<thead>
+<tr>
+<th>Jogador</th>
+<th class="mono">Saldo</th>
+<th>Ação</th>
+</tr>
+</thead>
+<tbody id="debtsTable"></tbody>
+</table>
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">🧾 Últimos pagamentos</h4>
+<table class="finance-table">
+<thead>
+<tr><th>Data</th><th>Jogador</th><th>Valor</th><th>Ação</th></tr>
+</thead>
+<tbody id="paymentsTable"></tbody>
+</table>
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Últimas despesas</h4>
+<table class="finance-table">
+<thead>
+<tr><th>Data</th><th>Categoria</th><th>Valor</th><th>Ação</th></tr>
+</thead>
+<tbody id="expensesTable"></tbody>
+</table>
+</div>
+<div class="card">
+<h4>🗑️ Histórico / Auditoria</h4>
+<div class="audit-grid" style="margin-bottom:10px">
+<div class="form-group">
+<label>Filtro</label>
+<select id="auditFilter" onchange="renderTrashLog()">
+<option value="all">Tudo</option>
+<option value="add_payment">Pagamentos</option>
+<option value="add_expense">Despesas</option>
+<option value="do_split">Rateios</option>
+<option value="gen_monthly_charges">Mensalidades (gerar cobranças)</option>
+<option value="undo">Desfazer (pagamento/rateio/despesa)</option>
+</select>
+</div>
+<div class="form-group" style="flex:1;min-width:220px">
+<label>Buscar</label>
+<input id="auditSearch" oninput="renderTrashLog()" placeholder="Ex: Alisson, quadra, Pix..." type="text"/>
+</div>
+<button class="btn btn-outline btn-sm" onclick="exportTrashCSV()">Baixar historico.csv</button>
+<button class="btn btn-outline btn-sm" onclick="exportGeneralReportCSV()">Baixar relatorio_geral.csv</button>
+<div class="form-group" style="min-width:170px"><label>PDF: itens</label><select id="printLimit"><option selected="" value="200">Últimos 200</option><option value="500">Últimos 500</option><option value="1000">Últimos 1000</option><option value="all">Tudo</option></select></div><div class="form-group" style="min-width:160px"><label>PDF: de</label><input id="printFrom" type="date"/></div><div class="form-group" style="min-width:160px"><label>PDF: até</label><input id="printTo" type="date"/></div>
+<button class="btn btn-outline btn-sm" onclick="setPdfPeriodFromMonthlyMonth()">PDF = mês das mensalidades</button><button class="btn btn-outline btn-sm" onclick="openPrintReport()">Imprimir / PDF</button>
+<button class="btn btn-danger btn-sm" onclick="clearTrashLog()">Limpar histórico</button>
+</div>
+<thead>
+<tr><th>Quando</th><th>Tipo</th><th>Detalhes</th></tr>
+</thead>
+<tbody id="trashTable"></tbody>
+<div class="small" style="margin-top:6px">Obs: isso é apenas um log para auditoria. Não restaura automaticamente os itens.</div>
+</div>
+<div class="card">
+<h4>📤 Exportar financeiro</h4>
+<button class="btn btn-outline" onclick="exportFinanceCSV()" style="width:100%">Baixar financeiro.csv</button>
+</div>
+</div>
+</div>
 <script>
 const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%23aaa'/%3E%3Ccircle cx='25' cy='19' r='9' fill='%23fff'/%3E%3Cellipse cx='25' cy='40' rx='14' ry='10' fill='%23fff'/%3E%3C/svg%3E";
 
@@ -1003,12 +1103,12 @@ function renderSidebar() {
             <div class="player-info">
                 <strong>${p.name}</strong>
                 <small>${p.position} ${statusText} · ${billingText}</small>
-            </div>
+            
             <div class="player-actions">
                 <button class="${presClass}" onclick="togglePresence(${p.id})">${presLabel}</button>
                 <button class="btn btn-outline btn-icon" onclick="editPlayer(${p.id})">✏️</button>
                 <button class="btn btn-danger btn-icon"  onclick="deletePlayer(${p.id})">🗑️</button>
-            </div>`;
+            `;
         list.appendChild(d);
     });
 }
@@ -1037,9 +1137,9 @@ function makePCard(p) {
     c.style.position = 'absolute';
     c.style.left = ((typeof p.x === 'number') ? p.x : 10)+'px'; c.style.top = ((typeof p.y === 'number') ? p.y : 30)+'px';
     c.innerHTML = `
-        <div class="pcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'"></div>
-        <div class="pcard-name">${p.name}</div>
-        <div class="pcard-pos">${p.position.substring(0,3).toUpperCase()}</div>`;
+        <div class="pcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'">
+        <div class="pcard-name">${p.name}
+        <div class="pcard-pos">${p.position.substring(0,3).toUpperCase()}`;
     enableDrag(c); return c;
 }
 
@@ -1047,9 +1147,9 @@ function makeBCard(p) {
     const c = document.createElement('div');
     c.className = 'bcard'; c.dataset.id = p.id;
     c.innerHTML = `
-        <div class="bcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'"></div>
-        <div class="bcard-name">${p.name}</div>
-        <div class="bcard-pos">${p.position.substring(0,3).toUpperCase()}</div>`;
+        <div class="bcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'">
+        <div class="bcard-name">${p.name}
+        <div class="bcard-pos">${p.position.substring(0,3).toUpperCase()}`;
     enableDrag(c); return c;
 }
 
@@ -1574,7 +1674,7 @@ function renderFinance() {
                 wrap.style.padding='6px 0';
                 wrap.style.borderBottom='1px solid #f0f0f0';
                 const left=document.createElement('div');
-                left.innerHTML = `<strong style="font-size:0.88rem">${p.name}</strong><div class="small">${p.billingType==='mensalista'?'Mensalista':(p.billingType==='goleiro'?'Goleiro (isento)':'Avulso')}</div>`;
+                left.innerHTML = `<strong style="font-size:0.88rem">${p.name}</strong><div class="small">${p.billingType==='mensalista'?'Mensalista':(p.billingType==='goleiro'?'Goleiro (isento)':'Avulso')}`;
                 const btn=document.createElement('button');
                 const isOn = !!s.attendance[p.id];
                 btn.className = isOn ? 'btn btn-green btn-sm' : 'btn btn-outline btn-sm';
@@ -1596,7 +1696,7 @@ function renderFinance() {
         ml.innerHTML = '';
         const mensalistas = players.filter(p => p.billingType==='mensalista');
         if (!mensalistas.length) {
-            ml.innerHTML = '<div class="small">Nenhum mensalista cadastrado.</div>';
+            ml.innerHTML = '<div class="small">Nenhum mensalista cadastrado.';
         } else {
             mensalistas.forEach(p => {
                 const total = monthlyChargeAmount(p.id, month);
@@ -1612,7 +1712,7 @@ function renderFinance() {
                 row.style.borderBottom='1px solid #f0f0f0';
 
                 const left = document.createElement('div');
-                left.innerHTML = `<strong style="font-size:0.88rem">${p.name}</strong><div class="small">${total>0 ? ('Mensalidade ' + month + ': ' + money(total)) : 'Sem cobrança (clique em Gerar cobranças)'}</div>`;
+                left.innerHTML = `<strong style="font-size:0.88rem">${p.name}</strong><div class="small">${total>0 ? ('Mensalidade ' + month + ': ' + money(total)) : 'Sem cobrança (clique em Gerar cobranças)'}`;
 
                 const right = document.createElement('div');
 
@@ -1702,10 +1802,19 @@ function renderFinance() {
             const cashTxt = moneySigned(cash);
             sumEl.innerHTML = `
                 <div class="kpi-row">
-                    <div class="kpi kpi-cash ${cashClass}"><small>Caixa</small> <span class="mono">${cashTxt}<\/span><\/div>
-                    <div class="kpi kpi-recv"><small>Total a receber</small> <span class="mono">${money(debtTotal)}<\/span><\/div>
-                    <div class="kpi kpi-meta"><small>Lançamentos</small> <span class="mono">${ledger.length}<\/span><\/div>
-                <\/div>`;
+                    <div class="kpi-item">
+                        <div class="kpi-label">Caixa</div>
+                        <div class="kpi-value kpi-cash ${cashClass}"><span class="mono">${cashTxt}</span></div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">Total a receber</div>
+                        <div class="kpi-value kpi-recv"><span class="mono">${money(debtTotal)}</span></div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">Lançamentos</div>
+                        <div class="kpi-value kpi-meta"><span class="mono">${ledger.length}</span></div>
+                    </div>
+                </div>`;
         }
 
 
@@ -1784,7 +1893,7 @@ function renderFinance() {
         const pending = ledger.filter(eligible).filter(e => !alreadySplit(e.id)).slice().reverse();
 
         if (!pending.length) {
-            ps.innerHTML = '<div class="small">Nenhuma despesa pendente de rateio.</div>';
+            ps.innerHTML = '<div class="small">Nenhuma despesa pendente de rateio.';
         } else {
             pending.slice(0, 8).forEach(e => {
                 const wrap=document.createElement('div');
@@ -1792,7 +1901,7 @@ function renderFinance() {
 
                 const left=document.createElement('div');
                 left.className='left';
-                left.innerHTML = `<strong>${(e.category||'Despesa')} • ${money(e.amount)}</strong><div class="small">${e.date||''}${e.note ? ' • '+e.note : ''}</div>`;
+                left.innerHTML = `<strong>${(e.category||'Despesa')} • ${money(e.amount)}</strong><div class="small">${e.date||''}${e.note ? ' • '+e.note : ''}`;
 
                 const right=document.createElement('div');
                 const btn=document.createElement('button');
@@ -1824,7 +1933,7 @@ function renderFinance() {
         const done = ledger.filter(eligible).filter(e => alreadySplit(e.id)).slice().reverse();
 
         if (!done.length) {
-            ds.innerHTML = '<div class="small">Nenhum rateio feito ainda.</div>';
+            ds.innerHTML = '<div class="small">Nenhum rateio feito ainda.';
         } else {
             done.slice(0, 8).forEach(e => {
                 const wrap=document.createElement('div');
@@ -1832,7 +1941,7 @@ function renderFinance() {
 
                 const left=document.createElement('div');
                 left.className='left';
-                left.innerHTML = `<strong>${(e.category||'Despesa')} • ${money(e.amount)}</strong><div class="small">${e.date||''}${e.note ? ' • '+e.note : ''}</div>`;
+                left.innerHTML = `<strong>${(e.category||'Despesa')} • ${money(e.amount)}</strong><div class="small">${e.date||''}${e.note ? ' • '+e.note : ''}`;
 
                 const right=document.createElement('div');
                 const btn=document.createElement('button');
@@ -2130,7 +2239,7 @@ function renderTrashLog() {
             txt = (d.summary || (function(){ try { return JSON.stringify(d); } catch(e){ return ''; } })());
         }
 
-        td3.innerHTML = `<div>${txt}<\/div>` + (d.note ? `<div class="small trash-muted">${d.note}<\/div>` : '');
+        td3.innerHTML = `<div>${txt}` + (d.note ? `<div class="small trash-muted">${d.note}` : '');
 
         tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
         tb.appendChild(tr);
@@ -2242,7 +2351,6 @@ function openPrintReport() {
         let from = (document.getElementById('printFrom') ? (document.getElementById('printFrom').value||'') : '').trim();
         let to   = (document.getElementById('printTo') ? (document.getElementById('printTo').value||'') : '').trim();
         if (from && to && from > to) { const tmp = from; from = to; to = tmp; }
-
         const periodTxt = (from || to) ? ('Período: ' + (from||'...') + ' até ' + (to||'...')) : '';
 
         const inRangeISO = (isoDate) => {
@@ -2253,9 +2361,8 @@ function openPrintReport() {
             return true;
         };
 
-        // Filtra lançamentos e auditoria pelo período
         const ledgerFiltered = (typeof ledger!=='undefined' ? ledger : []).filter(e => inRangeISO(e.date||''));
-        const auditFiltered  = (typeof trashLog!=='undefined' ? (trashLog||[]) : []).filter(it => inRangeISO((it.at||'')));
+        const auditFiltered  = (trashLog||[]).filter(it => inRangeISO(it.at||''));
 
         // Totais do período
         let chP=0, payP=0, expP=0;
@@ -2266,7 +2373,18 @@ function openPrintReport() {
         });
         const netCashP = payP - expP;
 
-        // Pendências no período (charges - payments dentro do range)
+        // Caixa geral
+        const cash = cashBalance();
+        const cashClass = cash >= 0 ? 'pos' : 'neg';
+        const netClass  = netCashP >= 0 ? 'pos' : 'neg';
+
+        // Pendências geral
+        const debtRowsAll = players.map(p => ({ p, due: playerDue(p.id) }))
+                                  .filter(x => Math.abs(x.due) > 0.001)
+                                  .sort((a,b) => b.due - a.due);
+        const totalToReceiveAll = debtRowsAll.filter(r=>r.due>0).reduce((a,r)=>a+r.due,0);
+
+        // Pendências no período
         const duePeriod = (pid) => {
             let charges=0, pays=0;
             ledgerFiltered.forEach(e => {
@@ -2276,24 +2394,11 @@ function openPrintReport() {
             });
             return charges - pays;
         };
-
-        const ps = (typeof players!=='undefined' ? players : []);
-        const debtRowsP = ps.map(p => ({ p, due: duePeriod(p.id) }))
-                            .filter(x => Math.abs(x.due) > 0.001)
-                            .sort((a,b) => b.due - a.due);
+        const debtRowsP = players.map(p => ({ p, due: duePeriod(p.id) }))
+                                 .filter(x => Math.abs(x.due) > 0.001)
+                                 .sort((a,b) => b.due - a.due);
         const totalToReceiveP = debtRowsP.filter(r=>r.due>0).reduce((a,r)=>a+r.due,0);
-        const totalCreditP = debtRowsP.filter(r=>r.due<0).reduce((a,r)=>a+(-r.due),0);
-
-        // Pendências gerais
-        const cash = (typeof cashBalance==='function') ? cashBalance() : 0;
-        const kpiCashClass = cash >= 0 ? 'pos' : 'neg';
-        const kpiCashTxt = (typeof moneySigned==='function') ? moneySigned(cash) : String(cash);
-
-        const debtRowsAll = ps.map(p => ({ p, due: (typeof playerDue==='function' ? playerDue(p.id) : 0) }))
-                             .filter(x => Math.abs(x.due) > 0.001)
-                             .sort((a,b) => b.due - a.due);
-        const totalToReceiveAll = debtRowsAll.filter(r=>r.due>0).reduce((a,r)=>a+r.due,0);
-        const totalCreditAll = debtRowsAll.filter(r=>r.due<0).reduce((a,r)=>a+(-r.due),0);
+        const totalCreditP    = debtRowsP.filter(r=>r.due<0).reduce((a,r)=>a+(-r.due),0);
 
         const topLedger = ledgerFiltered.slice().reverse().slice(0, limit);
         const topAudit  = auditFiltered.slice().reverse().slice(0, limit);
@@ -2301,34 +2406,55 @@ function openPrintReport() {
         const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
             const status = r.due>0 ? ('DEVENDO ' + money(r.due)) : ('CRÉDITO ' + money(-r.due));
             const cls = r.due>0 ? 'neg' : 'pos';
-            return `<tr><td>${escapeHtml(r.p.name)}</td><td class="mono"><span class="pill ${cls}">${escapeHtml(status)}</span></td><td class="mono">${escapeHtml(r.p.billingType||'')}</td></tr>`;
+            return `
+              <tr>
+                <td>${escapeHtml(r.p.name)}</td>
+                <td class="mono"><span class="pill ${cls}">${escapeHtml(status)}</span></td>
+                <td>${escapeHtml(r.p.billingType||'')}</td>
+              </tr>`;
         }).join('') : `<tr><td colspan="3" class="muted">Sem pendências.</td></tr>`;
 
         const debtsHtmlP = debtRowsP.length ? debtRowsP.map(r => {
             const status = r.due>0 ? ('DEVENDO ' + money(r.due)) : ('CRÉDITO ' + money(-r.due));
             const cls = r.due>0 ? 'neg' : 'pos';
-            return `<tr><td>${escapeHtml(r.p.name)}</td><td class="mono"><span class="pill ${cls}">${escapeHtml(status)}</span></td><td class="mono">${escapeHtml(r.p.billingType||'')}</td></tr>`;
+            return `
+              <tr>
+                <td>${escapeHtml(r.p.name)}</td>
+                <td class="mono"><span class="pill ${cls}">${escapeHtml(status)}</span></td>
+                <td>${escapeHtml(r.p.billingType||'')}</td>
+              </tr>`;
         }).join('') : `<tr><td colspan="3" class="muted">Sem pendências no período.</td></tr>`;
 
         const ledgerHtml = topLedger.map(e => {
-            const who = e.playerId ? (typeof getPlayerName==='function' ? getPlayerName(e.playerId) : '') : '';
-            return `<tr><td>${escapeHtml(e.date||'')}</td><td>${escapeHtml(e.kind||'')}</td><td>${escapeHtml(e.category||'')}</td><td>${escapeHtml(who)}</td><td class="mono">${escapeHtml(money(e.amount||0))}</td><td>${escapeHtml(e.note||'')}</td></tr>`;
+            const who = e.playerId ? getPlayerName(e.playerId) : '';
+            return `
+              <tr>
+                <td>${escapeHtml(e.date||'')}</td>
+                <td>${escapeHtml(e.kind||'')}</td>
+                <td>${escapeHtml(e.category||'')}</td>
+                <td>${escapeHtml(who)}</td>
+                <td class="mono">${escapeHtml(money(e.amount||0))}</td>
+                <td>${escapeHtml(e.note||'')}</td>
+              </tr>`;
         }).join('') || `<tr><td colspan="6" class="muted">Sem lançamentos no período/limite.</td></tr>`;
 
         const auditHtml = topAudit.map(it => {
             const d = it.details || {};
             let det='';
             try { det = JSON.stringify(d); } catch(e) { det = ''; }
-            return `<tr><td class="mono">${escapeHtml(it.atLocal||it.at||'')}</td><td>${escapeHtml(it.type||'')}</td><td>${escapeHtml(det)}</td></tr>`;
+            return `
+              <tr>
+                <td class="mono">${escapeHtml(it.atLocal||it.at||'')}</td>
+                <td>${escapeHtml(it.type||'')}</td>
+                <td>${escapeHtml(det)}</td>
+              </tr>`;
         }).join('') || `<tr><td colspan="3" class="muted">Sem registros de auditoria no período/limite.</td></tr>`;
 
-        const s = (typeof getCurrentSession==='function') ? getCurrentSession() : null;
-        const sessionTxt = s ? (s.date + ' • Presentes: ' + ps.filter(p => s.attendance && !!s.attendance[p.id]).length) : '—';
+        const s = getCurrentSession();
+        const sessionTxt = s ? (s.date + ' • Presentes: ' + players.filter(p => !!s.attendance[p.id]).length) : '—';
 
         const w = window.open('', '_blank');
         if (!w) return alert('O navegador bloqueou o pop-up. Permita pop-ups para gerar PDF.');
-
-        const netCashClass = netCashP >= 0 ? 'pos' : 'neg';
 
         const htmlOut = `<!doctype html>
 <html lang="pt-br"><head>
@@ -2336,36 +2462,39 @@ function openPrintReport() {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Relatório Financeiro</title>
 <style>
-:root{--green:#1b8f3a;--red:#c62828;--blue:#1a73e8;--gray:#455a64}
+:root{--green:#1b8f3a;--red:#c62828;--blue:#1a73e8;--gray:#6b7280;--line:#eaeaea}
 *{box-sizing:border-box;font-family:Segoe UI,system-ui,-apple-system,Arial,sans-serif}
 body{margin:0;background:#fff;color:#111}
-header{padding:14px 16px;border-bottom:1px solid #eee}
+header{padding:14px 16px;border-bottom:1px solid var(--line)}
 h1{margin:0;font-size:18px}
 .sub{margin-top:4px;color:#555;font-size:12px;line-height:1.35}
 .wrap{padding:14px 16px}
-.kpis{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
-.kpi{color:#fff;border-radius:10px;padding:10px 12px;font-weight:800;display:flex;gap:8px;align-items:center}
-.kpi small{opacity:.9;font-weight:700}
-.kpi.pos{background:var(--green)}
-.kpi.neg{background:var(--red)}
-.kpi.blue{background:var(--blue)}
-.kpi.gray{background:var(--gray)}
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+
+.kpis{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 16px;align-items:stretch}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:210px;flex:0 0 auto;background:#fff}
+.kpi .lbl{font-size:11px;font-weight:900;color:#444;margin-bottom:6px}
+.kpi .val{font-size:16px;font-weight:950;letter-spacing:.2px}
+.kpi.pos .val{color:var(--green)}
+.kpi.neg .val{color:var(--red)}
+.kpi.blue .val{color:var(--blue)}
+.kpi.gray .val{color:var(--gray)}
+
 .sec{margin:14px 0 18px}
 .sec h2{margin:0 0 8px;font-size:14px}
+
 table{width:100%;border-collapse:collapse;font-size:12px}
-th,td{border-bottom:1px solid #eee;padding:6px 6px;text-align:left;vertical-align:top}
+th,td{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:top}
 th{color:#444;font-size:11px}
-.pill{display:inline-block;padding:2px 8px;border-radius:999px;color:#fff;font-weight:800;font-size:11px}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;color:#fff;font-weight:900;font-size:11px}
 .pill.pos{background:var(--green)}
 .pill.neg{background:var(--red)}
 .muted{color:#666}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width: 720px){.grid2{grid-template-columns:1fr}}
+@media (max-width: 720px){.grid2{grid-template-columns:1fr}.kpi{min-width:180px}}
 @media print{.pagebreak{break-before:page}}
 </style>
-</head>
-<body onload="setTimeout(function(){window.print();},250)">
+</head><body>
 <header>
   <h1>Futebol de Terça — Relatório Financeiro</h1>
   <div class="sub">Gerado em: ${escapeHtml(dt)} • Sessão atual: ${escapeHtml(sessionTxt)} • Itens: ${escapeHtml(limTxt)}${periodTxt ? ' • ' + escapeHtml(periodTxt) : ''}</div>
@@ -2373,13 +2502,12 @@ th{color:#444;font-size:11px}
 <div class="wrap">
 
   <div class="kpis">
-    <div class="kpi ${kpiCashClass}"><small>Caixa (geral)</small> <span class="mono">${escapeHtml(kpiCashTxt)}</span></div>
-    <div class="kpi blue"><small>Total a receber (geral)</small> <span class="mono">${escapeHtml(money(totalToReceiveAll))}</span></div>
-    <div class="kpi gray"><small>Crédito (geral)</small> <span class="mono">${escapeHtml(money(totalCreditAll))}</span></div>
-    <div class="kpi ${netCashClass}"><small>Movimento do período</small> <span class="mono">${escapeHtml(moneySigned(netCashP))}</span></div>
-    <div class="kpi gray"><small>No período</small> <span class="mono">C ${escapeHtml(money(chP))} • P ${escapeHtml(money(payP))} • D ${escapeHtml(money(expP))}</span></div>
-    <div class="kpi blue"><small>A receber (período)</small> <span class="mono">${escapeHtml(money(totalToReceiveP))}</span></div>
-    <div class="kpi gray"><small>Crédito (período)</small> <span class="mono">${escapeHtml(money(totalCreditP))}</span></div>
+    <div class="kpi ${cashClass}"><div class="lbl">Caixa (geral)</div><div class="val mono">${escapeHtml(moneySigned(cash))}</div></div>
+    <div class="kpi blue"><div class="lbl">Total a receber (geral)</div><div class="val mono">${escapeHtml(money(totalToReceiveAll))}</div></div>
+    <div class="kpi gray"><div class="lbl">Lançamentos (no período)</div><div class="val mono">${escapeHtml(String(ledgerFiltered.length))}</div></div>
+    <div class="kpi ${netClass}"><div class="lbl">Movimento do período (pagamentos - despesas)</div><div class="val mono">${escapeHtml(moneySigned(netCashP))}</div></div>
+    <div class="kpi blue"><div class="lbl">A receber (período)</div><div class="val mono">${escapeHtml(money(totalToReceiveP))}</div></div>
+    <div class="kpi gray"><div class="lbl">Crédito (período)</div><div class="val mono">${escapeHtml(money(totalCreditP))}</div></div>
   </div>
 
   <div class="sec">
@@ -2387,15 +2515,15 @@ th{color:#444;font-size:11px}
     <table>
       <thead><tr><th>Item</th><th>Valor</th></tr></thead>
       <tbody>
-        <tr><td>Cobranças (charges)</td><td class="mono">${escapeHtml(money(chP))}</td></tr>
+        <tr><td>Cobranças</td><td class="mono">${escapeHtml(money(chP))}</td></tr>
         <tr><td>Pagamentos recebidos</td><td class="mono">${escapeHtml(money(payP))}</td></tr>
         <tr><td>Despesas do caixa</td><td class="mono">${escapeHtml(money(expP))}</td></tr>
         <tr><td><strong>Movimento de caixa (pagamentos - despesas)</strong></td><td class="mono"><strong>${escapeHtml(moneySigned(netCashP))}</strong></td></tr>
-        <tr><td>Total a receber (somatório do que devem no período)</td><td class="mono">${escapeHtml(money(totalToReceiveP))}</td></tr>
+        <tr><td>Total a receber (somatório dos que devem no período)</td><td class="mono">${escapeHtml(money(totalToReceiveP))}</td></tr>
         <tr><td>Crédito a favor (somatório do crédito no período)</td><td class="mono">${escapeHtml(money(totalCreditP))}</td></tr>
       </tbody>
     </table>
-    <div class="sub">Obs: “Cobranças” não entram diretamente no caixa; viram caixa quando o pagamento é registrado.</div>
+    <div class="sub">Obs: “Cobranças” não entram diretamente no caixa; elas viram caixa quando o pagamento é registrado.</div>
   </div>
 
   <div class="sec grid2">
@@ -2409,7 +2537,7 @@ th{color:#444;font-size:11px}
     </div>
     <div>
       <h2>Pendências por jogador (no período)</h2>
-      <div class="sub">Apenas cobranças e pagamentos dentro do período.</div>
+      <div class="sub">Apenas cobranças e pagamentos dentro do período (não mistura meses anteriores).</div>
       <table>
         <thead><tr><th>Jogador</th><th>Situação</th><th>Cobrança</th></tr></thead>
         <tbody>${debtsHtmlP}</tbody>
@@ -2440,12 +2568,14 @@ th{color:#444;font-size:11px}
         w.document.write(htmlOut);
         w.document.close();
 
+        // abre a prévia; você pode imprimir/salvar em PDF pelo navegador
+        setTimeout(() => { try { w.focus(); } catch(e) {} }, 200);
+
     } catch(err) {
         console.error(err);
         alert('Erro ao gerar relatório para impressão.');
     }
 }
 </script>
-
-</body>
+</div></body>
 </html>
