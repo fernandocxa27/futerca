@@ -190,20 +190,32 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 
 /* ===== DESKTOP ===== */
 @media (min-width: 768px) {
-    .tabs { display: none; }
-    .panel { display: block !important; }
-    body { display: grid; grid-template-rows: auto 1fr; }
+    /* No desktop, usamos abas também (não alonga a página) */
+    body { display: grid; grid-template-rows: auto auto 1fr; }
+
     .app-body {
-        display: grid; grid-template-columns: 300px 1fr;
-        gap: 16px; padding: 16px; align-items: start;
+        display: grid;
+        gap: 16px;
+        padding: 16px;
+        align-items: start;
+        overflow: auto;
     }
-    #panelCadastro { padding: 0; }
-    #panelField    { padding: 0; }
-    #panelCSV      { display: none !important; }
+
+    /* Campo: sidebar de jogadores + campo lado a lado */
+    body[data-view="field"] .app-body { grid-template-columns: 340px 1fr; }
+
+    /* Outras abas: ocupa tudo (1 coluna) */
+    body[data-view="finance"] .app-body,
+    body[data-view="csv"] .app-body,
+    body[data-view="players"] .app-body { grid-template-columns: 1fr; }
+
+    #panelCadastro, #panelField, #panelCSV, #panelFinance { padding: 0; }
+
     .csv-desktop   { display: flex !important; gap: 8px; align-items: center; }
+
     .pitch-wrap    { padding-top: 62%; } /* horizontal no desktop */
-    /* no desktop o pitch-inner fica lado a lado */
     .pitch-inner   { flex-direction: row; }
+
     .pcard { width: 62px; }
     .pcard-photo { width: 48px; height: 48px; }
     .pcard-name { font-size: 10px; max-width: 62px; }
@@ -267,12 +279,9 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 .small { font-size: 0.78rem; color: #666; }
 .hr { height: 1px; background: #eee; margin: 8px 0; }
 
-/* Desktop: empilha Cadastro + Financeiro na coluna esquerda e Campo ocupa toda a direita */
-@media (min-width: 768px) {
-  #panelFinance { padding: 0; }
   #panelCadastro { grid-column: 1; grid-row: 1; }
-  #panelFinance { grid-column: 1; grid-row: 2; display: block !important; }
-  #panelField { grid-column: 2; grid-row: 1 / span 2; }
+  
+#panelField { grid-column: 2; grid-row: 1 / span 2; }
   .app-body { grid-template-columns: 340px 1fr; grid-auto-rows: auto; }
 }
 </style>
@@ -650,6 +659,18 @@ window.onload = () => {
     applyTeamsMode(config.teamsCount);
     adaptSVG();
     renderAll();
+
+    // default view: Campo (no desktop mostra Campo + Cadastro lado a lado)
+    if (window.matchMedia('(min-width: 768px)').matches) {
+        document.body.dataset.view = 'field';
+        const cad = document.getElementById('panelCadastro');
+        const fld = document.getElementById('panelField');
+        if (cad) cad.classList.add('active');
+        if (fld) fld.classList.add('active');
+    } else {
+        const active = document.querySelector('.panel.active');
+        document.body.dataset.view = active ? (active.id === 'panelField' ? 'field' : (active.id === 'panelCSV' ? 'csv' : (active.id === 'panelFinance' ? 'finance' : 'players'))) : 'field';
+    }
     initDropZones();
     window.addEventListener('resize', adaptSVG);
 };
@@ -663,10 +684,35 @@ function adaptSVG() {
 
 /* ---- TABS ---- */
 function showTab(id, btn) {
+    // view: players | field | csv | finance
+    let view = 'players';
+    if (id === 'panelField') view = 'field';
+    if (id === 'panelCSV') view = 'csv';
+    if (id === 'panelFinance') view = 'finance';
+
+    document.body.dataset.view = view;
+
+    // reseta painéis
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+    // no desktop, quando estiver no Campo, também mostramos o Cadastro na lateral
+    const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+    if (isDesktop && view === 'field') {
+        const cad = document.getElementById('panelCadastro');
+        const fld = document.getElementById('panelField');
+        if (cad) cad.classList.add('active');
+        if (fld) fld.classList.add('active');
+    } else {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('active');
+    }
+
+    // abas
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
+
+    // ajustes visuais
+    if (view === 'field') setTimeout(adaptSVG, 50);
 }
 
 /* ---- SETTINGS ---- */
@@ -802,6 +848,18 @@ function togglePresence(id) {
     }
     save();
     renderAll();
+
+    // default view: Campo (no desktop mostra Campo + Cadastro lado a lado)
+    if (window.matchMedia('(min-width: 768px)').matches) {
+        document.body.dataset.view = 'field';
+        const cad = document.getElementById('panelCadastro');
+        const fld = document.getElementById('panelField');
+        if (cad) cad.classList.add('active');
+        if (fld) fld.classList.add('active');
+    } else {
+        const active = document.querySelector('.panel.active');
+        document.body.dataset.view = active ? (active.id === 'panelField' ? 'field' : (active.id === 'panelCSV' ? 'csv' : (active.id === 'panelFinance' ? 'finance' : 'players'))) : 'field';
+    }
 }
 
 /* ---- RENDER ---- */
