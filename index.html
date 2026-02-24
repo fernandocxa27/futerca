@@ -576,8 +576,9 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
             <div class="finance-row">
                 <div class="form-group" style="flex:1">
                     <label>Categoria</label>
-                    <select id="expCategory">
+                    <select id="expCategory" onchange="onExpenseCategoryChange()">
                         <option value="goleiro_alugado">Goleiro de fora</option>
+                        <option value="quadra">Aluguel da quadra</option>
                         <option value="bola">Bola / material</option>
                         <option value="outros">Outros</option>
                     </select>
@@ -599,9 +600,12 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
                 <div class="form-group" style="flex:1">
                     <label>Ratear compra (gera cobranças)</label>
                     <select id="splitMode">
+                        <option value="none">Não ratear (sai do caixa)</option>
+                        <option value="mensal_all">Entre mensalistas (todos)</option>
+                        <option value="mensal_present">Entre mensalistas presentes (pelada carregada)</option>
                         <option value="session_present">Entre presentes da pelada carregada</option>
                         <option value="all_non_goalie">Entre todos (exceto goleiros isentos)</option>
-                    </select>
+</select>
                 </div>
                 <button class="btn btn-primary" onclick="splitLastExpense()">Ratear última despesa</button>
             </div>
@@ -659,6 +663,8 @@ window.onload = () => {
     applyTeamsMode(config.teamsCount);
     adaptSVG();
     renderAll();
+    initFinanceUI();
+    renderFinance();
 
     // default view: Campo (no desktop mostra Campo + Cadastro lado a lado)
     if (window.matchMedia('(min-width: 768px)').matches) {
@@ -710,6 +716,13 @@ function showTab(id, btn) {
     // abas
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
+
+    // atualiza UI do financeiro quando abrir a aba
+    if (view === 'finance') {
+        try { initFinanceUI(); } catch(e) {}
+        try { renderFinance(); } catch(e) {}
+    }
+
 
     // ajustes visuais
     if (view === 'field') setTimeout(adaptSVG, 50);
@@ -1053,6 +1066,7 @@ function initFinanceUI() {
         }
     });
     save();
+    try { onExpenseCategoryChange(); } catch(e) {}
 }
 
 function getPlayerName(id) {
@@ -1271,36 +1285,79 @@ function addExpense() {
     document.getElementById('expNote').value = '';
 }
 
+
+
+function onExpenseCategoryChange() {
+    const catEl = document.getElementById('expCategory');
+    const amtEl = document.getElementById('expAmount');
+    const splitEl = document.getElementById('splitMode');
+    const cat = catEl ? catEl.value : '';
+
+    // Aluguel da quadra: despesa sem rateio
+    if (cat === 'quadra') {
+        if (amtEl && (!amtEl.value || Number(amtEl.value) === 0)) amtEl.value = 710;
+        if (splitEl) splitEl.value = 'none';
+    }
+
+    // Goleiro de fora: sai do caixa (não rateia)
+    if (cat === 'goleiro_alugado') {
+        if (splitEl) splitEl.value = 'none';
+    }
+}
 function splitLastExpense() {
-    const mode = document.getElementById('splitMode').value;
-    // pega a última despesa
-    const last = [...ledger].reverse().find(e => e.kind==='expense');
+    const last = ledger.slice().reverse().find(e => e.kind==='expense');
     if (!last) return alert('Nenhuma despesa encontrada.');
-    const total = Number(last.amount)||0;
-    if (total <= 0) return alert('Despesa inválida.');
+
+    const mode = (document.getElementById('splitMode') ? document.getElementById('splitMode').value : 'none');
+    if (mode === 'none') {
+        return alert('Sem rateio: esta despesa já foi lançada no caixa.');
+    }
+
+    const isMensalista = (p) => p && p.billingType === 'mensalista';
+    const isIsento = (p) => p && p.billingType === 'goleiro';
 
     let targets = [];
-    if (mode === 'all_non_goalie') {
-        targets = players.filter(p => p.billingType !== 'goleiro');
-    } else {
+
+    if (mode === 'mensal_all') {
+        targets = players.filter(p => isMensalista(p));
+    } else if (mode === 'mensal_present') {
         const s = getCurrentSession();
         if (!s) return alert('Carregue uma pelada para ratear entre presentes.');
-        targets = players.filter(p => p.billingType !== 'goleiro' && s.attendance[p.id]);
+        targets = players.filter(p => isMensalista(p) && !!s.attendance[p.id]);
+    } else if (mode === 'session_present') {
+        const s = getCurrentSession();
+        if (!s) return alert('Carregue uma pelada para ratear entre presentes.');
+        targets = players.filter(p => !isIsento(p) && !!s.attendance[p.id]);
+    } else {
+        // all_non_goalie
+        targets = players.filter(p => !isIsento(p));
     }
-    if (!targets.length) return alert('Nenhum jogador para ratear.');
 
-    // evita duplicar rateio para a mesma despesa
-    const already = ledger.some(e => e.kind==='charge' && e.category==='rateio' && e.note && e.note.includes(last.id));
-    if (already) return alert('Esse rateio já foi gerado para a última despesa.');
+    if (!targets.length) return alert('Não há jogadores suficientes para ratear neste modo.');
 
-    const per = Math.round((total / targets.length) * 100) / 100;
+    // evita duplicar rateio da mesma despesa
+    const already = ledger.some(e => e.kind==='charge' && e.category==='rateio' && e.refId===last.id);
+    if (already) return alert('Esta despesa já foi rateada.');
+
+    const per = Math.round((Number(last.amount||0) / targets.length) * 100) / 100;
     targets.forEach(p => {
-        ledger.push({ id: uuid(), kind:'charge', category:'rateio', playerId: p.id, amount: per, date: last.date, note: `Rateio: ${last.category} (${last.id})` });
+        ledger.push({
+            id: uuid(),
+            kind: 'charge',
+            category: 'rateio',
+            playerId: p.id,
+            amount: per,
+            date: todayISO(),
+            note: `Rateio: ${last.category} (${last.id})`,
+            refId: last.id
+        });
     });
+
     saveFinance();
     renderFinance();
     alert(`✅ Rateio gerado: ${targets.length} jogadores x ${money(per)}`);
 }
+
 
 function quickPay(pid, amount) {
     const a = Number(amount)||0;
@@ -1343,6 +1400,7 @@ function renderFinance() {
             opt.textContent = p.name + (p.billingType==='mensalista'?' (Mensalista)':(p.billingType==='goleiro'?' (Goleiro)':' (Avulso)'));
             sel.appendChild(opt);
         });
+        sel.disabled = (players.length === 0);
     }
 
     // session rendering
