@@ -284,6 +284,43 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 #panelField { grid-column: 2; grid-row: 1 / span 2; }
   .app-body { grid-template-columns: 340px 1fr; grid-auto-rows: auto; }
 }
+
+
+/* ===== FINANCE KPIs ===== */
+.kpi-row{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin-bottom:10px}
+.kpi{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;font-weight:800;color:#fff;letter-spacing:.2px}
+.kpi small{font-weight:700;opacity:.9}
+.kpi-cash.pos{background:#1b8f3a}
+.kpi-cash.neg{background:#c62828}
+.kpi-recv{background:#1a73e8}
+.kpi-meta{background:#546e7a}
+.kpi .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+
+/* ===== PENDING SPLITS ===== */
+.pending-splits{display:flex;flex-direction:column;gap:8px}
+.pending-item{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border:1px dashed #d9d9d9;border-radius:10px;background:#fafafa}
+.pending-item strong{font-size:.86rem}
+.pending-item .small{margin:0}
+.pending-item .left{display:flex;flex-direction:column;gap:2px}
+
+
+/* ===== TRASH / AUDIT LOG ===== */
+.trash-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.trash-table td{vertical-align:top}
+.trash-type{font-weight:800}
+.trash-muted{opacity:.8}
+
+
+/* ===== AUDIT BADGES ===== */
+.audit-badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:800;color:#fff;letter-spacing:.2px}
+.audit-pay{background:#1b8f3a}
+.audit-exp{background:#c62828}
+.audit-split{background:#1a73e8}
+.audit-monthly{background:#6a1b9a}
+.audit-undo{background:#ef6c00}
+.audit-misc{background:#455a64}
+.audit-grid{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.audit-grid .form-group{min-width:160px}
 </style>
 </head>
 <body>
@@ -612,7 +649,21 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
             <div class="small" style="margin-top:6px">Use: salve uma despesa de Bola/Outros e depois clique em ratear.</div>
         </div>
 
+        
         <div class="card">
+            <h4>⏳ Despesas pendentes de rateio</h4>
+            <div id="pendingSplits" class="pending-splits"></div>
+            <div class="small" style="margin-top:6px">Mostra despesas (Bola/Outros) que ainda no foram rateadas.</div>
+        </div>
+
+
+        <div class="card">
+            <h4>✅ Rateios realizados</h4>
+            <div id="doneSplits" class="pending-splits"></div>
+            <div class="small" style="margin-top:6px">Aqui voc consegue desfazer um rateio (remove as cobranas geradas, mas mantm a despesa no caixa).<\/div>
+        </div>
+
+<div class="card">
             <h4>📌 Pendências</h4>
             <div id="financeSummary" class="small" style="margin-bottom:8px"></div>
             <table class="finance-table">
@@ -625,9 +676,62 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
                 </thead>
                 <tbody id="debtsTable"></tbody>
             </table>
+            <div class="hr"></div>
+            <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">🧾 Últimos pagamentos</h4>
+            <table class="finance-table">
+                <thead>
+                    <tr><th>Data</th><th>Jogador</th><th>Valor</th><th>Ação</th></tr>
+                </thead>
+                <tbody id="paymentsTable"></tbody>
+            </table>
+            <div class="hr"></div>
+            <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Últimas despesas</h4>
+            <table class="finance-table">
+                <thead>
+                    <tr><th>Data</th><th>Categoria</th><th>Valor</th><th>Ação</th></tr>
+                </thead>
+                <tbody id="expensesTable"></tbody>
+            </table>
+
+
         </div>
 
+        
         <div class="card">
+            <h4>🗑️ Histórico / Auditoria</h4>
+            
+            <div class="audit-grid" style="margin-bottom:10px">
+                <div class="form-group">
+                    <label>Filtro</label>
+                    <select id="auditFilter" onchange="renderTrashLog()">
+                        <option value="all">Tudo</option>
+                        <option value="add_payment">Pagamentos</option>
+                        <option value="add_expense">Despesas</option>
+                        <option value="do_split">Rateios</option>
+                        <option value="gen_monthly_charges">Mensalidades (gerar cobranças)</option>
+                        <option value="undo">Desfazer (pagamento/rateio/despesa)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:1;min-width:220px">
+                    <label>Buscar</label>
+                    <input type="text" id="auditSearch" placeholder="Ex: Alisson, quadra, Pix..." oninput="renderTrashLog()">
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="exportTrashCSV()">Baixar historico.csv</button>
+                <button class="btn btn-outline btn-sm" onclick="exportGeneralReportCSV()">Baixar relatorio_geral.csv</button>
+                <div class="form-group" style="min-width:170px"><label>PDF: itens</label><select id="printLimit"><option value="200" selected>Últimos 200</option><option value="500">Últimos 500</option><option value="1000">Últimos 1000</option><option value="all">Tudo</option></select></div><div class="form-group" style="min-width:160px"><label>PDF: de</label><input type="date" id="printFrom"></div><div class="form-group" style="min-width:160px"><label>PDF: até</label><input type="date" id="printTo"></div>
+                <button class="btn btn-outline btn-sm" onclick="setPdfPeriodFromMonthlyMonth()">PDF = mês das mensalidades</button><button class="btn btn-outline btn-sm" onclick="openPrintReport()">Imprimir / PDF</button>
+                <button class="btn btn-danger btn-sm" onclick="clearTrashLog()">Limpar histórico</button>
+            </div>
+
+                <thead>
+                    <tr><th>Quando</th><th>Tipo</th><th>Detalhes</th></tr>
+                </thead>
+                <tbody id="trashTable"></tbody>
+            </table>
+            <div class="small" style="margin-top:6px">Obs: isso é apenas um log para auditoria. Não restaura automaticamente os itens.</div>
+        </div>
+
+<div class="card">
             <h4>📤 Exportar financeiro</h4>
             <button class="btn btn-outline" style="width:100%" onclick="exportFinanceCSV()">Baixar financeiro.csv</button>
         </div>
@@ -643,7 +747,9 @@ let config  = { teamsCount: 2, limitPerTeam: 7 };
 
 // ===== FINANCEIRO (local) =====
 let financeConfig = { feeMonthly: 60, feeSingle: 15, autoAvulso: true };
-let ledger = []; // {id, kind:'charge'|'payment'|'expense', date, amount, playerId?, category, note, sessionId?, refMonth?}
+let ledger = [];
+let trashLog = [];
+ // {id, kind:'charge'|'payment'|'expense', date, amount, playerId?, category, note, sessionId?, refMonth?}
 let sessions = []; // {id, date, notes, attendance: { [playerId]: true/false } }
 let currentSessionId = null;
 
@@ -660,6 +766,7 @@ window.onload = () => {
     });
     if (sc) { config = JSON.parse(sc); document.getElementById('limitPerTeam').value = config.limitPerTeam; }
     loadFinance();
+    loadTrashLog();
     applyTeamsMode(config.teamsCount);
     adaptSVG();
     renderAll();
@@ -1075,7 +1182,31 @@ function getPlayerName(id) {
 }
 
 function addLedger(entry) {
-    ledger.push({ id: uuid(), date: todayISO(), note: '', ...entry });
+    const created = { id: uuid(), date: todayISO(), note: '', ...entry };
+    ledger.push(created);
+
+    // auditoria (sem poluir): loga somente pagamentos e despesas manuais
+    try {
+        if (created.kind === 'payment') {
+            logTrash('add_payment', {
+                playerId: created.playerId,
+                playerName: getPlayerName(created.playerId),
+                amount: created.amount,
+                date: created.date||'',
+                category: created.category||'pagamento',
+                note: created.note||''
+            });
+        }
+        if (created.kind === 'expense') {
+            logTrash('add_expense', {
+                category: created.category||'despesa',
+                amount: created.amount,
+                date: created.date||'',
+                note: created.note||''
+            });
+        }
+    } catch(e) {}
+
     saveFinance();
     if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
     renderFinance();
@@ -1260,6 +1391,9 @@ function generateMonthlyCharges() {
         ledger.push({ id: uuid(), kind:'charge', category:'mensalidade', playerId: p.id, amount: fee, date: month + '-01', note: 'Mensalidade ' + month, refMonth: month });
         created++;
     });
+    try {
+        logTrash('gen_monthly_charges', { month: month, created: created, fee: fee });
+    } catch(e) {}
     saveFinance();
     renderFinance();
     alert('✅ Cobranças mensalistas geradas: ' + created);
@@ -1304,13 +1438,15 @@ function onExpenseCategoryChange() {
         if (splitEl) splitEl.value = 'none';
     }
 }
-function splitLastExpense() {
-    const last = ledger.slice().reverse().find(e => e.kind==='expense');
-    if (!last) return alert('Nenhuma despesa encontrada.');
+
+
+function splitExpenseById(expenseId) {
+    const exp = ledger.find(e => e.id === expenseId && e.kind === 'expense');
+    if (!exp) return alert('Despesa não encontrada.');
 
     const mode = (document.getElementById('splitMode') ? document.getElementById('splitMode').value : 'none');
     if (mode === 'none') {
-        return alert('Sem rateio: esta despesa já foi lançada no caixa.');
+        return alert('Selecione um modo de rateio (ou deixe sem rateio).');
     }
 
     const isMensalista = (p) => p && p.billingType === 'mensalista';
@@ -1335,11 +1471,10 @@ function splitLastExpense() {
 
     if (!targets.length) return alert('Não há jogadores suficientes para ratear neste modo.');
 
-    // evita duplicar rateio da mesma despesa
-    const already = ledger.some(e => e.kind==='charge' && e.category==='rateio' && e.refId===last.id);
+    const already = ledger.some(e => e.kind==='charge' && e.category==='rateio' && e.refId===exp.id);
     if (already) return alert('Esta despesa já foi rateada.');
 
-    const per = Math.round((Number(last.amount||0) / targets.length) * 100) / 100;
+    const per = Math.round((Number(exp.amount||0) / targets.length) * 100) / 100;
     targets.forEach(p => {
         ledger.push({
             id: uuid(),
@@ -1348,23 +1483,37 @@ function splitLastExpense() {
             playerId: p.id,
             amount: per,
             date: todayISO(),
-            note: `Rateio: ${last.category} (${last.id})`,
-            refId: last.id
+            note: `Rateio: ${exp.category} (${exp.id})`,
+            refId: exp.id
         });
     });
+
+    try {
+        logTrash('do_split', {
+            expenseId: exp.id,
+            category: exp.category||'',
+            expenseAmount: exp.amount||0,
+            targetsCount: targets.length,
+            perPlayer: per,
+            mode: mode
+        });
+    } catch(e) {}
 
     saveFinance();
     renderFinance();
     alert(`✅ Rateio gerado: ${targets.length} jogadores x ${money(per)}`);
+}
+function splitLastExpense() {
+    const last = ledger.slice().reverse().find(e => e.kind==='expense');
+    if (!last) return alert('Nenhuma despesa encontrada.');
+    splitExpenseById(last.id);
 }
 
 
 function quickPay(pid, amount) {
     const a = Number(amount)||0;
     if (a<=0) return;
-    ledger.push({ id: uuid(), kind:'payment', category:'pagamento', playerId: pid, amount: a, date: todayISO(), note: 'Pagamento rápido' });
-    saveFinance();
-    renderFinance();
+    addLedger({ kind:'payment', category:'pagamento', playerId: pid, amount: a, date: todayISO(), note: 'Pagamento rápido' });
 }
 
 function exportFinanceCSV() {
@@ -1521,8 +1670,24 @@ function renderFinance() {
                 ball.onclick = () => quickPay(r.p.id, r.due);
                 actTd.appendChild(b15);
                 actTd.appendChild(ball);
+
+                const bun=document.createElement('button');
+                bun.className='btn btn-danger btn-sm';
+                bun.style.marginLeft='6px';
+                bun.textContent = 'Desmarcar pago';
+                bun.onclick = () => undoLastPaymentForPlayer(r.p.id);
+                actTd.appendChild(bun);
             } else {
-                actTd.innerHTML = '<span class="small">OK</span>';
+                const hasPay = ledger.some(e => e.kind==='payment' && e.playerId==r.p.id);
+                if (hasPay) {
+                    const bun=document.createElement('button');
+                    bun.className='btn btn-danger btn-sm';
+                    bun.textContent = 'Desmarcar pago';
+                    bun.onclick = () => undoLastPaymentForPlayer(r.p.id);
+                    actTd.appendChild(bun);
+                } else {
+                    actTd.innerHTML = '<span class="small">OK</span>';
+                }
             }
             tr.appendChild(nameTd);
             tr.appendChild(dueTd);
@@ -1533,9 +1698,168 @@ function renderFinance() {
         if (sumEl) {
             const debtTotal = rows.filter(r=>r.due>0).reduce((a,r)=>a+r.due,0);
             const cash = cashBalance();
-            sumEl.textContent = `Caixa: ${money(cash)} • Total a receber: ${money(debtTotal)} • Lançamentos: ${ledger.length}`;
+            const cashClass = (cash >= 0) ? 'pos' : 'neg';
+            const cashTxt = moneySigned(cash);
+            sumEl.innerHTML = `
+                <div class="kpi-row">
+                    <div class="kpi kpi-cash ${cashClass}"><small>Caixa</small> <span class="mono">${cashTxt}<\/span><\/div>
+                    <div class="kpi kpi-recv"><small>Total a receber</small> <span class="mono">${money(debtTotal)}<\/span><\/div>
+                    <div class="kpi kpi-meta"><small>Lançamentos</small> <span class="mono">${ledger.length}<\/span><\/div>
+                <\/div>`;
+        }
+
+
+        // last payments table
+        const payT = document.getElementById('paymentsTable');
+        if (payT) {
+            payT.innerHTML='';
+            const pays = ledger.slice().reverse().filter(e => e.kind==='payment').slice(0, 15);
+            if (!pays.length) {
+                const tr=document.createElement('tr');
+                tr.innerHTML = '<td colspan="4" class="small">Nenhum pagamento registrado.</td>';
+                payT.appendChild(tr);
+            } else {
+                pays.forEach(e => {
+                    const tr=document.createElement('tr');
+                    const d=document.createElement('td');
+                    d.className='mono';
+                    d.textContent = (e.date||'');
+                    const n=document.createElement('td');
+                    n.textContent = getPlayerName(e.playerId);
+                    const v=document.createElement('td');
+                    v.className='mono';
+                    v.textContent = money(e.amount);
+                    const a=document.createElement('td');
+                    const b=document.createElement('button');
+                    b.className='btn btn-danger btn-sm';
+                    b.textContent='Desmarcar pago';
+                    b.onclick = () => undoPaymentEntry(e.id);
+                    a.appendChild(b);
+                    tr.appendChild(d); tr.appendChild(n); tr.appendChild(v); tr.appendChild(a);
+                    payT.appendChild(tr);
+                });
+            }
         }
     }
+
+    
+
+        // last expenses table
+        const expT = document.getElementById('expensesTable');
+        if (expT) {
+            expT.innerHTML='';
+            const exps = ledger.slice().reverse().filter(e => e.kind==='expense').slice(0, 15);
+            if (!exps.length) {
+                const tr=document.createElement('tr');
+                tr.innerHTML = '<td colspan="4" class="small">Nenhuma despesa registrada.</td>';
+                expT.appendChild(tr);
+            } else {
+                exps.forEach(e => {
+                    const tr=document.createElement('tr');
+                    const d=document.createElement('td');
+                    d.className='mono';
+                    d.textContent = (e.date||'');
+                    const c=document.createElement('td');
+                    c.textContent = (e.category||'');
+                    const v=document.createElement('td');
+                    v.className='mono';
+                    v.textContent = money(e.amount);
+                    const a=document.createElement('td');
+                    const b=document.createElement('button');
+                    b.className='btn btn-danger btn-sm';
+                    b.textContent='Desfazer despesa';
+                    b.onclick = () => undoExpenseEntry(e.id);
+                    a.appendChild(b);
+                    tr.appendChild(d); tr.appendChild(c); tr.appendChild(v); tr.appendChild(a);
+                    expT.appendChild(tr);
+                });
+            }
+        }
+// pending splits (expenses not yet split)
+    const ps = document.getElementById('pendingSplits');
+    if (ps) {
+        ps.innerHTML='';
+        const eligible = (e) => e.kind==='expense' && e.amount>0 && !['goleiro_alugado','quadra'].includes(e.category);
+        const alreadySplit = (expId) => ledger.some(x => x.kind==='charge' && x.category==='rateio' && x.refId===expId);
+        const pending = ledger.filter(eligible).filter(e => !alreadySplit(e.id)).slice().reverse();
+
+        if (!pending.length) {
+            ps.innerHTML = '<div class="small">Nenhuma despesa pendente de rateio.</div>';
+        } else {
+            pending.slice(0, 8).forEach(e => {
+                const wrap=document.createElement('div');
+                wrap.className='pending-item';
+
+                const left=document.createElement('div');
+                left.className='left';
+                left.innerHTML = `<strong>${(e.category||'Despesa')} • ${money(e.amount)}</strong><div class="small">${e.date||''}${e.note ? ' • '+e.note : ''}</div>`;
+
+                const right=document.createElement('div');
+                const btn=document.createElement('button');
+                btn.className='btn btn-primary btn-sm';
+                btn.textContent='Ratear agora';
+                btn.onclick = () => splitExpenseById(e.id);
+                right.appendChild(btn);
+
+                const bdel=document.createElement('button');
+                bdel.className='btn btn-danger btn-sm';
+                bdel.style.marginLeft='6px';
+                bdel.textContent='Desfazer despesa';
+                bdel.onclick = () => undoExpenseEntry(e.id);
+                right.appendChild(bdel);
+
+                wrap.appendChild(left);
+                wrap.appendChild(right);
+                ps.appendChild(wrap);
+            });
+        }
+    }
+
+    // completed splits (expenses already split)
+    const ds = document.getElementById('doneSplits');
+    if (ds) {
+        ds.innerHTML='';
+        const eligible = (e) => e.kind==='expense' && e.amount>0 && !['goleiro_alugado','quadra'].includes(e.category);
+        const alreadySplit = (expId) => ledger.some(x => x.kind==='charge' && x.category==='rateio' && x.refId===expId);
+        const done = ledger.filter(eligible).filter(e => alreadySplit(e.id)).slice().reverse();
+
+        if (!done.length) {
+            ds.innerHTML = '<div class="small">Nenhum rateio feito ainda.</div>';
+        } else {
+            done.slice(0, 8).forEach(e => {
+                const wrap=document.createElement('div');
+                wrap.className='pending-item';
+
+                const left=document.createElement('div');
+                left.className='left';
+                left.innerHTML = `<strong>${(e.category||'Despesa')} • ${money(e.amount)}</strong><div class="small">${e.date||''}${e.note ? ' • '+e.note : ''}</div>`;
+
+                const right=document.createElement('div');
+                const btn=document.createElement('button');
+                btn.className='btn btn-danger btn-sm';
+                btn.textContent='Desfazer rateio';
+                btn.onclick = () => undoSplitByExpenseId(e.id);
+                right.appendChild(btn);
+
+                const bdel=document.createElement('button');
+                bdel.className='btn btn-danger btn-sm';
+                bdel.style.marginLeft='6px';
+                bdel.textContent='Desfazer despesa';
+                bdel.onclick = () => undoExpenseEntry(e.id);
+                right.appendChild(bdel);
+
+                wrap.appendChild(left);
+                wrap.appendChild(right);
+                ds.appendChild(wrap);
+            });
+        }
+    }
+
+
+
+    // audit log
+    try { renderTrashLog(); } catch(e) {}
+
 }
 
 /* ---- CSV ---- */
@@ -1561,6 +1885,565 @@ function exportCSV() {
     a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
     a.download='jogadores.csv';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+
+function moneySigned(n) {
+    const v = Number(n)||0;
+    const sign = (v>=0) ? '+' : '-';
+    return sign + ' ' + money(Math.abs(v));
+}
+
+
+function undoPaymentEntry(entryId) {
+    const i = ledger.findIndex(e => e.id === entryId);
+    if (i === -1) return alert('Pagamento não encontrado.');
+    const e = ledger[i];
+    if (e.kind !== 'payment') return alert('Esse lançamento não é um pagamento.');
+    const who = getPlayerName(e.playerId);
+    if (!confirm(`Desmarcar pagamento de ${who} no valor de ${money(e.amount)}?`)) return;
+    logTrash('undo_payment', { playerId: e.playerId, playerName: who, amount: e.amount, date: e.date||'', note: e.note||'' });
+    ledger.splice(i, 1);
+    saveFinance();
+    renderFinance();
+}
+
+function undoLastPaymentForPlayer(pid) {
+    // remove o último pagamento do jogador (por ordem de lançamento)
+    for (let k = ledger.length - 1; k >= 0; k--) {
+        const e = ledger[k];
+        if (e.kind === 'payment' && e.playerId == pid) {
+            return undoPaymentEntry(e.id);
+        }
+    }
+    alert('Nenhum pagamento encontrado para este jogador.');
+}
+
+
+function undoSplitByExpenseId(expenseId) {
+    const exp = ledger.find(e => e.kind==='expense' && e.id === expenseId);
+    const chargesIdx = [];
+    let total = 0;
+
+    for (let i=0;i<ledger.length;i++) {
+        const e = ledger[i];
+        if (e.kind==='charge' && e.category==='rateio' && e.refId===expenseId) {
+            chargesIdx.push(i);
+            total += Number(e.amount)||0;
+        }
+    }
+
+    if (!chargesIdx.length) return alert('Nenhum rateio encontrado para esta despesa.');
+
+    const title = exp ? (exp.category || 'Despesa') : 'Despesa';
+    const msg = `Desfazer rateio de: ${title}
+` +
+                `Cobranças geradas: ${chargesIdx.length}
+` +
+                `Total removido: ${money(total)}
+
+` +
+                `Obs: isso não remove a despesa do caixa, apenas as cobranças do rateio.`;
+
+    if (!confirm(msg)) return;
+
+    logTrash('undo_expense', { expenseId: expenseId, category: (exp.category||''), amount: exp.amount||0, date: exp.date||'', note: exp.note||'', removedRateioCount: chargeIdx.length, removedRateioTotal: chargeTotal });
+
+    logTrash('undo_split', { expenseId: expenseId, category: (exp?exp.category:''), expenseAmount: (exp?exp.amount:0), removedCount: chargesIdx.length, removedTotal: total });
+
+    // remove de trás para frente para não bagunçar índices
+    for (let k=chargesIdx.length-1; k>=0; k--) {
+        ledger.splice(chargesIdx[k], 1);
+    }
+
+    saveFinance();
+    renderFinance();
+}
+
+
+function undoExpenseEntry(expenseId) {
+    const expIdx = ledger.findIndex(e => e.kind==='expense' && e.id === expenseId);
+    if (expIdx === -1) return alert('Despesa não encontrada.');
+    const exp = ledger[expIdx];
+
+    // rateio charges linked to this expense
+    const chargeIdx = [];
+    let chargeTotal = 0;
+    for (let i=0; i<ledger.length; i++) {
+        const e = ledger[i];
+        if (e.kind==='charge' && e.category==='rateio' && e.refId===expenseId) {
+            chargeIdx.push(i);
+            chargeTotal += Number(e.amount)||0;
+        }
+    }
+
+    const msg = `Desfazer despesa?
+
+` +
+                `Categoria: ${(exp.category||'Despesa')}
+` +
+                `Valor: ${money(exp.amount)}
+` +
+                `Data: ${(exp.date||'')}
+` +
+                (exp.note ? `Obs: ${exp.note}
+` : '') +
+                (chargeIdx.length ? `
+Esta despesa possui rateio vinculado: ${chargeIdx.length} cobranças (total ${money(chargeTotal)}).
+Ao confirmar, o rateio também será removido.` : '');
+
+    if (!confirm(msg)) return;
+
+    // remove linked rateio charges (if any)
+    for (let k=chargeIdx.length-1; k>=0; k--) {
+        ledger.splice(chargeIdx[k], 1);
+    }
+
+    // remove expense
+    ledger.splice(expIdx, 1);
+
+    saveFinance();
+    renderFinance();
+}
+
+
+function loadTrashLog() {
+    try {
+        const st = localStorage.getItem('ft_trash');
+        trashLog = st ? JSON.parse(st) : [];
+        if (!Array.isArray(trashLog)) trashLog = [];
+    } catch(e) {
+        trashLog = [];
+    }
+}
+
+function saveTrashLog() {
+    try { localStorage.setItem('ft_trash', JSON.stringify(trashLog||[])); } catch(e) {}
+}
+
+function nowLocalStr() {
+    const d = new Date();
+    const pad = (n) => (n<10?'0':'')+n;
+    return pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+
+function logTrash(type, detailsObj) {
+    if (!trashLog) trashLog = [];
+    const entry = {
+        id: uuid(),
+        at: new Date().toISOString(),
+        atLocal: nowLocalStr(),
+        type: type,
+        details: detailsObj || {}
+    };
+    trashLog.push(entry);
+    // keep last 300
+    if (trashLog.length > 300) trashLog = trashLog.slice(trashLog.length - 300);
+    saveTrashLog();
+}
+
+function clearTrashLog() {
+    if (!confirm('Limpar todo o histórico?')) return;
+    trashLog = [];
+    saveTrashLog();
+    renderTrashLog();
+}
+
+function renderTrashLog() {
+    const tb = document.getElementById('trashTable');
+    if (!tb) return;
+
+    const f = document.getElementById('auditFilter');
+    const q = document.getElementById('auditSearch');
+    const filter = f ? (f.value||'all') : 'all';
+    const query = q ? (q.value||'').trim().toLowerCase() : '';
+
+    tb.innerHTML='';
+    let items = (trashLog||[]).slice().reverse();
+
+    // filter
+    if (filter && filter !== 'all') {
+        if (filter === 'undo') {
+            items = items.filter(it => (it.type||'').startsWith('undo_'));
+        } else {
+            items = items.filter(it => (it.type||'') === filter);
+        }
+    }
+
+    // search
+    if (query) {
+        items = items.filter(it => {
+            const t = (it.type||'').toLowerCase();
+            let d = '';
+            try { d = JSON.stringify(it.details||{}).toLowerCase(); } catch(e) { d=''; }
+            const when = (it.atLocal||it.at||'').toLowerCase();
+            return t.includes(query) || d.includes(query) || when.includes(query);
+        });
+    }
+
+    if (!items.length) {
+        const tr=document.createElement('tr');
+        tr.innerHTML = '<td colspan="3" class="small">Nenhum registro encontrado.<\/td>';
+        tb.appendChild(tr);
+        return;
+    }
+
+    const badgeClass = (type) => {
+        if (!type) return 'audit-misc';
+        if (type === 'add_payment') return 'audit-pay';
+        if (type === 'add_expense') return 'audit-exp';
+        if (type === 'do_split') return 'audit-split';
+        if (type === 'gen_monthly_charges') return 'audit-monthly';
+        if (type.startsWith('undo_')) return 'audit-undo';
+        return 'audit-misc';
+    };
+
+    items.slice(0, 80).forEach(it => {
+        const tr=document.createElement('tr');
+        const td1=document.createElement('td');
+        td1.className='mono';
+        td1.textContent = it.atLocal || (it.at||'');
+
+        const td2=document.createElement('td');
+        const t = it.type || '';
+        td2.innerHTML = `<span class="audit-badge ${badgeClass(t)}">${t}<\/span>`;
+
+        const td3=document.createElement('td');
+        const d = it.details || {};
+        let txt = '';
+
+        if (t === 'add_payment') {
+            txt = `${d.playerName||''} • ${money(d.amount||0)} • ${(d.category||'pagamento')}`;
+        } else if (t === 'add_expense') {
+            txt = `${d.category||'despesa'} • ${money(d.amount||0)}`;
+        } else if (t === 'do_split') {
+            txt = `Rateio: ${d.category||''} • ${money(d.expenseAmount||0)} • jogadores: ${d.targetsCount||0} • ${d.mode||''}`;
+        } else if (t === 'gen_monthly_charges') {
+            txt = `Mensalidades: ${d.month||''} • geradas: ${d.created||0} • valor: ${money(d.fee||0)}`;
+        } else if (t === 'undo_payment') {
+            txt = `Desfazer pagamento: ${d.playerName||''} • ${money(d.amount||0)} • ${(d.date||'')}`;
+        } else if (t === 'undo_split') {
+            txt = `Desfazer rateio: ${d.category||'rateio'} • ${money(d.expenseAmount||0)} • cobranças removidas: ${d.removedCount||0}`;
+        } else if (t === 'undo_expense') {
+            txt = `Desfazer despesa: ${d.category||'despesa'} • ${money(d.amount||0)} • rateio removido: ${d.removedRateioCount||0}`;
+        } else {
+            txt = (d.summary || (function(){ try { return JSON.stringify(d); } catch(e){ return ''; } })());
+        }
+
+        td3.innerHTML = `<div>${txt}<\/div>` + (d.note ? `<div class="small trash-muted">${d.note}<\/div>` : '');
+
+        tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+        tb.appendChild(tr);
+    });
+}
+
+
+function exportTrashCSV() {
+    var csv = 'quando,tipo,detalhes\n';
+    (trashLog||[]).forEach(function(it){
+        var when = (it.atLocal||it.at||'').split(',').join(' ');
+        var typ = (it.type||'').split(',').join(' ');
+        var det = '';
+        try { det = JSON.stringify(it.details||{}); } catch(e) { det = ''; }
+        det = (det||'').split('\n').join(' ').split(',').join(';');
+        csv += when + ',' + typ + ',' + det + '\n';
+    });
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+    a.download='historico.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+
+function exportGeneralReportCSV() {
+    // Combina ledger (financeiro) + auditoria em um único CSV
+    let csv = 'origem,tipo,data,categoria,jogador,valor,obs\n';
+
+    // ledger
+    ledger.forEach(e => {
+        const origem = 'ledger';
+        const tipo = (e.kind||'');
+        const data = (e.date||'');
+        const categoria = (e.category||'');
+        const jogador = e.playerId ? getPlayerName(e.playerId) : '';
+        const valor = (Number(e.amount)||0).toString().replace('.', ',');
+        const obs = (e.note||'').split('\n').join(' ').split(',').join(';');
+        csv += `${origem},${tipo},${data},${categoria},${jogador},${valor},${obs}
+`;
+    });
+
+    // audit log
+    (trashLog||[]).forEach(it => {
+        const origem = 'auditoria';
+        const tipo = (it.type||'');
+        const data = (it.atLocal||it.at||'').split(',').join(' ');
+        const d = it.details || {};
+        const categoria = (d.category||d.kind||'');
+        const jogador = (d.playerName||'');
+        const valor = (Number(d.amount||d.expenseAmount||d.fee||0)).toString().replace('.', ',');
+        let obs = '';
+        try { obs = JSON.stringify(d); } catch(e) { obs = ''; }
+        obs = (obs||'').split('\n').join(' ').split(',').join(';');
+        csv += `${origem},${tipo},${data},${categoria},${jogador},${valor},${obs}
+`;
+    });
+
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+    a.download='relatorio_geral.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+
+function escapeHtml(s) {
+    return (s==null?'':String(s))
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#39;');
+}
+
+
+
+
+function setPdfPeriodFromMonthlyMonth() {
+    const elMonth = document.getElementById('billingMonth');
+    const month = (elMonth && elMonth.value) ? elMonth.value : (typeof todayISO==='function' ? todayISO().slice(0,7) : '');
+    if (!month || month.length < 7) return alert('Selecione um mês em Mensalidades.');
+
+    const parts = month.split('-');
+    const y = parseInt(parts[0],10);
+    const m = parseInt(parts[1],10);
+    if (!y || !m) return alert('Mês inválido.');
+
+    const lastDay = new Date(y, m, 0).getDate();
+    const pad2 = (n) => String(n).padStart(2,'0');
+    const from = month + '-01';
+    const to   = month + '-' + pad2(lastDay);
+
+    const pf = document.getElementById('printFrom');
+    const pt = document.getElementById('printTo');
+    if (pf) pf.value = from;
+    if (pt) pt.value = to;
+}
+
+
+function openPrintReport() {
+    try {
+        const now = new Date();
+        const dt = now.toLocaleString();
+
+        const limSel = document.getElementById('printLimit');
+        const limRaw = limSel ? (limSel.value||'200') : '200';
+        const limit  = (limRaw==='all') ? 999999 : Math.max(50, parseInt(limRaw,10)||200);
+        const limTxt = (limRaw==='all') ? 'Tudo' : ('Últimos ' + limit);
+
+        let from = (document.getElementById('printFrom') ? (document.getElementById('printFrom').value||'') : '').trim();
+        let to   = (document.getElementById('printTo') ? (document.getElementById('printTo').value||'') : '').trim();
+        if (from && to && from > to) { const tmp = from; from = to; to = tmp; }
+
+        const periodTxt = (from || to) ? ('Período: ' + (from||'...') + ' até ' + (to||'...')) : '';
+
+        const inRangeISO = (isoDate) => {
+            const d = (isoDate||'').slice(0,10);
+            if ((from||to) && !d) return false;
+            if (from && d < from) return false;
+            if (to   && d > to) return false;
+            return true;
+        };
+
+        // Filtra lançamentos e auditoria pelo período
+        const ledgerFiltered = (typeof ledger!=='undefined' ? ledger : []).filter(e => inRangeISO(e.date||''));
+        const auditFiltered  = (typeof trashLog!=='undefined' ? (trashLog||[]) : []).filter(it => inRangeISO((it.at||'')));
+
+        // Totais do período
+        let chP=0, payP=0, expP=0;
+        ledgerFiltered.forEach(e => {
+            if (e.kind==='charge')  chP  += Number(e.amount)||0;
+            if (e.kind==='payment') payP += Number(e.amount)||0;
+            if (e.kind==='expense') expP += Number(e.amount)||0;
+        });
+        const netCashP = payP - expP;
+
+        // Pendências no período (charges - payments dentro do range)
+        const duePeriod = (pid) => {
+            let charges=0, pays=0;
+            ledgerFiltered.forEach(e => {
+                if (e.playerId!=pid) return;
+                if (e.kind==='charge') charges += Number(e.amount)||0;
+                if (e.kind==='payment') pays += Number(e.amount)||0;
+            });
+            return charges - pays;
+        };
+
+        const ps = (typeof players!=='undefined' ? players : []);
+        const debtRowsP = ps.map(p => ({ p, due: duePeriod(p.id) }))
+                            .filter(x => Math.abs(x.due) > 0.001)
+                            .sort((a,b) => b.due - a.due);
+        const totalToReceiveP = debtRowsP.filter(r=>r.due>0).reduce((a,r)=>a+r.due,0);
+        const totalCreditP = debtRowsP.filter(r=>r.due<0).reduce((a,r)=>a+(-r.due),0);
+
+        // Pendências gerais
+        const cash = (typeof cashBalance==='function') ? cashBalance() : 0;
+        const kpiCashClass = cash >= 0 ? 'pos' : 'neg';
+        const kpiCashTxt = (typeof moneySigned==='function') ? moneySigned(cash) : String(cash);
+
+        const debtRowsAll = ps.map(p => ({ p, due: (typeof playerDue==='function' ? playerDue(p.id) : 0) }))
+                             .filter(x => Math.abs(x.due) > 0.001)
+                             .sort((a,b) => b.due - a.due);
+        const totalToReceiveAll = debtRowsAll.filter(r=>r.due>0).reduce((a,r)=>a+r.due,0);
+        const totalCreditAll = debtRowsAll.filter(r=>r.due<0).reduce((a,r)=>a+(-r.due),0);
+
+        const topLedger = ledgerFiltered.slice().reverse().slice(0, limit);
+        const topAudit  = auditFiltered.slice().reverse().slice(0, limit);
+
+        const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
+            const status = r.due>0 ? ('DEVENDO ' + money(r.due)) : ('CRÉDITO ' + money(-r.due));
+            const cls = r.due>0 ? 'neg' : 'pos';
+            return `<tr><td>${escapeHtml(r.p.name)}</td><td class="mono"><span class="pill ${cls}">${escapeHtml(status)}</span></td><td class="mono">${escapeHtml(r.p.billingType||'')}</td></tr>`;
+        }).join('') : `<tr><td colspan="3" class="muted">Sem pendências.</td></tr>`;
+
+        const debtsHtmlP = debtRowsP.length ? debtRowsP.map(r => {
+            const status = r.due>0 ? ('DEVENDO ' + money(r.due)) : ('CRÉDITO ' + money(-r.due));
+            const cls = r.due>0 ? 'neg' : 'pos';
+            return `<tr><td>${escapeHtml(r.p.name)}</td><td class="mono"><span class="pill ${cls}">${escapeHtml(status)}</span></td><td class="mono">${escapeHtml(r.p.billingType||'')}</td></tr>`;
+        }).join('') : `<tr><td colspan="3" class="muted">Sem pendências no período.</td></tr>`;
+
+        const ledgerHtml = topLedger.map(e => {
+            const who = e.playerId ? (typeof getPlayerName==='function' ? getPlayerName(e.playerId) : '') : '';
+            return `<tr><td>${escapeHtml(e.date||'')}</td><td>${escapeHtml(e.kind||'')}</td><td>${escapeHtml(e.category||'')}</td><td>${escapeHtml(who)}</td><td class="mono">${escapeHtml(money(e.amount||0))}</td><td>${escapeHtml(e.note||'')}</td></tr>`;
+        }).join('') || `<tr><td colspan="6" class="muted">Sem lançamentos no período/limite.</td></tr>`;
+
+        const auditHtml = topAudit.map(it => {
+            const d = it.details || {};
+            let det='';
+            try { det = JSON.stringify(d); } catch(e) { det = ''; }
+            return `<tr><td class="mono">${escapeHtml(it.atLocal||it.at||'')}</td><td>${escapeHtml(it.type||'')}</td><td>${escapeHtml(det)}</td></tr>`;
+        }).join('') || `<tr><td colspan="3" class="muted">Sem registros de auditoria no período/limite.</td></tr>`;
+
+        const s = (typeof getCurrentSession==='function') ? getCurrentSession() : null;
+        const sessionTxt = s ? (s.date + ' • Presentes: ' + ps.filter(p => s.attendance && !!s.attendance[p.id]).length) : '—';
+
+        const w = window.open('', '_blank');
+        if (!w) return alert('O navegador bloqueou o pop-up. Permita pop-ups para gerar PDF.');
+
+        const netCashClass = netCashP >= 0 ? 'pos' : 'neg';
+
+        const htmlOut = `<!doctype html>
+<html lang="pt-br"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relatório Financeiro</title>
+<style>
+:root{--green:#1b8f3a;--red:#c62828;--blue:#1a73e8;--gray:#455a64}
+*{box-sizing:border-box;font-family:Segoe UI,system-ui,-apple-system,Arial,sans-serif}
+body{margin:0;background:#fff;color:#111}
+header{padding:14px 16px;border-bottom:1px solid #eee}
+h1{margin:0;font-size:18px}
+.sub{margin-top:4px;color:#555;font-size:12px;line-height:1.35}
+.wrap{padding:14px 16px}
+.kpis{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
+.kpi{color:#fff;border-radius:10px;padding:10px 12px;font-weight:800;display:flex;gap:8px;align-items:center}
+.kpi small{opacity:.9;font-weight:700}
+.kpi.pos{background:var(--green)}
+.kpi.neg{background:var(--red)}
+.kpi.blue{background:var(--blue)}
+.kpi.gray{background:var(--gray)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+.sec{margin:14px 0 18px}
+.sec h2{margin:0 0 8px;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{border-bottom:1px solid #eee;padding:6px 6px;text-align:left;vertical-align:top}
+th{color:#444;font-size:11px}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;color:#fff;font-weight:800;font-size:11px}
+.pill.pos{background:var(--green)}
+.pill.neg{background:var(--red)}
+.muted{color:#666}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width: 720px){.grid2{grid-template-columns:1fr}}
+@media print{.pagebreak{break-before:page}}
+</style>
+</head>
+<body onload="setTimeout(function(){window.print();},250)">
+<header>
+  <h1>Futebol de Terça — Relatório Financeiro</h1>
+  <div class="sub">Gerado em: ${escapeHtml(dt)} • Sessão atual: ${escapeHtml(sessionTxt)} • Itens: ${escapeHtml(limTxt)}${periodTxt ? ' • ' + escapeHtml(periodTxt) : ''}</div>
+</header>
+<div class="wrap">
+
+  <div class="kpis">
+    <div class="kpi ${kpiCashClass}"><small>Caixa (geral)</small> <span class="mono">${escapeHtml(kpiCashTxt)}</span></div>
+    <div class="kpi blue"><small>Total a receber (geral)</small> <span class="mono">${escapeHtml(money(totalToReceiveAll))}</span></div>
+    <div class="kpi gray"><small>Crédito (geral)</small> <span class="mono">${escapeHtml(money(totalCreditAll))}</span></div>
+    <div class="kpi ${netCashClass}"><small>Movimento do período</small> <span class="mono">${escapeHtml(moneySigned(netCashP))}</span></div>
+    <div class="kpi gray"><small>No período</small> <span class="mono">C ${escapeHtml(money(chP))} • P ${escapeHtml(money(payP))} • D ${escapeHtml(money(expP))}</span></div>
+    <div class="kpi blue"><small>A receber (período)</small> <span class="mono">${escapeHtml(money(totalToReceiveP))}</span></div>
+    <div class="kpi gray"><small>Crédito (período)</small> <span class="mono">${escapeHtml(money(totalCreditP))}</span></div>
+  </div>
+
+  <div class="sec">
+    <h2>Totais do período</h2>
+    <table>
+      <thead><tr><th>Item</th><th>Valor</th></tr></thead>
+      <tbody>
+        <tr><td>Cobranças (charges)</td><td class="mono">${escapeHtml(money(chP))}</td></tr>
+        <tr><td>Pagamentos recebidos</td><td class="mono">${escapeHtml(money(payP))}</td></tr>
+        <tr><td>Despesas do caixa</td><td class="mono">${escapeHtml(money(expP))}</td></tr>
+        <tr><td><strong>Movimento de caixa (pagamentos - despesas)</strong></td><td class="mono"><strong>${escapeHtml(moneySigned(netCashP))}</strong></td></tr>
+        <tr><td>Total a receber (somatório do que devem no período)</td><td class="mono">${escapeHtml(money(totalToReceiveP))}</td></tr>
+        <tr><td>Crédito a favor (somatório do crédito no período)</td><td class="mono">${escapeHtml(money(totalCreditP))}</td></tr>
+      </tbody>
+    </table>
+    <div class="sub">Obs: “Cobranças” não entram diretamente no caixa; viram caixa quando o pagamento é registrado.</div>
+  </div>
+
+  <div class="sec grid2">
+    <div>
+      <h2>Pendências por jogador (geral)</h2>
+      <div class="sub">Saldo acumulado total.</div>
+      <table>
+        <thead><tr><th>Jogador</th><th>Situação</th><th>Cobrança</th></tr></thead>
+        <tbody>${debtsHtmlAll}</tbody>
+      </table>
+    </div>
+    <div>
+      <h2>Pendências por jogador (no período)</h2>
+      <div class="sub">Apenas cobranças e pagamentos dentro do período.</div>
+      <table>
+        <thead><tr><th>Jogador</th><th>Situação</th><th>Cobrança</th></tr></thead>
+        <tbody>${debtsHtmlP}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec pagebreak">
+    <h2>Lançamentos do financeiro (${escapeHtml(limTxt)}${periodTxt ? ' • ' + escapeHtml(periodTxt) : ''})</h2>
+    <table>
+      <thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Jogador</th><th>Valor</th><th>Obs</th></tr></thead>
+      <tbody>${ledgerHtml}</tbody>
+    </table>
+  </div>
+
+  <div class="sec pagebreak">
+    <h2>Auditoria (${escapeHtml(limTxt)}${periodTxt ? ' • ' + escapeHtml(periodTxt) : ''})</h2>
+    <table>
+      <thead><tr><th>Quando</th><th>Tipo</th><th>Detalhes (JSON)</th></tr></thead>
+      <tbody>${auditHtml}</tbody>
+    </table>
+  </div>
+
+</div>
+</body></html>`;
+
+        w.document.open();
+        w.document.write(htmlOut);
+        w.document.close();
+
+    } catch(err) {
+        console.error(err);
+        alert('Erro ao gerar relatório para impressão.');
+    }
 }
 </script>
 
