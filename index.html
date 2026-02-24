@@ -1161,22 +1161,27 @@ function makePCard(p) {
     const c = document.createElement('div');
     c.className = 'pcard'; c.dataset.id = p.id;
     c.style.position = 'absolute';
-    c.style.left = ((typeof p.x === 'number') ? p.x : 10)+'px'; c.style.top = ((typeof p.y === 'number') ? p.y : 30)+'px';
+    c.style.left = ((typeof p.x === 'number') ? p.x : 10) + 'px';
+    c.style.top  = ((typeof p.y === 'number') ? p.y : 30) + 'px';
     c.innerHTML = `
-        <div class="pcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'">
-        <div class="pcard-name">${p.name}
-        <div class="pcard-pos">${p.position.substring(0,3).toUpperCase()}`;
-    enableDrag(c); return c;
+        <div class="pcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'"></div>
+        <div class="pcard-name">${p.name}</div>
+        <div class="pcard-pos">${p.position.substring(0,3).toUpperCase()}</div>
+    `;
+    enableDrag(c);
+    return c;
 }
 
 function makeBCard(p) {
     const c = document.createElement('div');
     c.className = 'bcard'; c.dataset.id = p.id;
     c.innerHTML = `
-        <div class="bcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'">
-        <div class="bcard-name">${p.name}
-        <div class="bcard-pos">${p.position.substring(0,3).toUpperCase()}`;
-    enableDrag(c); return c;
+        <div class="bcard-photo"><img src="${imgSrc(p.photoUrl)}" onerror="this.onerror=null;this.src='${FALLBACK}'"></div>
+        <div class="bcard-name">${p.name}</div>
+        <div class="bcard-pos">${p.position.substring(0,3).toUpperCase()}</div>
+    `;
+    enableDrag(c);
+    return c;
 }
 
 /* ---- DRAG & DROP (mouse + touch) ---- */
