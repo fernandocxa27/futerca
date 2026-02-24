@@ -483,6 +483,85 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 @media (max-width: 767px){
   .backup-controls{width:100%;margin-left:0;justify-content:flex-start}
 }
+
+
+/* ===== FINANCE-UX v1 (didático + organizado, sem quebrar JS) ===== */
+#panelFinance{
+  background:#d1d5db; /* cinza médio */
+  border-radius: 16px;
+  padding: 12px;
+}
+#panelFinance .fin-sep{
+  margin: 4px 0 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 2px solid rgba(15,23,42,0.10);
+  background: rgba(255,255,255,0.78);
+}
+#panelFinance .fin-sep-title{
+  font-weight: 950;
+  color:#0f172a;
+  font-size: 0.92rem;
+}
+#panelFinance .fin-sep-sub{
+  margin-top: 3px;
+  color:#475569;
+  font-size: 0.80rem;
+  line-height:1.25;
+}
+
+#panelFinance .fin-card{
+  background:#fff;
+  border:2px solid rgba(15,23,42,0.10);
+  border-radius:16px;
+  box-shadow: 0 10px 22px rgba(15,23,42,0.10);
+  padding: 12px 12px 14px;
+  margin: 0 0 12px;
+}
+#panelFinance .fin-card > h4{
+  margin: -12px -12px 12px;
+  padding: 11px 12px 11px 14px;
+  border-bottom: 2px solid #eef2f7;
+  background: linear-gradient(180deg, rgba(2,6,23,0.06), rgba(2,6,23,0));
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  position: relative;
+}
+#panelFinance .fin-card > h4::before{
+  content:'';
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width: 7px;
+  background: var(--accent, #1b8f3a);
+  border-top-left-radius: 16px;
+}
+
+/* acento por card */
+#panelFinance .fin-config{ --accent:#16a34a; }
+#panelFinance .fin-session{ --accent:#0ea5e9; }
+#panelFinance .fin-monthly{ --accent:#6366f1; }
+#panelFinance .fin-payment{ --accent:#22c55e; }
+#panelFinance .fin-expense{ --accent:#ef4444; }
+#panelFinance .fin-pendingsplit{ --accent:#f59e0b; }
+#panelFinance .fin-donesplit{ --accent:#8b5cf6; }
+#panelFinance .fin-debts{ --accent:#1a73e8; }
+#panelFinance .fin-audit{ --accent:#64748b; }
+#panelFinance .fin-export{ --accent:#0f172a; }
+
+#panelFinance .hr{ background:#e6edf7; height:2px; margin:12px 0; }
+#panelFinance .small{ color:#526072; }
+#panelFinance .finance-row{ gap:10px; }
+
+
+/* ===== FINANCE-STEPS COLOR v1 ===== */
+#panelFinance .fin-step-1{ background: rgba(34,197,94,0.10); border-color: rgba(22,163,74,0.25); }
+#panelFinance .fin-step-2{ background: rgba(14,165,233,0.10); border-color: rgba(14,165,233,0.25); }
+#panelFinance .fin-step-3{ background: rgba(245,158,11,0.10); border-color: rgba(245,158,11,0.28); }
+#panelFinance .fin-step-4{ background: rgba(99,102,241,0.10); border-color: rgba(99,102,241,0.25); }
+#panelFinance .fin-step-1 .fin-sep-title{ color:#14532d; }
+#panelFinance .fin-step-2 .fin-sep-title{ color:#0c4a6e; }
+#panelFinance .fin-step-3 .fin-sep-title{ color:#7c2d12; }
+#panelFinance .fin-step-4 .fin-sep-title{ color:#312e81; }
 </style>
 </head>
 <body>
@@ -495,7 +574,6 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
 </div>
 </div>
-
 <div class="backup-controls">
 <button class="btn btn-outline" onclick="exportBackup()" type="button">💾 Backup</button>
 <button class="btn btn-outline" onclick="triggerImportBackup()" type="button">📤 Restaurar</button>
@@ -661,7 +739,6 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 <div class="small" style="margin-top:8px">Atenção: restaurar substitui os dados deste navegador (apenas dados do app).</div>
 </div>
-
 <div class="card">
 <h4>📥 Carregar CSV do GitHub</h4>
 <div class="form-group" style="margin-bottom:8px">
@@ -678,7 +755,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 <!-- FINANCEIRO -->
 <div class="panel" id="panelFinance">
-<div class="card">
+<div class="fin-sep fin-step-1"><div class="fin-sep-title">1) Configurar valores</div><div class="fin-sep-sub">Defina os valores de mensalista/avulso. Isso fica salvo neste aparelho.</div></div><div class="card fin-card fin-config">
 <h4>💰 Financeiro</h4>
 <div class="finance-row">
 <div class="form-group">
@@ -691,8 +768,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 </div>
 <div class="small" style="margin-top:6px">Dica: isso fica salvo no seu celular/PC (localStorage).</div>
-</div>
-<div class="card">
+</div><div class="fin-sep fin-step-2"><div class="fin-sep-title">2) Gerar cobranças</div><div class="fin-sep-sub">Carregue a pelada do dia e/ou gere as mensalidades do mês.</div></div><div class="card fin-card fin-session">
 <h4>🗓️ Pelada (por data)</h4>
 <div class="finance-row">
 <div class="form-group" style="flex:1">
@@ -714,8 +790,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 <div class="small" id="sessionInfo" style="margin-top:8px"></div>
 <div id="sessionAttendance" style="margin-top:8px"></div>
-</div>
-<div class="card">
+</div><div class="card fin-card fin-monthly">
 <h4>📆 Mensalidades</h4>
 <div class="finance-row">
 <div class="form-group" style="flex:1">
@@ -729,8 +804,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-green btn-sm" onclick="markAllMonthlyPaid()">Marcar todos pagos</button>
 </div>
 <div id="monthlyList" style="margin-top:8px"></div>
-</div>
-<div class="card">
+</div><div class="fin-sep fin-step-3"><div class="fin-sep-title">3) Movimentar o caixa</div><div class="fin-sep-sub">Registre pagamentos, despesas e faça rateios (pendentes e realizados).</div></div><div class="card fin-card fin-payment">
 <h4>✅ Registrar pagamento</h4>
 <div class="finance-row">
 <div class="form-group" style="flex:1">
@@ -749,8 +823,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 <button class="btn btn-green" onclick="addPayment()">Salvar pagamento</button>
 </div>
-</div>
-<div class="card">
+</div><div class="card fin-card fin-expense">
 <h4>🧾 Despesas do caixa</h4>
 <div class="finance-row">
 <div class="form-group" style="flex:1">
@@ -789,17 +862,15 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-primary" onclick="splitLastExpense()">Ratear última despesa</button>
 </div>
 <div class="small" style="margin-top:6px">Use: salve uma despesa de Bola/Outros e depois clique em ratear.</div>
-</div>
-<div class="card">
+</div><div class="card fin-card fin-pendingsplit">
 <h4>⏳ Despesas pendentes de rateio</h4>
 <div class="pending-splits" id="pendingSplits"></div>
 <div class="small" style="margin-top:6px">Mostra despesas (Bola/Outros) que ainda não foram rateadas.</div>
-</div>
-<div class="card">
+</div><div class="card fin-card fin-donesplit">
 <h4>✅ Rateios realizados</h4>
 <div class="pending-splits" id="doneSplits"></div>
 <div class="small" style="margin-top:6px">Aqui você consegue desfazer um rateio (remove as cobranças geradas, mas mantém a despesa no caixa).</div>
-<div class="card">
+</div><div class="fin-sep fin-step-4"><div class="fin-sep-title">4) Conferir e fechar</div><div class="fin-sep-sub">Veja pendências, histórico/auditoria e exporte/gera PDF.</div></div><div class="card fin-card fin-debts">
 <h4>📌 Pendências</h4>
 <div class="small" id="financeSummary" style="margin-bottom:8px"></div>
 <table class="finance-table">
@@ -828,8 +899,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </thead>
 <tbody id="expensesTable"></tbody>
 </table>
-</div>
-<div class="card">
+</div><div class="card fin-card fin-audit">
 <h4>🗑️ Histórico / Auditoria</h4>
 <div class="audit-grid" style="margin-bottom:10px">
 <div class="form-group">
@@ -858,12 +928,10 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </thead>
 <tbody id="trashTable"></tbody>
 <div class="small" style="margin-top:6px">Obs: isso é apenas um log para auditoria. Não restaura automaticamente os itens.</div>
-</div>
-<div class="card">
+</div><div class="card fin-card fin-export">
 <h4>📤 Exportar financeiro</h4>
 <button class="btn btn-outline" onclick="exportFinanceCSV()" style="width:100%">Baixar financeiro.csv</button>
-</div>
-</div>
+</div></div>
 </div>
 <script>
 const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%23aaa'/%3E%3Ccircle cx='25' cy='19' r='9' fill='%23fff'/%3E%3Cellipse cx='25' cy='40' rx='14' ry='10' fill='%23fff'/%3E%3C/svg%3E";
@@ -2661,5 +2729,5 @@ async function importBackup(ev){
   }catch(err){console.error(err);alert('Erro ao restaurar backup. Verifique se o arquivo é um .json válido.');}
 }
 </script>
-</div></body>
+</body>
 </html>
