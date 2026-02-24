@@ -562,6 +562,10 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 #panelFinance .fin-step-2 .fin-sep-title{ color:#0c4a6e; }
 #panelFinance .fin-step-3 .fin-sep-title{ color:#7c2d12; }
 #panelFinance .fin-step-4 .fin-sep-title{ color:#312e81; }
+
+
+/* FIN-ADJUST accent */
+#panelFinance .fin-adjust{ --accent:#0f172a; }
 </style>
 </head>
 <body>
@@ -767,6 +771,10 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <input id="feeSingle" min="0" onchange="saveFinanceConfig()" step="1" type="number" value="15"/>
 </div>
 </div>
+
+
+
+
 <div class="small" style="margin-top:6px">Dica: isso fica salvo no seu celular/PC (localStorage).</div>
 </div><div class="fin-sep fin-step-2"><div class="fin-sep-title">2) Gerar cobranças</div><div class="fin-sep-sub">Carregue a pelada do dia e/ou gere as mensalidades do mês.</div></div><div class="card fin-card fin-session">
 <h4>🗓️ Pelada (por data)</h4>
@@ -804,7 +812,17 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-green btn-sm" onclick="markAllMonthlyPaid()">Marcar todos pagos</button>
 </div>
 <div id="monthlyList" style="margin-top:8px"></div>
-</div><div class="fin-sep fin-step-3"><div class="fin-sep-title">3) Movimentar o caixa</div><div class="fin-sep-sub">Registre pagamentos, despesas e faça rateios (pendentes e realizados).</div></div><div class="card fin-card fin-payment">
+</div><div class="fin-sep fin-step-3"><div class="fin-sep-title">3) Movimentar o caixa</div><div class="fin-sep-sub">Registre pagamentos, despesas e faça rateios (pendentes e realizados).</div></div><div class="card fin-card fin-adjust"><h4>💵 Saldo inicial / Ajuste de caixa</h4><div class="finance-row">
+<div class="form-group" style="flex:1;min-width:170px">
+<label>Ajuste (R$)</label>
+<input id="cashAdjustAmount" placeholder="Ex: 100 (entrada) ou -50 (saída)" step="0.01" type="number"/>
+</div>
+<div class="form-group" style="flex:2;min-width:220px">
+<label>Obs</label>
+<input id="cashAdjustNote" placeholder="Ex: saldo anterior, troco, acerto..." type="text"/>
+</div>
+<button class="btn btn-primary" onclick="applyCashAdjustment()" type="button">Aplicar ajuste</button>
+</div><div class="small" style="margin-top:6px">Use valor positivo para entrada no caixa e negativo para saída. Não vincula a jogador.</div></div><div class="card fin-card fin-payment">
 <h4>✅ Registrar pagamento</h4>
 <div class="finance-row">
 <div class="form-group" style="flex:1">
@@ -2727,6 +2745,31 @@ async function importBackup(ev){
     alert('✅ Backup restaurado! Vou recarregar a página.');
     location.reload();
   }catch(err){console.error(err);alert('Erro ao restaurar backup. Verifique se o arquivo é um .json válido.');}
+}
+
+
+/* ---- SALDO INICIAL / AJUSTE DE CAIXA ---- */
+function applyCashAdjustment() {
+    const amtEl  = document.getElementById('cashAdjustAmount');
+    const noteEl = document.getElementById('cashAdjustNote');
+    const raw = amtEl ? String(amtEl.value||'').trim() : '';
+    const v = parseFloat(raw.replace(',', '.'));
+    const note = noteEl ? String(noteEl.value||'').trim() : '';
+
+    if (!raw || !isFinite(v) || Math.abs(v) < 0.00001) {
+        return alert('Digite um valor diferente de zero (pode ser positivo ou negativo).');
+    }
+
+    const abs = Math.round(Math.abs(v) * 100) / 100;
+    const kind = (v >= 0) ? 'payment' : 'expense';
+    const prefix = (v >= 0) ? 'Ajuste de caixa (entrada)' : 'Ajuste de caixa (saída)';
+    const fullNote = (note ? (note + ' • ') : '') + prefix;
+
+    // Não vincula a jogador (sem playerId)
+    addLedger({ kind: kind, category: 'ajuste_caixa', amount: abs, note: fullNote, date: todayISO() });
+
+    if (amtEl) amtEl.value = '';
+    if (noteEl) noteEl.value = '';
 }
 </script>
 </body>
