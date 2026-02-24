@@ -566,6 +566,16 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 
 /* FIN-ADJUST accent */
 #panelFinance .fin-adjust{ --accent:#0f172a; }
+
+
+/* ===== HELP-PAGE v1 ===== */
+#panelHelp .help-note{font-size:0.90rem; color:#334155; line-height:1.35}
+#panelHelp .help-steps{display:flex; flex-direction:column; gap:8px}
+#panelHelp .help-step{font-size:0.90rem; color:#0f172a; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:10px 12px}
+#panelHelp .help-details{border:1px solid #e2e8f0; border-radius:12px; padding:10px 12px; background:#fff}
+#panelHelp .help-details summary{cursor:pointer; font-weight:900; color:var(--green); margin:0 0 8px}
+#panelHelp .help-list{margin:0; padding-left:18px; color:#0f172a; font-size:0.92rem; line-height:1.35}
+#panelHelp .help-list li{margin:6px 0}
 </style>
 </head>
 <body>
@@ -588,7 +598,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="tab-btn" onclick="showTab('panelCadastro',this)">👥 Jogadores</button>
 <button class="tab-btn active" onclick="showTab('panelField',this)">⚽ Campo</button>
 <button class="tab-btn" onclick="showTab('panelCSV',this)">📎 CSV</button>
-<button class="tab-btn" onclick="showTab('panelFinance',this)">💰 Financeiro</button></div>
+<button class="tab-btn" onclick="showTab('panelFinance',this)">💰 Financeiro</button><button class="tab-btn" id="tabHelp" onclick="showTab('panelHelp', this)" type="button">❓ Ajuda</button></div>
 <div class="app-body">
 <!-- CADASTRO -->
 <div class="panel" id="panelCadastro">
@@ -771,10 +781,6 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <input id="feeSingle" min="0" onchange="saveFinanceConfig()" step="1" type="number" value="15"/>
 </div>
 </div>
-
-
-
-
 <div class="small" style="margin-top:6px">Dica: isso fica salvo no seu celular/PC (localStorage).</div>
 </div><div class="fin-sep fin-step-2"><div class="fin-sep-title">2) Gerar cobranças</div><div class="fin-sep-sub">Carregue a pelada do dia e/ou gere as mensalidades do mês.</div></div><div class="card fin-card fin-session">
 <h4>🗓️ Pelada (por data)</h4>
@@ -949,7 +955,87 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div><div class="card fin-card fin-export">
 <h4>📤 Exportar financeiro</h4>
 <button class="btn btn-outline" onclick="exportFinanceCSV()" style="width:100%">Baixar financeiro.csv</button>
-</div></div>
+</div></div><div class="panel" id="panelHelp">
+<div class="card">
+<h4>❓ Ajuda rápida (como usar do começo ao fim)</h4>
+<div class="help-note">Tudo fica salvo no seu navegador (celular/PC). Para usar em outro aparelho, use <strong>Backup</strong> e <strong>Restaurar</strong>.</div>
+</div>
+<div class="card">
+<h4>1) Primeira vez (setup)</h4>
+<div class="help-steps">
+<div class="help-step"><strong>1.</strong> Vá em <strong>Jogadores</strong> e cadastre ou carregue pelo <strong>CSV</strong>.</div>
+<div class="help-step"><strong>2.</strong> Vá em <strong>Financeiro</strong> e ajuste <strong>Mensalista</strong> e <strong>Avulso</strong>.</div>
+<div class="help-step"><strong>3.</strong> Em <strong>Movimentar o caixa</strong>, use <strong>Saldo inicial / Ajuste de caixa</strong> para começar com o caixa certo.</div>
+<div class="help-step"><strong>4.</strong> Faça um <strong>Backup</strong> e guarde o arquivo .json.</div>
+</div>
+</div>
+<div class="card">
+<h4>2) Jogadores</h4>
+<details class="help-details" open="">
+<summary>O que fazer aqui</summary>
+<ul class="help-list">
+<li><strong>Adicionar</strong> jogador (nome, posição, cobrança, foto).</li>
+<li><strong>Editar</strong> ou <strong>excluir</strong> jogadores.</li>
+<li>Marcar <strong>Vem/Falta</strong> (controle geral do grupo).</li>
+</ul>
+</details>
+</div>
+<div class="card">
+<h4>3) Campo (escalação)</h4>
+<details class="help-details" open="">
+<summary>Como escalar</summary>
+<ul class="help-list">
+<li>Escolha <strong>2 Times</strong> ou <strong>3 Times</strong> e o número <strong>por time</strong>.</li>
+<li>Arraste jogadores para <strong>TIME A</strong>, <strong>TIME B</strong> (e <strong>TIME C</strong>) e para o <strong>Banco de Reservas</strong>.</li>
+<li>No banco, o card mostra <strong>nome</strong> e <strong>posição</strong> (útil quando a foto não ajuda).</li>
+</ul>
+</details>
+</div>
+<div class="card">
+<h4>4) CSV (importar/exportar)</h4>
+<details class="help-details">
+<summary>Importar / Exportar</summary>
+<ul class="help-list">
+<li><strong>Carregar CSV</strong>: cole a URL Raw do jogadores.csv (GitHub) e carregue.</li>
+<li><strong>Exportar CSV</strong>: baixa o arquivo com todos os jogadores.</li>
+</ul>
+</details>
+<details class="help-details" open="">
+<summary>Backup / Restaurar (recomendado)</summary>
+<ul class="help-list">
+<li><strong>Backup</strong> baixa um .json com tudo do app neste aparelho.</li>
+<li><strong>Restaurar</strong> aplica o .json em outro aparelho (ou para recuperar dados).</li>
+</ul>
+</details>
+</div>
+<div class="card">
+<h4>5) Financeiro (rotina do dia)</h4>
+<details class="help-details" open="">
+<summary>Passo a passo</summary>
+<div class="help-steps">
+<div class="help-step"><strong>Etapa 1:</strong> Configure valores (Mensalista/Avulso).</div>
+<div class="help-step"><strong>Etapa 2:</strong> Em <strong>Pelada (por data)</strong>, escolha a data, carregue e marque presentes/ausentes. Gere cobranças de avulsos se necessário.</div>
+<div class="help-step"><strong>Etapa 2:</strong> Em <strong>Mensalidades</strong>, selecione o mês e clique <strong>Gerar cobranças</strong>.</div>
+<div class="help-step"><strong>Etapa 3:</strong> Use <strong>Saldo inicial / Ajuste de caixa</strong> para entradas/saídas sem jogador.</div>
+<div class="help-step"><strong>Etapa 3:</strong> Registre <strong>Pagamentos</strong> e <strong>Despesas</strong>.</div>
+<div class="help-step"><strong>Etapa 3:</strong> Para compras (bola/outros), use <strong>Ratear</strong> para gerar cobranças do rateio.</div>
+<div class="help-step"><strong>Etapa 4:</strong> Veja <strong>Pendências</strong> e use os botões rápidos para receber.</div>
+<div class="help-step"><strong>Etapa 4:</strong> Use <strong>Histórico/Auditoria</strong>, exporte CSV e gere PDF quando precisar.</div>
+</div>
+</details>
+</div>
+<div class="card">
+<h4>6) Dicas e problemas comuns</h4>
+<details class="help-details">
+<summary>Não aparece em outro celular/PC</summary>
+<div class="help-note">Cada aparelho tem seus dados. Use <strong>Backup</strong> (no aparelho A) e <strong>Restaurar</strong> (no aparelho B).</div>
+</details>
+<details class="help-details">
+<summary>Apareceu texto estranho (código) no fim da tela</summary>
+<div class="help-note">Atualize a página. Se persistir, use o Chrome padrão e evite extensões/bloqueadores. Se continuar acontecendo, refaça um Backup e me diga qual navegador para eu ajustar.</div>
+</details>
+</div>
+</div>
 </div>
 <script>
 const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%23aaa'/%3E%3Ccircle cx='25' cy='19' r='9' fill='%23fff'/%3E%3Cellipse cx='25' cy='40' rx='14' ry='10' fill='%23fff'/%3E%3C/svg%3E";
@@ -1009,11 +1095,12 @@ function adaptSVG() {
 
 /* ---- TABS ---- */
 function showTab(id, btn) {
-    // view: players | field | csv | finance
+    // view: players | field | csv | finance | help
     let view = 'players';
     if (id === 'panelField') view = 'field';
     if (id === 'panelCSV') view = 'csv';
     if (id === 'panelFinance') view = 'finance';
+    if (id === 'panelHelp') view = 'help';
 
     document.body.dataset.view = view;
 
