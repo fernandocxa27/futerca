@@ -703,6 +703,43 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 }
 
 
+
+
+/* ===== MOBILE FIXES: STICKY HEADER/TABS + STATS LAYOUT ===== */
+@media (max-width: 767px){
+  /* fixa header + abas no topo */
+  header{ position: sticky; top: 0; z-index: 80; background:#fff; }
+  .tabs{ position: sticky; top: 48px; z-index: 79; background:#fff; }
+
+  /* subtabs (Lançamentos/Resumo) não podem ficar atrás das abas */
+  .session-subtabs{ top: 92px !important; }
+
+  /* Lançamentos: coloca Nota em linha separada (antes do comentário) */
+  #sessionStatsField .session-stats-row,
+  #sessionStatsField .session-stats-head,
+  #sessionStatsFin .session-stats-row,
+  #sessionStatsFin .session-stats-head{
+    grid-template-columns: 1fr 118px 118px;
+  }
+
+  /* rating (estrelas) em linha cheia */
+  #sessionStatsField .session-stats-row .rt,
+  #sessionStatsFin .session-stats-row .rt,
+  #sessionStatsField .session-stats-head .rt,
+  #sessionStatsFin .session-stats-head .rt{
+    grid-column: 1 / -1;
+  }
+
+  /* comentário em linha cheia (já era), reforça */
+  #sessionStatsField .session-stats-row .cm,
+  #sessionStatsFin .session-stats-row .cm,
+  #sessionStatsField .session-stats-head .cm,
+  #sessionStatsFin .session-stats-head .cm{
+    grid-column: 1 / -1;
+  }
+
+  .star-rating{ justify-content:flex-start; }
+}
 </style>
 </head>
 <body>
@@ -2340,7 +2377,7 @@ function renderSessionToolsField() {
 
     const head = document.createElement('div');
     head.className = 'session-stats-head';
-    head.innerHTML = '<div>Jogador</div><div class="mono">Gols</div><div class="mono">Assist.</div><div class="mono">Nota (0–5)</div><div class="cm">Comentário</div>';
+    head.innerHTML = '<div>Jogador</div><div class="mono">Gols</div><div class="mono">Assist.</div><div class="mono rt">Nota (0–5)</div><div class="cm">Comentário</div>';
 
     statsWrap.innerHTML = '';
     statsWrap.appendChild(head);
@@ -2410,6 +2447,7 @@ function renderSessionToolsField() {
 
         // Stars rating (0-5)
         const rStars = makeStars(p.id, st.rating);
+        rStars.classList.add('rt');
         if (locked) { rStars.style.pointerEvents = 'none'; rStars.style.opacity = '0.7'; }
 
         const c = document.createElement('input');
@@ -2496,7 +2534,7 @@ function renderSessionToolsFinance() {
 
     const head = document.createElement('div');
     head.className = 'session-stats-head';
-    head.innerHTML = '<div>Jogador</div><div class="mono">Gols</div><div class="mono">Assist.</div><div class="mono">Nota (0–5)</div><div class="cm">Comentário</div>';
+    head.innerHTML = '<div>Jogador</div><div class="mono">Gols</div><div class="mono">Assist.</div><div class="mono rt">Nota (0–5)</div><div class="cm">Comentário</div>';
 
     statsWrap.innerHTML = '';
     statsWrap.appendChild(head);
@@ -2566,6 +2604,7 @@ function renderSessionToolsFinance() {
 
         // Stars rating (0-5)
         const rStars = makeStars(p.id, st.rating);
+        rStars.classList.add('rt');
         if (locked) { rStars.style.pointerEvents = 'none'; rStars.style.opacity = '0.7'; }
 
         const c = document.createElement('input');
