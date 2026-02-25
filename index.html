@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <!-- saved from url=(0103)https://tess-workflows-files.storage.googleapis.com/fad7d88331bf02728926fdb381977e79ec94ee5e/index.html -->
-<html lang="pt-br"><head><meta charset="utf-8"/>
+<html lang="pt-br"><head><meta charset="UTF-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <title>Futebol de Terça</title>
 <style>
@@ -208,6 +208,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
     body[data-view="finance"] .app-body,
     body[data-view="csv"] .app-body,
     body[data-view="players"] .app-body { grid-template-columns: 1fr; }
+    body[data-view="rank"] .app-body { grid-template-columns: 1fr; }
 
     #panelCadastro, #panelField, #panelCSV, #panelFinance { padding: 0; }
 
@@ -576,29 +577,144 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 #panelHelp .help-details summary{cursor:pointer; font-weight:900; color:var(--green); margin:0 0 8px}
 #panelHelp .help-list{margin:0; padding-left:18px; color:#0f172a; font-size:0.92rem; line-height:1.35}
 #panelHelp .help-list li{margin:6px 0}
+
+/* ===== SESSION ATTENDANCE (FIELD) ===== */
+#sessionAttendanceField .session-att-row{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 0; border-bottom:1px solid #f0f0f0}
+#sessionAttendanceField .session-att-row .left{display:flex; flex-direction:column}
+#sessionAttendanceField .session-att-row .left .nm{font-weight:800; font-size:0.88rem}
+#sessionAttendanceField .session-att-row .left .sm{font-size:0.78rem; color:#64748b}
+
+/* ===== SESSION STATS (FIELD) ===== */
+#sessionStatsField .session-stats-row{display:grid; grid-template-columns: 1fr 76px 92px 92px 1.3fr; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid #f0f0f0}
+#sessionStatsField .session-stats-row .nm{font-weight:800; font-size:0.9rem}
+#sessionStatsField .session-stats-row input[type=number]{width:100%}
+#sessionStatsField .session-stats-row input[type=text]{width:100%}
+#sessionStatsField .session-stats-head{display:grid; grid-template-columns: 1fr 76px 92px 92px 1.3fr; gap:8px; font-size:0.78rem; color:#475569; margin-bottom:6px}
+@media (max-width: 767px){
+  #sessionStatsField .session-stats-row, #sessionStatsField .session-stats-head{grid-template-columns: 1fr 68px 84px 84px}
+  #sessionStatsField .session-stats-row .cm, #sessionStatsField .session-stats-head .cm{grid-column:1 / -1}
+}
+
+/* ===== STEPPER + STARS (SESSION STATS) ===== */
+.stat-stepper{display:flex; align-items:center; gap:6px}
+.stat-stepper .btn-step{width:26px; height:26px; padding:0; border-radius:8px; font-weight:950; line-height:1; display:inline-flex; align-items:center; justify-content:center}
+.stat-stepper .stat-val{width:44px; text-align:center; font-weight:900}
+.stat-stepper input.stat-val{height:28px; padding:0 6px; border-radius:8px; border:1px solid #e5e7eb}
+
+.star-rating{display:inline-flex; gap:4px; align-items:center; user-select:none}
+.star-rating .star{width:18px; height:18px; cursor:pointer; display:inline-block}
+.star-rating .star svg{width:18px; height:18px; display:block}
+.star-rating .star.off path{fill:#e5e7eb}
+.star-rating .star.on path{fill:#f59e0b} /* dourado */
+.star-rating .star:focus{outline:2px solid rgba(26,115,232,0.35); outline-offset:2px; border-radius:4px}
+.star-rating .clear{margin-left:6px; font-size:11px; color:#64748b; cursor:pointer}
+
+
+/* ===== MOBILE TOUCH IMPROVEMENTS (STEP/STARS) ===== */
+@media (max-width: 767px){
+  .stat-stepper{gap:8px}
+  .stat-stepper .btn-step{width:36px; height:36px; border-radius:12px; font-size:1.05rem}
+  .stat-stepper .stat-val{width:46px; height:36px; font-size:1.00rem}
+  .star-rating{gap:6px}
+  .star-rating .star{width:24px; height:24px}
+  .star-rating .star svg{width:24px; height:24px}
+  .star-rating .clear{font-size:12px}
+}
+
+
+/* ===== UI POLISH (STEP/STARS/CONFIRM) ===== */
+.stat-stepper .btn-step{
+  border-radius:999px !important;
+  border:none !important;
+  color:#fff !important;
+  font-weight:1000;
+}
+.stat-stepper .btn-step.btn-plus{background:#1b8f3a !important;}
+.stat-stepper .btn-step.btn-minus{background:#c62828 !important;}
+.stat-stepper .btn-step:disabled{opacity:0.55; filter:saturate(0.7); cursor:not-allowed;}
+
+/* Ajuste de grid para caber steppers + estrelas sem sobrepor comentário */
+#sessionStatsField .session-stats-row,
+#sessionStatsField .session-stats-head,
+#sessionStatsFin .session-stats-row,
+#sessionStatsFin .session-stats-head{
+  grid-template-columns: 1fr 120px 120px 170px 1fr;
+}
+
+/* Comentário um pouco menor (evita encostar nas estrelas) */
+#sessionStatsField .session-stats-row input.cm,
+#sessionStatsFin .session-stats-row input.cm{min-width:160px;}
+
+/* Banner do placar */
+.score-banner{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #dbeafe;
+  background:#eff6ff;
+  color:#0f172a;
+}
+.score-banner .t{
+  font-weight:950;
+  font-size:14px;
+}
+.score-banner .s{
+  margin-top:4px;
+  font-weight:1000;
+  font-size:18px;
+  letter-spacing:.3px;
+}
+.score-banner.confirmed{
+  border-color:#bbf7d0;
+  background:#ecfdf5;
+}
+.score-banner.confirmed .t{color:var(--green)}
+
+@media (max-width: 767px){
+  /* No mobile mantemos comentário em linha separada (já existe), mas garantimos colunas suficientes */
+  #sessionStatsField .session-stats-row,
+  #sessionStatsField .session-stats-head,
+  #sessionStatsFin .session-stats-row,
+  #sessionStatsFin .session-stats-head{
+    grid-template-columns: 1fr 118px 118px 170px;
+  }
+  .score-banner .s{font-size:17px}
+}
+
+
+
+/* ===== SESSION SUBTABS (MOBILE) ===== */
+.session-subtabs{display:none; gap:8px; flex-wrap:wrap; margin:10px 0 10px; width:100%}
+.session-subtabs .stbtn{padding:7px 10px; border-radius:999px; font-weight:900; font-size:0.78rem; border:1px solid #cbd5e1; background:#fff; color:#0f172a}
+.session-subtabs .stbtn.active{background:var(--primary); border-color:var(--primary); color:#fff}
+@media (max-width: 767px){
+  .session-subtabs{
+    display:flex;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgba(255,255,255,0.96);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    padding: 8px 0;
+    margin: 0 0 10px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}
+
+
 </style>
 </head>
 <body>
 <header>
 <div class="header-title">⚽ Futebol de Terça</div>
-<div class="header-controls">
-<div class="csv-desktop">
-<input id="csvUrlDesktop" placeholder="URL Raw do CSV (GitHub)" style="width:220px" type="text"/>
-<button class="btn btn-outline" onclick="importCSV('csvUrlDesktop')">Carregar CSV</button>
-<button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
-</div>
-</div>
-<div class="backup-controls">
-<button class="btn btn-outline" onclick="exportBackup()" type="button">💾 Backup</button>
-<button class="btn btn-outline" onclick="triggerImportBackup()" type="button">📤 Restaurar</button>
-<input accept="application/json" id="backupFile" onchange="importBackup(event)" style="display:none" type="file"/>
 </div>
 </header>
 <div class="tabs">
 <button class="tab-btn" onclick="showTab('panelCadastro',this)">👥 Jogadores</button>
 <button class="tab-btn active" onclick="showTab('panelField',this)">⚽ Campo</button>
 <button class="tab-btn" onclick="showTab('panelCSV',this)">📎 CSV</button>
-<button class="tab-btn" onclick="showTab('panelFinance',this)">💰 Financeiro</button><button class="tab-btn" id="tabHelp" onclick="showTab('panelHelp', this)" type="button">❓ Ajuda</button></div>
+<button class="tab-btn" onclick="showTab('panelFinance',this)">💰 Financeiro</button><button class="tab-btn" id="tabRank" onclick="showTab('panelRank', this)" type="button">📊 Ranking / Artilharia</button><button class="tab-btn" id="tabHelp" onclick="showTab('panelHelp', this)" type="button">❓ Ajuda</button></div>
 <div class="app-body">
 <!-- CADASTRO -->
 <div class="panel" id="panelCadastro">
@@ -740,6 +856,56 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <div class="bench-wrap">
 <h5>🪑 Banco de Reservas</h5>
 <div class="bench-slots" data-team="bench" id="bench"></div>
+<div class="card" id="sessionToolsField" style="margin-top:12px">
+  <h4>📅 Pelada agendada (por data)</h4>
+  <div class="small">Escolha a data, carregue a pelada e confirme a presença real. Os lançamentos (gols/assistências/nota) só aparecem para quem estiver <strong>Presente</strong>.</div>
+  <div class="hr"></div>
+
+  <div class="finance-row" style="flex-wrap:wrap">
+    <div class="form-group" style="min-width:180px">
+      <label>Data</label>
+      <input id="sessionDateField" type="date" />
+    </div>
+    <button class="btn btn-primary" type="button" onclick="loadOrCreateSessionFromField()">Carregar pelada</button>
+    <button class="btn btn-outline" type="button" onclick="resetSessionAttendance()">Limpar presença</button>
+    <button class="btn btn-outline" type="button" onclick="confirmScheduledAttendance('confirmed', true)">Confirmados (Vem) → Presentes (limpar)</button>
+    <button class="btn btn-outline" type="button" onclick="confirmScheduledAttendance('field', true)">Campo/Banco → Presentes (limpar)</button>
+    <button class="btn btn-outline" type="button" onclick="sessionMarkAll(true)">Marcar todos presentes</button>
+    <button class="btn btn-outline" type="button" onclick="sessionMarkAll(false)">Marcar todos ausentes</button>
+  </div>
+
+  <div class="small" id="sessionInfoField" style="margin:8px 0"></div>
+
+  <div class="hr"></div>
+  <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Confirmar presença (confirmados)</h4>
+  <div id="sessionAttendanceField"></div>
+
+  <div class="card" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0; box-shadow:none">
+    <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+      <div class="form-group" style="min-width:120px">
+        <label>Placar Time A</label>
+        <input id="scoreA" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromField()" />
+      </div>
+      <div class="form-group" style="min-width:120px">
+        <label>Placar Time B</label>
+        <input id="scoreB" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromField()" />
+      </div>
+      <div class="form-group hidden" style="min-width:120px" id="scoreCWrap">
+        <label>Placar Time C</label>
+        <input id="scoreC" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromField()" />
+      </div>
+      <div class="form-group" style="flex:1;min-width:220px">
+        <label>Obs da pelada (opcional)</label>
+        <input id="sessionNoteField" type="text" placeholder="Ex: chuva, bola nova, convidados..." oninput="saveSessionNoteFromField()" />
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+  <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Lançamentos da pelada (somente presentes)</h4>
+  <div id="sessionSubTabsField" class="session-subtabs"><button type="button" class="stbtn" data-tab="stats" onclick="switchSessionSubTab('field','stats')">Lançamentos</button><button type="button" class="stbtn" data-tab="summary" onclick="switchSessionSubTab('field','summary')">Resumo / Confirmar</button></div><div id="sessionStatsField"></div>
+</div>
+
 </div>
 </div>
 <!-- CSV MOBILE -->
@@ -804,6 +970,41 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 <div class="small" id="sessionInfo" style="margin-top:8px"></div>
 <div id="sessionAttendance" style="margin-top:8px"></div>
+
+<div class="hr"></div>
+<div class="finance-row" style="margin-top:8px">
+  <button class="btn btn-outline btn-sm" type="button" onclick="resetSessionAttendance()">Limpar presença</button>
+  <button class="btn btn-outline btn-sm" type="button" onclick="confirmScheduledAttendance('confirmed', true)">Confirmados (Vem) → Presentes (limpar)</button>
+  <button class="btn btn-outline btn-sm" type="button" onclick="confirmScheduledAttendance('field', true)">Campo/Banco → Presentes (limpar)</button>
+</div>
+
+<div class="card" id="sessionScoreFinance" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0; box-shadow:none; margin-top:8px">
+  <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+    <div class="form-group" style="min-width:120px">
+      <label>Placar Time A</label>
+      <input id="scoreA_fin" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromFinance()" />
+    </div>
+    <div class="form-group" style="min-width:120px">
+      <label>Placar Time B</label>
+      <input id="scoreB_fin" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromFinance()" />
+    </div>
+    <div class="form-group hidden" style="min-width:120px" id="scoreCWrap_fin">
+      <label>Placar Time C</label>
+      <input id="scoreC_fin" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromFinance()" />
+    </div>
+    <div class="form-group" style="flex:1;min-width:220px">
+      <label>Obs da pelada (opcional)</label>
+      <input id="sessionNote_fin" type="text" placeholder="Ex: chuva, bola nova, convidados..." oninput="saveSessionNoteFromFinance()" />
+    </div>
+  </div>
+</div>
+
+<div id="scoreBannerFin" class="score-banner" style="display:none"><div class="t"></div><div class="s mono"></div><div class="sub" id="statsConfirmInfoFin" style="margin-top:6px"></div><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap" id="statsConfirmActionsFin"></div></div>
+
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Lançamentos da pelada (somente presentes)</h4>
+<div id="sessionSubTabsFin" class="session-subtabs"><button type="button" class="stbtn" data-tab="stats" onclick="switchSessionSubTab('fin','stats')">Lançamentos</button><button type="button" class="stbtn" data-tab="summary" onclick="switchSessionSubTab('fin','summary')">Resumo / Confirmar</button></div><div id="sessionStatsFin"></div>
+
 </div><div class="card fin-card fin-monthly">
 <h4>📆 Mensalidades</h4>
 <div class="finance-row">
@@ -1037,7 +1238,64 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 </div>
 </div>
+
+</div></div><div class="panel" id="panelRank">
+  <div class="card">
+    <h4>📊 Ranking / Artilharia</h4>
+    <div class="small">Lance gols, assistências, nota (0–5) e comentário por data. Rankings consideram apenas jogadores marcados como <strong>Presentes</strong> na pelada.</div>
+    <div class="hr"></div>
+    <div class="finance-row" style="flex-wrap:wrap">
+      <div class="form-group" style="min-width:160px">
+        <label>Ano</label>
+        <input id="rankYear" type="number" min="2020" step="1" value="" />
+      </div>
+      <div class="form-group" style="min-width:170px">
+        <label>Mês (opcional)</label>
+        <input id="rankMonth" type="month" />
+      </div>
+      <button class="btn btn-outline" type="button" onclick="renderRankings()">Atualizar</button>
+      <button class="btn btn-outline" type="button" onclick="exportRankingsCSV()">Baixar rankings.csv</button>
+      <button class="btn btn-outline" type="button" onclick="exportMatchStatsCSV()">Baixar stats_peladas.csv</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin:0 0 8px;color:var(--green)">Ranking do mês</h4>
+    <div class="small" id="rankMonthInfo" style="margin-bottom:8px"></div>
+    <table class="finance-table">
+      <thead>
+        <tr>
+          <th>Jogador</th>
+          <th class="mono">Presenças</th>
+          <th class="mono">Gols</th>
+          <th class="mono">Assist.</th>
+          <th class="mono">Nota média</th>
+        </tr>
+      </thead>
+      <tbody id="rankMonthTable"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h4 style="margin:0 0 8px;color:var(--green)">Ranking do ano</h4>
+    <div class="small" id="rankYearInfo" style="margin-bottom:8px"></div>
+    <table class="finance-table">
+      <thead>
+        <tr>
+          <th>Jogador</th>
+          <th class="mono">Presenças</th>
+          <th class="mono">Gols</th>
+          <th class="mono">Assist.</th>
+          <th class="mono">Nota média</th>
+        </tr>
+      </thead>
+      <tbody id="rankYearTable"></tbody>
+    </table>
+  </div>
+</div>
+
 <script>
+
 const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%23aaa'/%3E%3Ccircle cx='25' cy='19' r='9' fill='%23fff'/%3E%3Cellipse cx='25' cy='40' rx='14' ry='10' fill='%23fff'/%3E%3C/svg%3E";
 
 let players = [];
@@ -1069,7 +1327,7 @@ window.onload = () => {
     adaptSVG();
     renderAll();
     initFinanceUI();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 
     // default view: Campo (no desktop mostra Campo + Cadastro lado a lado)
     if (window.matchMedia('(min-width: 768px)').matches) {
@@ -1101,6 +1359,7 @@ function showTab(id, btn) {
     if (id === 'panelCSV') view = 'csv';
     if (id === 'panelFinance') view = 'finance';
     if (id === 'panelHelp') view = 'help';
+    if (id === 'panelRank') view = 'rank';
 
     document.body.dataset.view = view;
 
@@ -1126,7 +1385,7 @@ function showTab(id, btn) {
     // atualiza UI do financeiro quando abrir a aba
     if (view === 'finance') {
         try { initFinanceUI(); } catch(e) {}
-        try { renderFinance(); } catch(e) {}
+        try { renderFinance(); try{renderSessionToolsField();}catch(e){} try{renderSessionToolsFinance();}catch(e){} } catch(e) {}
     }
 
 
@@ -1143,7 +1402,7 @@ function updateSettings() {
 function setTeamsMode(n) {
     config.teamsCount = n;
     players.forEach(p => { if (p.team === 'C') p.team = 'bench'; });
-    applyTeamsMode(n); save(); renderAll();
+    applyTeamsMode(n); save(); renderAll(); try{renderSessionToolsField();}catch(e){} try{renderSessionToolsFinance();}catch(e){}
 }
 
 function applyTeamsMode(n) {
@@ -1180,6 +1439,9 @@ function loadFinance() {
     // migração: garante campos básicos
     if (!Array.isArray(ledger)) ledger = [];
     if (!Array.isArray(sessions)) sessions = [];
+
+    // migração: garante extras da pelada (stats/placar)
+    try { sessions.forEach(s => ensureSessionExtras(s)); } catch(e) {}
 }
 
 function saveFinanceConfig() {
@@ -1187,7 +1449,7 @@ function saveFinanceConfig() {
     financeConfig.feeSingle  = parseFloat(document.getElementById('feeSingle').value) || 0;
     saveFinance();
     if (financeConfig.autoAvulso) syncAvulsoChargeForPlayerInSession(pid, getCurrentSession());
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
 function money(n) {
@@ -1282,7 +1544,7 @@ function togglePresence(id) {
 }
 
 /* ---- RENDER ---- */
-function renderAll() { renderSidebar(); renderBench(); renderField(); }
+function renderAll() { renderSidebar(); renderBench(); renderField(); try{renderSessionToolsField();}catch(e){} try{renderSessionToolsFinance();}catch(e){} }
 function imgSrc(url) { return (url && url.trim()) ? url.trim() : FALLBACK; }
 
 function renderSidebar() {
@@ -1513,7 +1775,7 @@ function addLedger(entry) {
 
     saveFinance();
     if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
 function playerDue(playerId) {
@@ -1542,13 +1804,789 @@ function loadOrCreateSession() {
     if (!s) {
         s = { id: uuid(), date, notes: '', attendance: {} };
         // default: usa flag global de presença (Vem/Falta) como sugestão
-        players.forEach(p => { s.attendance[p.id] = (p.present !== false); });
+        players.forEach(p => { s.attendance[p.id] = false; });
         sessions.push(s);
         saveFinance();
     }
     currentSessionId = s.id;
+    try { ensureSessionExtras(s); } catch(e) {}
+    if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
+}
+
+
+function ensureSessionExtras(s) {
+    if (!s) return;
+    if (!s.stats || typeof s.stats !== 'object') s.stats = {};
+    if (!s.score || typeof s.score !== 'object') s.score = { A: 0, B: 0, C: 0 };
+    if (typeof s.notes !== 'string') s.notes = (s.notes || '');
+}
+
+function getSessionPlayerStats(s, pid) {
+    ensureSessionExtras(s);
+    if (!s.stats[pid] || typeof s.stats[pid] !== 'object') {
+        s.stats[pid] = { goals: 0, assists: 0, rating: null, comment: '' };
+    }
+    const st = s.stats[pid];
+    if (typeof st.goals !== 'number') st.goals = Number(st.goals)||0;
+    if (typeof st.assists !== 'number') st.assists = Number(st.assists)||0;
+    if (st.rating === '' || typeof st.rating === 'undefined') st.rating = null;
+    if (st.rating !== null) st.rating = Number(st.rating);
+    if (!isFinite(st.rating)) st.rating = null;
+    if (typeof st.comment !== 'string') st.comment = String(st.comment||'');
+    return st;
+}
+
+function loadOrCreateSessionFromField() {
+    const el = document.getElementById('sessionDateField');
+    const date = el && el.value ? el.value : todayISO();
+
+    // sincroniza com a tela do financeiro (se existir)
+    const finDate = document.getElementById('sessionDate');
+    if (finDate) finDate.value = date;
+
+    // garante input preenchido
+    if (el) el.value = date;
+
+    loadOrCreateSession();
+    renderSessionToolsField();
+}
+
+function getIdsFromConfirmed() {
+    // Confirmados = jogadores marcados como "Vem" (p.present !== false)
+    return players.filter(p => (p.present !== false)).map(p => p.id);
+}
+
+function getIdsFromFieldAndBench() {
+    // Considera somente os jogadores que estão no Campo/Banco agora
+    // (e que estão como "Vem" para não puxar quem já está "Falta")
+    return players
+        .filter(p => (p.present !== false) && ['A','B','C','bench'].includes(p.team || 'bench'))
+        .map(p => p.id);
+}
+
+function resetSessionAttendance() {
+    const s = getCurrentSession();
+    if (!s) return alert('Carregue uma pelada primeiro.');
+    players.forEach(p => { s.attendance[p.id] = false; });
+    saveFinance();
     if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
     renderFinance();
+    try { renderSessionToolsField(); } catch(e) {}
+    try { renderSessionToolsFinance(); } catch(e) {}
+}
+
+function confirmScheduledAttendance(mode, resetAll) {
+    const s = getCurrentSession();
+    if (!s) return alert('Carregue uma pelada primeiro.');
+
+    let ids = [];
+    if (mode === 'field') ids = getIdsFromFieldAndBench();
+    else ids = getIdsFromConfirmed();
+
+    if (resetAll) {
+        players.forEach(p => { s.attendance[p.id] = false; });
+    }
+
+    ids.forEach(pid => { s.attendance[pid] = true; });
+
+    saveFinance();
+    if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
+    renderFinance();
+    try { renderSessionToolsField(); } catch(e) {}
+    try { renderSessionToolsFinance(); } catch(e) {}
+}
+
+
+function isSessionStatsConfirmed(s) {
+    return !!(s && s.statsConfirmedAt);
+}
+
+
+function computeAutoScoreFromGoals(session) {
+    if (!session) return {A:0,B:0,C:0};
+    ensureSessionExtras(session);
+
+    const snap = {};
+    players.forEach(p => {
+        if (session.attendance && session.attendance[p.id]) snap[p.id] = (p.team || 'bench');
+    });
+    session.teamSnapshot = snap; // guarda o time de cada um nesta data (no momento da confirmação)
+
+    const sum = {A:0, B:0, C:0};
+    const stats = session.stats || {};
+
+    Object.keys(stats).forEach(pid => {
+        if (!session.attendance || !session.attendance[pid]) return;
+        const st = stats[pid] || {};
+        const g = Math.max(0, parseInt(st.goals || 0, 10) || 0);
+        if (!g) return;
+
+        const t = snap[pid] || 'bench';
+        if (t === 'A' || t === 'B' || t === 'C') sum[t] += g;
+    });
+
+    return sum;
+}
+
+function confirmSessionStats() {
+    const s = getCurrentSession();
+    if (!s) return alert('Carregue uma pelada primeiro.');
+    ensureSessionExtras(s);
+
+    // Gera placar automaticamente a partir dos gols lançados por time (A/B/C)
+    const auto = computeAutoScoreFromGoals(s);
+    s.scoreAuto = { ...auto };
+    s.score = { A: auto.A||0, B: auto.B||0, C: auto.C||0 };
+    s.scoreSource = 'auto_from_goals';
+
+    s.statsConfirmedAt = new Date().toISOString();
+    try { s.statsConfirmedAtLocal = new Date().toLocaleString(); } catch(e) { s.statsConfirmedAtLocal = s.statsConfirmedAt; }
+
+    saveFinance();
+    renderFinance();
+    try { renderSessionToolsField(); } catch(e) {}
+    try { renderSessionToolsFinance(); } catch(e) {}
+    try { renderScoreBanner('field'); } catch(e) {}
+    try { renderScoreBanner('fin'); } catch(e) {}
+
+    alert('✅ Lançamentos confirmados e placar calculado automaticamente pelos gols.');
+}
+
+function unconfirmSessionStats() {
+    const s = getCurrentSession();
+    if (!s) return;
+    if (!confirm('Reabrir edição dos lançamentos e do placar desta pelada?')) return;
+    delete s.statsConfirmedAt;
+    delete s.statsConfirmedAtLocal;
+    saveFinance();
+    renderFinance();
+    try { renderSessionToolsField(); } catch(e) {}
+    try { renderSessionToolsFinance(); } catch(e) {}
+}
+
+function renderScoreBanner(which) {
+    const s = getCurrentSession();
+    const el = document.getElementById(which === 'fin' ? 'scoreBannerFin' : 'scoreBannerField');
+    const info = document.getElementById(which === 'fin' ? 'statsConfirmInfoFin' : 'statsConfirmInfoField');
+    const actions = document.getElementById(which === 'fin' ? 'statsConfirmActionsFin' : 'statsConfirmActionsField');
+
+    if (!el || !info || !actions) return;
+    if (!s) { el.style.display='none'; el.dataset.baseDisplay = el.style.display; return; }
+
+    ensureSessionExtras(s);
+    const a = (s.score && isFinite(s.score.A)) ? s.score.A : 0;
+    const b = (s.score && isFinite(s.score.B)) ? s.score.B : 0;
+    const c = (s.score && isFinite(s.score.C)) ? s.score.C : 0;
+
+    const confirmed = isSessionStatsConfirmed(s);
+    el.classList.toggle('confirmed', confirmed);
+
+    const t = el.querySelector('.t');
+    const sc = el.querySelector('.s');
+
+    if (t) t.textContent = confirmed ? 'Placar confirmado' : 'Placar (rascunho)';
+
+    let scoreTxt = `Time A ${a} x ${b} Time B`;
+    if (config.teamsCount === 3) scoreTxt = `Time A ${a} x ${b} x ${c} (A/B/C)`;
+    if (sc) sc.textContent = scoreTxt;
+
+    info.textContent = confirmed ? ('Lançamentos confirmados em: ' + (s.statsConfirmedAtLocal || s.statsConfirmedAt)) : 'Edite gols/assistências/nota e confirme quando terminar.';
+
+    // ações
+    actions.innerHTML = '';
+    if (!confirmed) {
+        const b1 = document.createElement('button');
+        b1.type='button';
+        b1.className='btn btn-primary btn-sm';
+        b1.textContent='Confirmar lançamentos';
+        b1.onclick = () => confirmSessionStats();
+        actions.appendChild(b1);
+    } else {
+        const b2 = document.createElement('button');
+        b2.type='button';
+        b2.className='btn btn-outline btn-sm';
+        b2.textContent='Reabrir edição';
+        b2.onclick = () => unconfirmSessionStats();
+        actions.appendChild(b2);
+    }
+
+    el.style.display = 'block'; el.dataset.baseDisplay = el.style.display;
+}
+
+function sessionStatsInputsLocked() {
+    const s = getCurrentSession();
+    return isSessionStatsConfirmed(s);
+}
+
+
+// ----- SUB-ABAS (mobile): Lançamentos x Resumo/Confirmar -----
+const _sessionSubTab = { field: 'stats', fin: 'stats' };
+
+function applySessionSubTab(which) {
+    const isMobile = window.innerWidth < 768;
+    const statsEl = document.getElementById(which === 'fin' ? 'sessionStatsFin' : 'sessionStatsField');
+    const bannerEl = document.getElementById(which === 'fin' ? 'scoreBannerFin' : 'scoreBannerField');
+    const tabWrap = document.getElementById(which === 'fin' ? 'sessionSubTabsFin' : 'sessionSubTabsField');
+
+    if (!statsEl || !bannerEl) return;
+
+    const baseBanner = bannerEl.dataset.baseDisplay || bannerEl.style.display || 'block';
+
+    if (!isMobile) {
+        statsEl.style.display = '';
+        bannerEl.style.display = baseBanner;
+    } else {
+        const tab = _sessionSubTab[which] || 'stats';
+        if (tab === 'summary') {
+            statsEl.style.display = 'none';
+            bannerEl.style.display = baseBanner;
+        } else {
+            statsEl.style.display = '';
+            bannerEl.style.display = 'none';
+        }
+    }
+
+    if (tabWrap) {
+        const tab = _sessionSubTab[which] || 'stats';
+        const b1 = tabWrap.querySelector('[data-tab="stats"]');
+        const b2 = tabWrap.querySelector('[data-tab="summary"]');
+        if (b1) b1.classList.toggle('active', tab === 'stats');
+        if (b2) b2.classList.toggle('active', tab === 'summary');
+    }
+}
+
+function switchSessionSubTab(which, tab) {
+    _sessionSubTab[which] = tab;
+    applySessionSubTab(which);
+}
+
+window.addEventListener('resize', () => {
+    try { applySessionSubTab('field'); } catch(e) {}
+    try { applySessionSubTab('fin'); } catch(e) {}
+});
+
+function saveSessionScoreFromField() {
+    const s = getCurrentSession();
+    if (!s) return;
+    ensureSessionExtras(s);
+    const a = parseInt((document.getElementById('scoreA')||{}).value)||0;
+    const b = parseInt((document.getElementById('scoreB')||{}).value)||0;
+    const cEl = document.getElementById('scoreC');
+    const c = cEl ? (parseInt(cEl.value)||0) : 0;
+    s.score = { A: Math.max(0,a), B: Math.max(0,b), C: Math.max(0,c) };
+    saveFinance();
+
+    try { renderScoreBanner('field'); } catch(e) {}
+}
+
+function saveSessionNoteFromField() {
+    const s = getCurrentSession();
+    if (!s) return;
+    ensureSessionExtras(s);
+    const v = (document.getElementById('sessionNoteField')||{}).value || '';
+    s.notes = String(v);
+    saveFinance();
+}
+
+function setSessionStat(pid, field, rawVal) {
+    const s = getCurrentSession();
+    if (!s) return;
+    if (!s.attendance || !s.attendance[pid]) return; // só presentes
+
+    const st = getSessionPlayerStats(s, pid);
+
+    if (field === 'goals' || field === 'assists') {
+        let v = parseInt(rawVal);
+        if (!isFinite(v)) v = 0;
+        st[field] = Math.max(0, v);
+    }
+
+    if (field === 'rating') {
+        const txt = String(rawVal||'').trim();
+        if (!txt) st.rating = null;
+        else {
+            let v = parseInt(txt);
+            if (!isFinite(v)) v = null;
+            if (v !== null) v = Math.max(0, Math.min(5, v));
+            st.rating = v;
+        }
+    }
+
+    if (field === 'comment') {
+        st.comment = String(rawVal||'').slice(0, 140);
+    }
+
+    ensureSessionExtras(s);
+    s.stats[pid] = st;
+    saveFinance();
+}
+
+
+function incSessionStat(pid, field, delta) {
+    const s = getCurrentSession();
+    if (sessionStatsInputsLocked()) return 0;
+    if (!s) return 0;
+    if (!s.attendance || !s.attendance[pid]) return 0;
+
+    const st = getSessionPlayerStats(s, pid);
+    const cur = Number(st[field] || 0) || 0;
+    let next = cur + (Number(delta) || 0);
+    if (!isFinite(next)) next = cur;
+    next = Math.max(0, Math.round(next));
+    setSessionStat(pid, field, next);
+    return next;
+}
+
+
+function bindHoldRepeat(btn, action) {
+    if (!btn) return;
+
+    const stop = () => {
+        try { if (btn._repT) { clearTimeout(btn._repT); btn._repT = null; } } catch(e) {}
+        try { if (btn._repI) { clearInterval(btn._repI); btn._repI = null; } } catch(e) {}
+    };
+
+    const start = (e) => {
+        if (btn.disabled) return;
+        try { e.preventDefault(); } catch(err) {}
+        stop();
+
+        // execute once immediately
+        btn._ignoreClick = true;
+        action();
+
+        // then repeat after a short delay
+        btn._repT = setTimeout(() => {
+            btn._repI = setInterval(() => { action(); }, 120);
+        }, 320);
+    };
+
+    btn.addEventListener('pointerdown', start);
+    btn.addEventListener('pointerup', stop);
+    btn.addEventListener('pointercancel', stop);
+    btn.addEventListener('pointerleave', stop);
+
+    btn.addEventListener('click', (e) => {
+        if (btn.disabled) return;
+        if (btn._ignoreClick) {
+            btn._ignoreClick = false;
+            return;
+        }
+        action();
+    });
+}
+
+function setSessionRating(pid, val) {
+    const s = getCurrentSession();
+    if (!s) return;
+    if (sessionStatsInputsLocked()) return;
+    if (!s.attendance || !s.attendance[pid]) return;
+
+    const st = getSessionPlayerStats(s, pid);
+
+    // toggle: clicar no mesmo valor limpa
+    if (st.rating !== null && Number(st.rating) === Number(val)) {
+        setSessionStat(pid, 'rating', '');
+    } else {
+        setSessionStat(pid, 'rating', Number(val));
+    }
+
+    // re-render só os painéis (mais simples e seguro)
+    try { renderSessionToolsField(); } catch(e) {}
+    try { renderSessionToolsFinance(); } catch(e) {}
+}
+
+function clearSessionRating(pid) {
+    setSessionStat(pid, 'rating', '');
+    try { renderSessionToolsField(); } catch(e) {}
+    try { renderSessionToolsFinance(); } catch(e) {}
+}
+
+function makeStarSVG() {
+    // inline svg star
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    const p = document.createElementNS(ns, 'path');
+    p.setAttribute('d', 'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z');
+    svg.appendChild(p);
+    return svg;
+}
+
+function makeStars(pid, currentRating) {
+    const wrap = document.createElement('div');
+    wrap.className = 'star-rating';
+
+    const cur = (currentRating === null || typeof currentRating === 'undefined' || currentRating === '') ? 0 : Number(currentRating);
+
+    for (let i = 1; i <= 5; i++) {
+        const s = document.createElement('span');
+        s.className = 'star ' + (i <= cur ? 'on' : 'off');
+        s.tabIndex = 0;
+        s.title = String(i);
+        s.appendChild(makeStarSVG());
+        s.onclick = () => setSessionRating(pid, i);
+        s.onkeydown = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSessionRating(pid, i); }
+        };
+        wrap.appendChild(s);
+    }
+
+    const clr = document.createElement('span');
+    clr.className = 'clear';
+    clr.textContent = 'limpar';
+    clr.onclick = () => clearSessionRating(pid);
+    wrap.appendChild(clr);
+
+    return wrap;
+}
+
+
+
+function renderSessionAttendanceField() {
+    const wrap = document.getElementById('sessionAttendanceField');
+    const s = getCurrentSession();
+    if (!wrap) return;
+
+    if (!s) { wrap.innerHTML = ''; return; }
+
+    // confirmados = players com Vem (present flag global)
+    const confirmed = players.filter(p => (p.present !== false));
+
+    wrap.innerHTML = '';
+    if (!confirmed.length) {
+        wrap.innerHTML = '<div class="small">Não há confirmados (Vem) para sugerir presença.</div>';
+        return;
+    }
+
+    confirmed.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'session-att-row';
+
+        const left = document.createElement('div');
+        left.className = 'left';
+        const billingText = (p.billingType==='mensalista'?'Mensalista':(p.billingType==='goleiro'?'Goleiro (isento)':'Avulso'));
+        left.innerHTML = `<div class="nm">${escapeHtml(p.name||'')}</div><div class="sm">${escapeHtml(p.position||'')} • ${escapeHtml(billingText)}</div>`;
+
+        const btn = document.createElement('button');
+        const isOn = !!(s.attendance && s.attendance[p.id]);
+        btn.className = isOn ? 'btn btn-green btn-sm' : 'btn btn-outline btn-sm';
+        btn.textContent = isOn ? 'Presente' : 'Ausente';
+        btn.onclick = () => toggleSessionAttendance(p.id);
+
+        row.appendChild(left);
+        row.appendChild(btn);
+        wrap.appendChild(row);
+    });
+}
+function renderSessionToolsField() {
+    const box = document.getElementById('sessionToolsField');
+    if (!box) return;
+
+    // default date value
+    const dt = document.getElementById('sessionDateField');
+    if (dt && !dt.value) dt.value = todayISO();
+
+    const s = getCurrentSession();
+
+    const locked = sessionStatsInputsLocked();
+    const info = document.getElementById('sessionInfoField');
+    const statsWrap = document.getElementById('sessionStatsField');
+
+    // score fields
+    const scoreA = document.getElementById('scoreA');
+    const scoreB = document.getElementById('scoreB');
+    const scoreC = document.getElementById('scoreC');
+    const scoreCWrap = document.getElementById('scoreCWrap');
+
+    if (!s) {
+        if (info) info.textContent = 'Carregue uma data para confirmar presença e lançar gols/assistências/notas.';
+        if (statsWrap) statsWrap.innerHTML = '';
+        try { const aw=document.getElementById('sessionAttendanceField'); if(aw) aw.innerHTML=''; } catch(e) {}
+        if (scoreA) scoreA.value = 0;
+        if (scoreB) scoreB.value = 0;
+        if (scoreC) scoreC.value = 0;
+        if (scoreCWrap) scoreCWrap.style.display = (config.teamsCount === 3 ? 'block' : 'none');
+        return;
+    }
+
+    ensureSessionExtras(s);
+
+    try { renderSessionAttendanceField(); } catch(e) {}
+
+    const present = players.filter(p => !!s.attendance[p.id]);
+    const presentCount = present.length;
+
+    if (info) {
+        const scoreTxt = `Placar: A ${s.score.A||0} x B ${s.score.B||0}` + (config.teamsCount===3 ? (` x C ${s.score.C||0}`) : '');
+        info.textContent = `Pelada ${s.date} • Presentes: ${presentCount} • ${scoreTxt}`;
+    }
+
+    if (scoreA) { scoreA.value = (s.score && isFinite(s.score.A) ? s.score.A : 0); scoreA.disabled = locked; }
+    if (scoreB) { scoreB.value = (s.score && isFinite(s.score.B) ? s.score.B : 0); scoreB.disabled = locked; }
+    if (scoreC) { scoreC.value = (s.score && isFinite(s.score.C) ? s.score.C : 0); scoreC.disabled = locked; }
+    if (scoreCWrap) scoreCWrap.style.display = (config.teamsCount === 3 ? 'block' : 'none');
+
+    const noteEl = document.getElementById('sessionNoteField');
+    if (noteEl) { noteEl.value = (s.notes || ''); noteEl.disabled = locked; }
+
+    if (!statsWrap) return;
+
+    if (!present.length) {
+        statsWrap.innerHTML = '<div class="small">Ninguém marcado como presente nesta data.</div>';
+        return;
+    }
+
+    const head = document.createElement('div');
+    head.className = 'session-stats-head';
+    head.innerHTML = '<div>Jogador</div><div class="mono">Gols</div><div class="mono">Assist.</div><div class="mono">Nota (0–5)</div><div class="cm">Comentário</div>';
+
+    statsWrap.innerHTML = '';
+    statsWrap.appendChild(head);
+
+    present.forEach(p => {
+        const st = getSessionPlayerStats(s, p.id);
+        const row = document.createElement('div');
+        row.className = 'session-stats-row';
+
+        const nm = document.createElement('div');
+        nm.className = 'nm';
+        nm.textContent = p.name;
+
+        // Goals stepper
+        const gWrap = document.createElement('div');
+        gWrap.className = 'stat-stepper';
+        const gMinus = document.createElement('button');
+        gMinus.type = 'button';
+        gMinus.className = 'btn btn-sm btn-step btn-minus';
+        gMinus.textContent = '-';
+        bindHoldRepeat(gMinus, () => { const v = incSessionStat(p.id, 'goals', -1); gVal.value = String(v); });
+
+        const gVal = document.createElement('input');
+        gVal.className = 'stat-val mono';
+        gVal.type = 'text';
+        gVal.readOnly = true;
+        gVal.value = String(st.goals||0);
+
+        const gPlus = document.createElement('button');
+        gPlus.type = 'button';
+        gPlus.className = 'btn btn-sm btn-step btn-plus';
+        gPlus.textContent = '+';
+        bindHoldRepeat(gPlus,  () => { const v = incSessionStat(p.id, 'goals',  1); gVal.value = String(v); });
+
+        gMinus.disabled = locked;
+        gPlus.disabled = locked;
+        gWrap.appendChild(gMinus);
+        gWrap.appendChild(gVal);
+        gWrap.appendChild(gPlus);
+
+        // Assists stepper
+        const aWrap = document.createElement('div');
+        aWrap.className = 'stat-stepper';
+        const aMinus = document.createElement('button');
+        aMinus.type = 'button';
+        aMinus.className = 'btn btn-sm btn-step btn-minus';
+        aMinus.textContent = '-';
+        bindHoldRepeat(aMinus, () => { const v = incSessionStat(p.id, 'assists', -1); aVal.value = String(v); });
+
+        const aVal = document.createElement('input');
+        aVal.className = 'stat-val mono';
+        aVal.type = 'text';
+        aVal.readOnly = true;
+        aVal.value = String(st.assists||0);
+
+        const aPlus = document.createElement('button');
+        aPlus.type = 'button';
+        aPlus.className = 'btn btn-sm btn-step btn-plus';
+        aPlus.textContent = '+';
+        bindHoldRepeat(aPlus,  () => { const v = incSessionStat(p.id, 'assists',  1); aVal.value = String(v); });
+
+        aMinus.disabled = locked;
+        aPlus.disabled = locked;
+        aWrap.appendChild(aMinus);
+        aWrap.appendChild(aVal);
+        aWrap.appendChild(aPlus);
+
+        // Stars rating (0-5)
+        const rStars = makeStars(p.id, st.rating);
+        if (locked) { rStars.style.pointerEvents = 'none'; rStars.style.opacity = '0.7'; }
+
+        const c = document.createElement('input');
+        c.type = 'text';
+        c.className = 'cm';
+        c.placeholder = 'Opcional (curto)';
+        c.value = st.comment || '';
+        c.disabled = locked;
+        c.onchange = () => setSessionStat(p.id, 'comment', c.value);
+
+        row.appendChild(nm);
+        row.appendChild(gWrap);
+        row.appendChild(aWrap);
+        row.appendChild(rStars);
+        row.appendChild(c);
+        statsWrap.appendChild(row);
+    });
+
+
+    try { renderScoreBanner('field'); } catch(e) {}
+    try { applySessionSubTab('field'); } catch(e) {}
+}
+
+
+function saveSessionScoreFromFinance() {
+    const s = getCurrentSession();
+    if (!s) return;
+    ensureSessionExtras(s);
+    const a = parseInt((document.getElementById('scoreA_fin')||{}).value)||0;
+    const b = parseInt((document.getElementById('scoreB_fin')||{}).value)||0;
+    const cEl = document.getElementById('scoreC_fin');
+    const c = cEl ? (parseInt(cEl.value)||0) : 0;
+    s.score = { A: Math.max(0,a), B: Math.max(0,b), C: Math.max(0,c) };
+    saveFinance();
+
+    try { renderScoreBanner('fin'); } catch(e) {}
+}
+
+function saveSessionNoteFromFinance() {
+    const s = getCurrentSession();
+    if (!s) return;
+    ensureSessionExtras(s);
+    const v = (document.getElementById('sessionNote_fin')||{}).value || '';
+    s.notes = String(v);
+    saveFinance();
+}
+
+function renderSessionToolsFinance() {
+    const statsWrap = document.getElementById('sessionStatsFin');
+    const scoreA = document.getElementById('scoreA_fin');
+    const scoreB = document.getElementById('scoreB_fin');
+    const scoreC = document.getElementById('scoreC_fin');
+    const scoreCWrap = document.getElementById('scoreCWrap_fin');
+    const noteEl = document.getElementById('sessionNote_fin');
+
+    if (scoreCWrap) scoreCWrap.classList.toggle('hidden', config.teamsCount !== 3);
+
+    const s = getCurrentSession();
+
+    const locked = sessionStatsInputsLocked();
+    if (!s) {
+        if (statsWrap) statsWrap.innerHTML = '';
+        if (scoreA) scoreA.value = 0;
+        if (scoreB) scoreB.value = 0;
+        if (scoreC) scoreC.value = 0;
+        if (noteEl) noteEl.value = '';
+        return;
+    }
+
+    ensureSessionExtras(s);
+
+    if (scoreA) { scoreA.value = (s.score && isFinite(s.score.A) ? s.score.A : 0); scoreA.disabled = locked; }
+    if (scoreB) { scoreB.value = (s.score && isFinite(s.score.B) ? s.score.B : 0); scoreB.disabled = locked; }
+    if (scoreC) { scoreC.value = (s.score && isFinite(s.score.C) ? s.score.C : 0); scoreC.disabled = locked; }
+    if (noteEl) { noteEl.value = (s.notes || ''); noteEl.disabled = locked; }
+
+    if (!statsWrap) return;
+
+    const present = players.filter(p => !!s.attendance[p.id]);
+    if (!present.length) {
+        statsWrap.innerHTML = '<div class="small">Ninguém marcado como presente nesta data.</div>';
+        return;
+    }
+
+    const head = document.createElement('div');
+    head.className = 'session-stats-head';
+    head.innerHTML = '<div>Jogador</div><div class="mono">Gols</div><div class="mono">Assist.</div><div class="mono">Nota (0–5)</div><div class="cm">Comentário</div>';
+
+    statsWrap.innerHTML = '';
+    statsWrap.appendChild(head);
+
+    present.forEach(p => {
+        const st = getSessionPlayerStats(s, p.id);
+        const row = document.createElement('div');
+        row.className = 'session-stats-row';
+
+        const nm = document.createElement('div');
+        nm.className = 'nm';
+        nm.textContent = p.name;
+
+        // Goals stepper
+        const gWrap = document.createElement('div');
+        gWrap.className = 'stat-stepper';
+        const gMinus = document.createElement('button');
+        gMinus.type = 'button';
+        gMinus.className = 'btn btn-sm btn-step btn-minus';
+        gMinus.textContent = '-';
+        bindHoldRepeat(gMinus, () => { const v = incSessionStat(p.id, 'goals', -1); gVal.value = String(v); });
+
+        const gVal = document.createElement('input');
+        gVal.className = 'stat-val mono';
+        gVal.type = 'text';
+        gVal.readOnly = true;
+        gVal.value = String(st.goals||0);
+
+        const gPlus = document.createElement('button');
+        gPlus.type = 'button';
+        gPlus.className = 'btn btn-sm btn-step btn-plus';
+        gPlus.textContent = '+';
+        bindHoldRepeat(gPlus,  () => { const v = incSessionStat(p.id, 'goals',  1); gVal.value = String(v); });
+
+        gMinus.disabled = locked;
+        gPlus.disabled = locked;
+        gWrap.appendChild(gMinus);
+        gWrap.appendChild(gVal);
+        gWrap.appendChild(gPlus);
+
+        // Assists stepper
+        const aWrap = document.createElement('div');
+        aWrap.className = 'stat-stepper';
+        const aMinus = document.createElement('button');
+        aMinus.type = 'button';
+        aMinus.className = 'btn btn-sm btn-step btn-minus';
+        aMinus.textContent = '-';
+        bindHoldRepeat(aMinus, () => { const v = incSessionStat(p.id, 'assists', -1); aVal.value = String(v); });
+
+        const aVal = document.createElement('input');
+        aVal.className = 'stat-val mono';
+        aVal.type = 'text';
+        aVal.readOnly = true;
+        aVal.value = String(st.assists||0);
+
+        const aPlus = document.createElement('button');
+        aPlus.type = 'button';
+        aPlus.className = 'btn btn-sm btn-step btn-plus';
+        aPlus.textContent = '+';
+        bindHoldRepeat(aPlus,  () => { const v = incSessionStat(p.id, 'assists',  1); aVal.value = String(v); });
+
+        aMinus.disabled = locked;
+        aPlus.disabled = locked;
+        aWrap.appendChild(aMinus);
+        aWrap.appendChild(aVal);
+        aWrap.appendChild(aPlus);
+
+        // Stars rating (0-5)
+        const rStars = makeStars(p.id, st.rating);
+        if (locked) { rStars.style.pointerEvents = 'none'; rStars.style.opacity = '0.7'; }
+
+        const c = document.createElement('input');
+        c.type = 'text';
+        c.className = 'cm';
+        c.placeholder = 'Opcional (curto)';
+        c.value = st.comment || '';
+        c.disabled = locked;
+        c.onchange = () => setSessionStat(p.id, 'comment', c.value);
+
+        row.appendChild(nm);
+        row.appendChild(gWrap);
+        row.appendChild(aWrap);
+        row.appendChild(rStars);
+        row.appendChild(c);
+        statsWrap.appendChild(row);
+    });
+
+
+    try { renderScoreBanner('fin'); } catch(e) {}
+    try { applySessionSubTab('fin'); } catch(e) {}
 }
 
 function getCurrentSession() {
@@ -1562,7 +2600,7 @@ function toggleSessionAttendance(pid) {
     s.attendance[pid] = !s.attendance[pid];
     saveFinance();
     if (financeConfig.autoAvulso) syncAvulsoChargeForPlayerInSession(pid, getCurrentSession());
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
 function sessionMarkAll(val) {
@@ -1571,7 +2609,7 @@ function sessionMarkAll(val) {
     players.forEach(p => { s.attendance[p.id] = !!val; });
     saveFinance();
     if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
 function generateAvulsoCharges() {
@@ -1588,7 +2626,7 @@ function generateAvulsoCharges() {
         created++;
     });
     saveFinance();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
     alert('✅ Cobranças avulsos geradas: ' + created);
 }
 
@@ -1633,7 +2671,7 @@ function syncAvulsoChargesForCurrentSession() {
     if (!s) return;
     players.forEach(p => syncAvulsoChargeForPlayerInSession(p.id, s));
     saveFinance();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
 function monthlyPaidAmount(playerId, month) {
@@ -1665,7 +2703,7 @@ function markMonthlyPaid(playerId) {
     if (remain <= 0) return; // já pago
     ledger.push({ id: uuid(), kind:'payment', category:'mensalidade_pag', playerId, amount: remain, date: todayISO(), note: 'Mensalidade paga ' + month, refMonth: month });
     saveFinance();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
 function markAllMonthlyPaid() {
@@ -1681,7 +2719,7 @@ function markAllMonthlyPaid() {
         }
     });
     saveFinance();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
     if (count) alert('✅ Mensalidades marcadas como pagas: ' + count);
 }
 function generateMonthlyCharges() {
@@ -1699,7 +2737,7 @@ function generateMonthlyCharges() {
         logTrash('gen_monthly_charges', { month: month, created: created, fee: fee });
     } catch(e) {}
     saveFinance();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
     alert('✅ Cobranças mensalistas geradas: ' + created);
 }
 
@@ -1804,7 +2842,7 @@ function splitExpenseById(expenseId) {
     } catch(e) {}
 
     saveFinance();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
     alert(`✅ Rateio gerado: ${targets.length} jogadores x ${money(per)}`);
 }
 function splitLastExpense() {
@@ -2173,6 +3211,9 @@ function renderFinance() {
     // audit log
     try { renderTrashLog(); } catch(e) {}
 
+
+
+    try { renderSessionToolsFinance(); } catch(e) {}
 }
 
 /* ---- CSV ---- */
@@ -2218,7 +3259,7 @@ function undoPaymentEntry(entryId) {
     logTrash('undo_payment', { playerId: e.playerId, playerName: who, amount: e.amount, date: e.date||'', note: e.note||'' });
     ledger.splice(i, 1);
     saveFinance();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
 function undoLastPaymentForPlayer(pid) {
@@ -2260,7 +3301,7 @@ function undoSplitByExpenseId(expenseId) {
 
     if (!confirm(msg)) return;
 
-    logTrash('undo_expense', { expenseId: expenseId, category: (exp.category||''), amount: exp.amount||0, date: exp.date||'', note: exp.note||'', removedRateioCount: chargeIdx.length, removedRateioTotal: chargeTotal });
+    logTrash('undo_expense', { expenseId: expenseId, category: (exp.category||''), amount: exp.amount||0, date: exp.date||'', note: exp.note||'', removedRateioCount: chargesIdx.length, removedRateioTotal: total });
 
     logTrash('undo_split', { expenseId: expenseId, category: (exp?exp.category:''), expenseAmount: (exp?exp.amount:0), removedCount: chargesIdx.length, removedTotal: total });
 
@@ -2270,7 +3311,7 @@ function undoSplitByExpenseId(expenseId) {
     }
 
     saveFinance();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
 
@@ -2316,7 +3357,7 @@ Ao confirmar, o rateio também será removido.` : '');
     ledger.splice(expIdx, 1);
 
     saveFinance();
-    renderFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
 
@@ -2662,7 +3703,7 @@ function openPrintReport() {
 
         const htmlOut = `<!doctype html>
 <html lang="pt-br"><head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Relatório Financeiro</title>
 <style>
@@ -2697,6 +3738,23 @@ th{color:#444;font-size:11px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width: 720px){.grid2{grid-template-columns:1fr}.kpi{min-width:180px}}
 @media print{.pagebreak{break-before:page}}
+
+/* ===== SESSION ATTENDANCE (FIELD) ===== */
+#sessionAttendanceField .session-att-row{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 0; border-bottom:1px solid #f0f0f0}
+#sessionAttendanceField .session-att-row .left{display:flex; flex-direction:column}
+#sessionAttendanceField .session-att-row .left .nm{font-weight:800; font-size:0.88rem}
+#sessionAttendanceField .session-att-row .left .sm{font-size:0.78rem; color:#64748b}
+
+/* ===== SESSION STATS (FIELD) ===== */
+#sessionStatsField .session-stats-row{display:grid; grid-template-columns: 1fr 76px 92px 92px 1.3fr; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid #f0f0f0}
+#sessionStatsField .session-stats-row .nm{font-weight:800; font-size:0.9rem}
+#sessionStatsField .session-stats-row input[type=number]{width:100%}
+#sessionStatsField .session-stats-row input[type=text]{width:100%}
+#sessionStatsField .session-stats-head{display:grid; grid-template-columns: 1fr 76px 92px 92px 1.3fr; gap:8px; font-size:0.78rem; color:#475569; margin-bottom:6px}
+@media (max-width: 767px){
+  #sessionStatsField .session-stats-row, #sessionStatsField .session-stats-head{grid-template-columns: 1fr 68px 84px 84px}
+  #sessionStatsField .session-stats-row .cm, #sessionStatsField .session-stats-head .cm{grid-column:1 / -1}
+}
 </style>
 </head><body>
 <header>
@@ -2790,6 +3848,166 @@ function triggerImportBackup(){
   inp.click();
 }
 
+
+
+/* ===== RANKINGS / ARTILHARIA ===== */
+function periodFromRankInputs() {
+    const yEl = document.getElementById('rankYear');
+    const mEl = document.getElementById('rankMonth');
+
+    let year = null;
+    if (yEl && String(yEl.value||'').trim()) year = parseInt(yEl.value);
+    if (!year || !isFinite(year)) year = new Date().getFullYear();
+
+    let month = null; // 'YYYY-MM'
+    if (mEl && String(mEl.value||'').trim()) month = String(mEl.value).slice(0,7);
+
+    return { year, month };
+}
+
+function computeTotalsForPeriod(filterFn) {
+    const totals = {}; // pid -> {goals, assists, pres, ratingSum, ratingCount}
+
+    players.forEach(p => {
+        totals[p.id] = { pid: p.id, name: p.name, goals: 0, assists: 0, pres: 0, ratingSum: 0, ratingCount: 0 };
+    });
+
+    (sessions||[]).forEach(s => {
+        if (!s || !s.date) return;
+        ensureSessionExtras(s);
+        if (!filterFn(s)) return;
+
+        players.forEach(p => {
+            if (!s.attendance || !s.attendance[p.id]) return;
+            totals[p.id].pres += 1;
+
+            const st = (s.stats && s.stats[p.id]) ? getSessionPlayerStats(s, p.id) : null;
+            if (st) {
+                totals[p.id].goals += Number(st.goals)||0;
+                totals[p.id].assists += Number(st.assists)||0;
+                if (st.rating !== null && isFinite(st.rating)) {
+                    totals[p.id].ratingSum += Number(st.rating);
+                    totals[p.id].ratingCount += 1;
+                }
+            }
+        });
+    });
+
+    // return as array, only players with at least 1 presenca in period
+    return Object.values(totals).filter(x => x.pres > 0);
+}
+
+function formatAvg(sum, count) {
+    if (!count) return '—';
+    const v = Math.round((sum / count) * 100) / 100;
+    // show 1 decimal when needed
+    if (Math.abs(v - Math.round(v)) < 0.00001) return String(Math.round(v));
+    return String(v.toFixed(1));
+}
+
+function renderRankTable(tbodyId, infoId, rows, label) {
+    const tb = document.getElementById(tbodyId);
+    const info = document.getElementById(infoId);
+    if (!tb) return;
+
+    if (info) info.textContent = label + ' • jogadores com pelo menos 1 presença: ' + rows.length;
+
+    // sort: goals desc, assists desc, pres desc, name
+    rows.sort((a,b) => (b.goals-a.goals) || (b.assists-a.assists) || (b.pres-a.pres) || (a.name||'').localeCompare(b.name||''));
+
+    tb.innerHTML = '';
+    if (!rows.length) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="5" class="small">Sem dados no período.</td>';
+        tb.appendChild(tr);
+        return;
+    }
+
+    rows.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(r.name||'')}</td>
+          <td class="mono">${escapeHtml(String(r.pres||0))}</td>
+          <td class="mono">${escapeHtml(String(r.goals||0))}</td>
+          <td class="mono">${escapeHtml(String(r.assists||0))}</td>
+          <td class="mono">${escapeHtml(formatAvg(r.ratingSum||0, r.ratingCount||0))}</td>
+        `;
+        tb.appendChild(tr);
+    });
+}
+
+function renderRankings() {
+    const { year, month } = periodFromRankInputs();
+
+    // populate default values
+    const yEl = document.getElementById('rankYear');
+    if (yEl && !String(yEl.value||'').trim()) yEl.value = year;
+
+    // monthly
+    const monthKey = month || (todayISO().slice(0,7));
+    const monthRows = computeTotalsForPeriod(s => String(s.date||'').slice(0,7) === monthKey);
+    renderRankTable('rankMonthTable', 'rankMonthInfo', monthRows, 'Mês: ' + monthKey);
+
+    // yearly
+    const yearKey = String(year);
+    const yearRows = computeTotalsForPeriod(s => String(s.date||'').slice(0,4) === yearKey);
+    renderRankTable('rankYearTable', 'rankYearInfo', yearRows, 'Ano: ' + yearKey);
+}
+
+function exportRankingsCSV() {
+    const { year, month } = periodFromRankInputs();
+    const monthKey = month || (todayISO().slice(0,7));
+    const yearKey = String(year);
+
+    const monthRows = computeTotalsForPeriod(s => String(s.date||'').slice(0,7) === monthKey);
+    const yearRows  = computeTotalsForPeriod(s => String(s.date||'').slice(0,4) === yearKey);
+
+    const toCsv = (rows) => {
+        const sorted = rows.slice().sort((a,b) => (b.goals-a.goals) || (b.assists-a.assists) || (b.pres-a.pres) || (a.name||'').localeCompare(b.name||''));
+        let csv = 'jogador_id,jogador_nome,presencas,gols,assistencias,nota_media\n';
+        sorted.forEach(r => {
+            const avg = r.ratingCount ? (r.ratingSum / r.ratingCount) : '';
+            csv += `${r.pid},${(r.name||'').split(',').join(';')},${r.pres},${r.goals},${r.assists},${String(avg).replace('.', ',')}\n`;
+        });
+        return csv;
+    };
+
+    const blob = new Blob([
+        '### RANKING MÊS ' + monthKey + '\n' + toCsv(monthRows) + '\n\n' +
+        '### RANKING ANO ' + yearKey + '\n' + toCsv(yearRows)
+    ], {type:'text/csv;charset=utf-8;'});
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `rankings_${yearKey}_${monthKey}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function exportMatchStatsCSV() {
+    let csv = 'data,placar_A,placar_B,placar_C,jogador_id,jogador_nome,presente,gols,assistencias,nota,comentario\n';
+
+    (sessions||[]).slice().sort((a,b) => String(a.date||'').localeCompare(String(b.date||''))).forEach(s => {
+        if (!s || !s.date) return;
+        ensureSessionExtras(s);
+        const scA = (s.score && isFinite(s.score.A)) ? s.score.A : 0;
+        const scB = (s.score && isFinite(s.score.B)) ? s.score.B : 0;
+        const scC = (s.score && isFinite(s.score.C)) ? s.score.C : 0;
+
+        players.forEach(p => {
+            const pres = (s.attendance && s.attendance[p.id]) ? '1' : '0';
+            if (pres !== '1') return; // export apenas presentes
+            const st = getSessionPlayerStats(s, p.id);
+            const note = st.rating === null ? '' : String(st.rating);
+            const cm = (st.comment||'').split('\n').join(' ').split(',').join(';');
+            csv += `${s.date},${scA},${scB},${scC},${p.id},${(p.name||'').split(',').join(';')},${pres},${st.goals||0},${st.assists||0},${note},${cm}\n`;
+        });
+    });
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+    a.download = 'stats_peladas.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
 function exportBackup(){
   try{
     const payload={_meta:{app:'Futebol de Terça',version:1,exportedAt:new Date().toISOString()},storage:{}};
