@@ -1,0 +1,1164 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://tess-workflows-files.storage.googleapis.com/a788c2d138f6a11bffaea4d0343bdc7187e51e09/index_edited_v37.html
+Subject: =?utf-8?Q?Futebol=20de=20Ter=C3=A7a?=
+Date: Wed, 25 Feb 2026 18:11:46 -0300
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--Dsg3BSX9EGgtj09E6I4rbE0ay4oaO4srTe6ARyruXf----"
+
+
+------MultipartBoundary--Dsg3BSX9EGgtj09E6I4rbE0ay4oaO4srTe6ARyruXf----
+Content-Type: text/html
+Content-ID: <frame-B9186F4A249D09545DAC6BC2D3F5069A@mhtml.blink>
+Content-Transfer-Encoding: binary
+Content-Location: https://tess-workflows-files.storage.googleapis.com/a788c2d138f6a11bffaea4d0343bdc7187e51e09/index_edited_v37.html
+
+<!DOCTYPE html><!-- saved from url=(0103)https://tess-workflows-files.storage.googleapis.com/fad7d88331bf02728926fdb381977e79ec94ee5e/index.html --><html lang="pt-br"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="stylesheet" type="text/css" href="cid:css-ebf5a760-2c20-464d-8aeb-cd7ec2e855de@mhtml.blink" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Futebol de Terça</title>
+
+</head>
+<body data-view="finance">
+<header>
+<div class="header-title">⚽ Futebol de Terça</div>
+
+</header>
+<div class="tabs">
+<button class="tab-btn">👥 Jogadores</button>
+<button class="tab-btn">⚽ Campo</button>
+<button class="tab-btn">📎 CSV</button>
+<button class="tab-btn active">💰 Financeiro</button><button class="tab-btn" id="tabRank" type="button">📊 Ranking / Artilharia</button><button class="tab-btn" id="tabHelp" type="button">❓ Ajuda</button></div>
+<div class="app-body">
+<!-- CADASTRO -->
+<div class="panel" id="panelCadastro">
+<div class="card">
+<h4 id="formTitle">➕ Cadastrar Jogador</h4>
+
+<div class="form-group" style="margin-bottom:6px">
+<label>Nome</label>
+<input id="pName" placeholder="Nome do jogador" type="text">
+</div>
+<div class="form-group" style="margin-bottom:6px">
+<label>Posição</label>
+<select id="pPos">
+<option>Goleiro</option><option>Zagueiro</option><option>Lateral</option>
+<option>Volante</option><option>Meio-campo</option><option>Atacante</option>
+</select>
+</div>
+<div class="form-group" style="margin-bottom:6px">
+<label>Cobrança</label>
+<select id="pBilling">
+<option value="mensalista">Mensalista (R$ 60/mês)</option>
+<option value="avulso">Avulso/Convidado (R$ 15/pelada)</option>
+<option value="goleiro">Goleiro (isento)</option>
+</select>
+</div>
+<div class="form-group" id="monthlyStartWrap" style="margin-bottom:6px;display:none">
+<label>Início da mensalidade (mês)</label>
+<input id="pMonthlyStart" type="month">
+<div class="small">Se o jogador virou mensalista agora, deixe no mês atual. Evita cobrar meses anteriores.</div>
+</div>
+
+<div class="form-group" style="margin-bottom:6px">
+<label>URL da Foto</label>
+<input id="pFoto" placeholder="https://lh3.googleusercontent.com/d/..." type="text">
+</div>
+<div class="btn-row">
+<button class="btn btn-primary" id="btnSave" style="flex:1">Adicionar</button>
+<button class="btn btn-outline hidden" id="btnCancel">Cancelar</button>
+</div>
+</div>
+<div class="card">
+<h4>📋 Jogadores (<span id="playerCount">0</span>)</h4>
+<div id="playerList"></div>
+</div>
+</div>
+<!-- CAMPO -->
+<div class="panel" id="panelField">
+<div class="field-controls">
+<span>Times:</span>
+<button class="btn btn-outline btn-sm active" id="btn2Times">2 Times</button>
+<button class="btn btn-outline btn-sm" id="btn3Times">3 Times</button>
+<span style="margin-left:8px">Por time:</span>
+<input id="limitPerTeam" max="15" min="1" style="width:48px" type="number" value="7">
+</div>
+<div class="pitch-wrap">
+<!-- ===== SVG DO CAMPO VERTICAL (mobile) ===== -->
+<svg class="pitch-svg" id="svgMobile" preserveAspectRatio="none" style="display: block;" viewBox="0 0 400 560" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<!-- Faixas verticais (mais contraste, estilo exemplo) -->
+<pattern height="56" id="stripeV" patternUnits="userSpaceOnUse" width="400" x="0" y="0">
+<rect fill="#0d5b2a" height="56" width="400"></rect>
+<rect fill="#179347" height="28" width="400"></rect>
+</pattern>
+</defs>
+<!-- Gramado -->
+<rect fill="url(#stripeV)" height="560" rx="8" width="400"></rect>
+<!-- Linhas brancas (sem meia-lua e sem área pequena) -->
+<g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" transform="translate(20,28) scale(0.9)">
+<!-- Borda -->
+<rect height="540" rx="6" width="380" x="10" y="10"></rect>
+<!-- Linha do meio -->
+<line x1="10" x2="390" y1="280" y2="280"></line>
+<!-- Círculo central + ponto -->
+<circle cx="200" cy="280" r="55"></circle>
+<circle cx="200" cy="280" fill="white" r="2" stroke="none"></circle>
+<!-- Área grande (cima) -->
+<rect height="90" width="220" x="90" y="10"></rect>
+<!-- Ponto pênalti (cima) -->
+<circle cx="200" cy="75" fill="white" r="2.5" stroke="none"></circle>
+<!-- Área grande (baixo) -->
+<rect height="90" width="220" x="90" y="460"></rect>
+<!-- Ponto pênalti (baixo) -->
+<circle cx="200" cy="485" fill="white" r="2.5" stroke="none"></circle>
+<!-- Gols -->
+<rect height="14" stroke="white" stroke-width="2" width="64" x="168" y="4"></rect>
+<rect height="14" stroke="white" stroke-width="2" width="64" x="168" y="542"></rect>
+<!-- Escanteios -->
+<path d="M 10 22 A 12 12 0 0 1 22 10"></path>
+<path d="M 378 10 A 12 12 0 0 1 390 22"></path>
+<path d="M 10 538 A 12 12 0 0 0 22 550"></path>
+<path d="M 390 538 A 12 12 0 0 1 378 550"></path>
+</g>
+</svg>
+<!-- ===== SVG DO CAMPO HORIZONTAL (desktop) ===== -->
+<svg class="pitch-svg" id="svgDesktop" preserveAspectRatio="none" style="display: none;" viewBox="0 0 700 435" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<!-- Faixas verticais (mais contraste, estilo exemplo) -->
+<pattern height="435" id="stripeD" patternUnits="userSpaceOnUse" width="80" x="0" y="0">
+<rect fill="#0d5b2a" height="435" width="80"></rect>
+<rect fill="#179347" height="435" width="40"></rect>
+</pattern>
+</defs>
+<!-- Gramado -->
+<rect fill="url(#stripeD)" height="435" rx="8" width="700"></rect>
+<!-- Linhas brancas (sem meia-lua e sem área pequena) -->
+<g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" transform="translate(35,21.75) scale(0.9)">
+<!-- Borda -->
+<rect height="415" rx="6" width="680" x="10" y="10"></rect>
+<!-- Linha do meio -->
+<line x1="350" x2="350" y1="10" y2="425"></line>
+<!-- Círculo central + ponto -->
+<circle cx="350" cy="217" r="60"></circle>
+<circle cx="350" cy="217" fill="white" r="2.5" stroke="none"></circle>
+<!-- Área grande esquerda -->
+<rect height="221" width="120" x="10" y="107"></rect>
+<!-- Ponto pênalti esq -->
+<circle cx="95" cy="217" fill="white" r="2.5" stroke="none"></circle>
+<!-- Área grande direita -->
+<rect height="221" width="120" x="570" y="107"></rect>
+<!-- Ponto pênalti dir -->
+<circle cx="605" cy="217" fill="white" r="2.5" stroke="none"></circle>
+<!-- Gols -->
+<rect height="81" stroke="white" stroke-width="2" width="12" x="0" y="177"></rect>
+<rect height="81" stroke="white" stroke-width="2" width="12" x="688" y="177"></rect>
+<!-- Escanteios -->
+<path d="M 10 22 A 12 12 0 0 1 22 10"></path>
+<path d="M 678 10 A 12 12 0 0 1 690 22"></path>
+<path d="M 10 413 A 12 12 0 0 0 22 425"></path>
+<path d="M 690 413 A 12 12 0 0 1 678 425"></path>
+</g>
+</svg>
+<!-- Zonas dos times (transparentes, por cima do SVG) -->
+<div class="pitch-inner" id="pitchInner">
+<div class="team-zone" data-team="A" id="zoneA">
+<div class="team-label">TIME A</div>
+</div>
+<div class="team-zone" data-team="B" id="zoneB">
+<div class="team-label">TIME B</div>
+</div>
+<div class="team-zone hidden" data-team="C" id="zoneC">
+<div class="team-label">TIME C</div>
+</div>
+</div>
+</div>
+<div class="bench-wrap">
+<h5>🪑 Banco de Reservas</h5>
+<div class="bench-slots" data-team="bench" id="bench"></div>
+<div class="card" id="sessionToolsField" style="margin-top:12px">
+  <h4>📅 Pelada agendada (por data)</h4>
+  <div class="small">Escolha a data, carregue a pelada e confirme a presença real. Os lançamentos (gols/assistências/nota) só aparecem para quem estiver <strong>Presente</strong>.</div>
+  <div class="hr"></div>
+
+  <div class="finance-row" style="flex-wrap:wrap">
+    <div class="form-group" style="min-width:180px">
+      <label>Data</label>
+      <input id="sessionDateField" type="date">
+    </div>
+    <button class="btn btn-primary" type="button">Carregar pelada</button>
+    <button class="btn btn-lite-red" type="button">Limpar presença</button>
+<button class="btn btn-lite-red" type="button">Excluir pelada (teste)</button>
+    <button class="btn btn-lite-green" type="button">Confirmados (Vem) → Presentes</button>
+<button class="btn btn-lite-green" type="button">Marcar todos presentes</button>
+</div>
+
+  <div class="small" id="sessionInfoField" style="margin:8px 0">Carregue uma data para confirmar presença e lançar gols/assistências/notas.</div>
+
+  <div class="hr"></div>
+  <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Confirmar presença (confirmados)</h4>
+  <div id="sessionAttendanceField"></div>
+
+  <div class="card" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0; box-shadow:none">
+    <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+      <div class="form-group" style="min-width:120px">
+        <label>Placar Time A</label>
+        <input id="scoreA" type="number" min="0" step="1" value="0">
+      </div>
+      <div class="form-group" style="min-width:120px">
+        <label>Placar Time B</label>
+        <input id="scoreB" type="number" min="0" step="1" value="0">
+      </div>
+      <div class="form-group hidden" style="min-width: 120px; display: none;" id="scoreCWrap">
+        <label>Placar Time C</label>
+        <input id="scoreC" type="number" min="0" step="1" value="0">
+      </div>
+      <div class="form-group" style="flex:1;min-width:220px">
+        <label>Obs da pelada (opcional)</label>
+        <input id="sessionNoteField" type="text" placeholder="Ex: chuva, bola nova, convidados...">
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+  <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Lançamentos da pelada (somente presentes)</h4>
+  <div id="sessionSubTabsField" class="session-subtabs"><button type="button" class="stbtn" data-tab="stats">Lançamentos</button><button type="button" class="stbtn" data-tab="summary">Resumo / Confirmar</button></div><div id="sessionStatsField"></div>
+</div>
+
+</div>
+</div>
+<!-- CSV MOBILE -->
+<div class="panel" id="panelCSV">
+<div class="card" id="backupCard">
+<h4>💾 Backup / Restaurar</h4>
+<p class="small">Baixe um arquivo .json com tudo que está salvo neste aparelho (jogadores, times, posições e configurações). Para compartilhar, envie o arquivo e restaure no outro aparelho.</p>
+<div class="btn-row">
+<button class="btn btn-primary" type="button">Baixar backup (.json)</button>
+<button class="btn btn-outline" type="button">Restaurar backup</button>
+</div>
+<div class="small" style="margin-top:8px">Atenção: restaurar substitui os dados deste navegador (apenas dados do app).</div>
+</div>
+<div class="card">
+<h4>📥 Carregar CSV do GitHub</h4>
+<div class="form-group" style="margin-bottom:8px">
+<label>URL Raw do CSV</label>
+<input id="csvUrlMobile" placeholder="https://raw.githubusercontent.com/..." type="text">
+</div>
+<button class="btn btn-primary" style="width:100%">Carregar CSV</button>
+</div>
+<div class="card">
+<h4>📤 Exportar CSV</h4>
+<p style="font-size:0.82rem;color:#666;margin-bottom:8px">Baixa jogadores.csv com todos os jogadores.</p>
+<button class="btn btn-green" style="width:100%">Exportar CSV</button>
+</div>
+</div>
+<!-- FINANCEIRO -->
+<div class="panel active" id="panelFinance">
+<div class="fin-sep fin-step-1"><div class="fin-sep-title">1) Configurar valores</div><div class="fin-sep-sub">Defina os valores de mensalista/avulso. Isso fica salvo neste aparelho.</div></div><div class="card fin-card fin-config">
+<h4>💰 Financeiro</h4>
+<div class="finance-row">
+<div class="form-group">
+<label>Mensalista (R$ / mês)</label>
+<input id="feeMonthly" min="0" step="1" type="number" value="60">
+</div>
+<div class="form-group">
+<label>Avulso (R$ / pelada)</label>
+<input id="feeSingle" min="0" step="1" type="number" value="15">
+</div>
+</div>
+<div class="small" style="margin-top:6px">Dica: isso fica salvo no seu celular/PC (localStorage).</div>
+</div><div class="fin-sep fin-step-2"><div class="fin-sep-title">2) Gerar cobranças</div><div class="fin-sep-sub">Carregue a pelada do dia e/ou gere as mensalidades do mês.</div></div><div class="card fin-card fin-session">
+<h4>🗓️ Pelada (por data)</h4>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Data</label>
+<input id="sessionDate" type="date">
+</div>
+<button class="btn btn-outline">Carregar</button>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<button class="btn btn-outline btn-sm">Marcar todos presentes</button>
+<button class="btn btn-outline btn-sm">Marcar todos ausentes</button>
+<button class="btn btn-primary btn-sm">Gerar cobranças avulsos</button>
+<button class="btn btn-danger btn-sm">Excluir pelada (teste)</button>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#444">
+<input id="autoAvulso" type="checkbox">
+                    Cobrar avulso automaticamente ao marcar Presente
+                </label>
+</div>
+<div class="small" id="sessionInfo" style="margin-top:8px">Carregue uma data para controlar presença e gerar cobranças de avulsos.</div>
+<div id="sessionAttendance" style="margin-top:8px"></div>
+
+<div class="hr"></div>
+<div class="finance-row" style="margin-top:8px">
+  <button class="btn btn-outline btn-sm" type="button">Limpar presença</button>
+  <button class="btn btn-outline btn-sm" type="button">Confirmados (Vem) → Presentes</button>
+  <button class="btn btn-outline btn-sm" type="button">Campo/Banco → Presentes (limpar)</button>
+</div>
+
+<div class="card" id="sessionScoreFinance" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0; box-shadow:none; margin-top:8px">
+  <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+    <div class="form-group" style="min-width:120px">
+      <label>Placar Time A</label>
+      <input id="scoreA_fin" type="number" min="0" step="1" value="0">
+    </div>
+    <div class="form-group" style="min-width:120px">
+      <label>Placar Time B</label>
+      <input id="scoreB_fin" type="number" min="0" step="1" value="0">
+    </div>
+    <div class="form-group hidden" style="min-width:120px" id="scoreCWrap_fin">
+      <label>Placar Time C</label>
+      <input id="scoreC_fin" type="number" min="0" step="1" value="0">
+    </div>
+    <div class="form-group" style="flex:1;min-width:220px">
+      <label>Obs da pelada (opcional)</label>
+      <input id="sessionNote_fin" type="text" placeholder="Ex: chuva, bola nova, convidados...">
+    </div>
+  </div>
+</div>
+
+<div id="scoreBannerFin" class="score-banner" style="display:none"><div class="t"></div><div class="s mono"></div><div class="sub" id="statsConfirmInfoFin" style="margin-top:6px"></div><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap" id="statsConfirmActionsFin"></div></div>
+
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Lançamentos da pelada (somente presentes)</h4>
+<div id="sessionSubTabsFin" class="session-subtabs"><button type="button" class="stbtn active" data-tab="stats">Lançamentos</button><button type="button" class="stbtn" data-tab="summary">Resumo / Confirmar</button></div><div id="sessionStatsFin"></div>
+
+</div><div class="card fin-card fin-monthly">
+<h4>📆 Mensalidades</h4>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Mês</label>
+<input id="billingMonth" type="month">
+</div>
+<button class="btn btn-primary">Gerar cobranças</button>
+<button class="btn btn-danger" type="button">Excluir cobranças do mês</button>
+</div>
+<div class="small" style="margin-top:6px">Gera 1 cobrança por mensalista no mês escolhido (evita duplicar).</div>
+<div class="finance-row" style="margin-top:8px">
+<button class="btn btn-green btn-sm">Marcar todos pagos</button>
+</div>
+<div id="monthlyList" style="margin-top:8px"><div class="small">Nenhum mensalista cadastrado.</div></div>
+</div><div class="fin-sep fin-step-3"><div class="fin-sep-title">3) Movimentar o caixa</div><div class="fin-sep-sub">Registre pagamentos, despesas e faça rateios (pendentes e realizados).</div></div><div class="card fin-card fin-adjust"><h4>💵 Saldo inicial / Ajuste de caixa</h4><div class="finance-row">
+<div class="form-group" style="flex:1;min-width:170px">
+<label>Ajuste (R$)</label>
+<input id="cashAdjustAmount" placeholder="Ex: 100 (entrada) ou -50 (saída)" step="0.01" type="number">
+</div>
+<div class="form-group" style="flex:2;min-width:220px">
+<label>Obs</label>
+<input id="cashAdjustNote" placeholder="Ex: saldo anterior, troco, acerto..." type="text">
+</div>
+<button class="btn btn-primary" type="button">Aplicar ajuste</button>
+</div><div class="small" style="margin-top:6px">Use valor positivo para entrada no caixa e negativo para saída. Não vincula a jogador.</div></div><div class="card fin-card fin-payment">
+<h4>✅ Registrar pagamento</h4>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Jogador</label>
+<select id="payPlayer" disabled=""><option value="">Selecione...</option></select>
+</div>
+<div class="form-group">
+<label>Valor (R$)</label>
+<input id="payAmount" min="0" step="1" type="number" value="15">
+</div>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<div class="form-group" style="flex:1">
+<label>Obs (Pix, dinheiro, etc.)</label>
+<input id="payNote" placeholder="Ex: Pix, fulano pagou pra ciclano" type="text">
+</div>
+<button class="btn btn-green">Salvar pagamento</button>
+</div>
+</div><div class="card fin-card fin-expense">
+<h4>🧾 Despesas do caixa</h4>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Categoria</label>
+<select id="expCategory">
+<option value="goleiro_alugado">Goleiro de fora</option>
+<option value="quadra">Aluguel da quadra</option>
+<option value="bola">Bola / material</option>
+<option value="outros">Outros</option>
+</select>
+</div>
+<div class="form-group">
+<label>Valor (R$)</label>
+<input id="expAmount" min="0" step="1" type="number" value="0">
+</div>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<div class="form-group" style="flex:1">
+<label>Obs</label>
+<input id="expNote" placeholder="Ex: pagamos goleiro X, bola nova Nike" type="text">
+</div>
+<button class="btn btn-danger">Salvar despesa</button>
+</div>
+<div class="hr"></div>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Ratear compra (gera cobranças)</label>
+<select id="splitMode">
+<option value="none">Não ratear (sai do caixa)</option>
+<option value="mensal_all">Entre mensalistas (todos)</option>
+<option value="mensal_present">Entre mensalistas presentes (pelada carregada)</option>
+<option value="session_present">Entre presentes da pelada carregada</option>
+<option value="all_non_goalie">Entre todos (exceto goleiros isentos)</option>
+</select>
+</div>
+<button class="btn btn-primary">Ratear última despesa</button>
+</div>
+<div class="small" style="margin-top:6px">Use: salve uma despesa de Bola/Outros e depois clique em ratear.</div>
+</div><div class="card fin-card fin-pendingsplit">
+<h4>⏳ Despesas pendentes de rateio</h4>
+<div class="pending-splits" id="pendingSplits"><div class="small">Nenhuma despesa pendente de rateio.</div></div>
+<div class="small" style="margin-top:6px">Mostra despesas (Bola/Outros) que ainda não foram rateadas.</div>
+</div><div class="card fin-card fin-donesplit">
+<h4>✅ Rateios realizados</h4>
+<div class="pending-splits" id="doneSplits"><div class="small">Nenhum rateio feito ainda.</div></div>
+<div class="small" style="margin-top:6px">Aqui você consegue desfazer um rateio (remove as cobranças geradas, mas mantém a despesa no caixa).</div>
+</div><div class="fin-sep fin-step-4"><div class="fin-sep-title">4) Conferir e fechar</div><div class="fin-sep-sub">Veja pendências, histórico/auditoria e exporte/gera PDF.</div></div><div class="card fin-card fin-debts">
+<h4>📌 Pendências</h4>
+<div class="small" id="financeSummary" style="margin-bottom:8px">
+                <div class="kpi-row">
+                    <div class="kpi-item">
+                        <div class="kpi-label">Caixa</div>
+                        <div class="kpi-value kpi-cash pos"><span class="mono">+ R$ 0,00</span></div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">Total a receber</div>
+                        <div class="kpi-value kpi-recv"><span class="mono">R$ 0,00</span></div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">Lançamentos</div>
+                        <div class="kpi-value kpi-meta"><span class="mono">0</span></div>
+                    </div>
+                </div></div>
+<table class="finance-table">
+<thead>
+<tr>
+<th>Jogador</th>
+<th class="mono">Saldo</th>
+<th>Ação</th>
+</tr>
+</thead>
+<tbody id="debtsTable"></tbody>
+</table>
+
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">🧹 Limpeza / Diagnóstico (cobranças)</h4>
+<div class="small" id="chargesDiagSummary" style="margin-bottom:8px">Use os filtros para achar cobranças de teste. Você pode remover cobranças individualmente.</div>
+<div class="audit-grid" style="margin-bottom:10px">
+  <div class="form-group" style="min-width:160px"><label>De</label><input id="chargesDiagFrom" type="date"></div>
+  <div class="form-group" style="min-width:160px"><label>Até</label><input id="chargesDiagTo" type="date"></div>
+  <div class="form-group" style="min-width:170px"><label>Categoria</label>
+    <select id="chargesDiagCat">
+      <option value="all">Todas</option>
+      <option value="avulso">avulso</option>
+      <option value="mensalidade">mensalidade</option>
+      <option value="rateio">rateio</option>
+      <option value="ajuste_caixa">ajuste_caixa</option>
+    </select>
+  </div>
+  <div class="form-group" style="flex:1;min-width:220px"><label>Buscar</label>
+    <input id="chargesDiagSearch" type="text" placeholder="Ex: 2026-02-24, avulso, Pelada...">
+  </div>
+  <div class="form-group" style="min-width:180px"><label>Mostrar</label>
+    <select id="chargesDiagScope">
+      <option value="owing" selected="">Somente quem está devendo</option>
+      <option value="all">Todas as cobranças</option>
+    </select>
+  </div>
+  <button class="btn btn-outline btn-sm" type="button">Atualizar</button>
+<button class="btn btn-danger btn-sm" type="button">Limpar rateios órfãos</button>
+<button class="btn btn-danger btn-sm" type="button">Remover cobranças listadas</button>
+</div>
+<table class="finance-table">
+  <thead><tr><th>Data</th><th>Jogador</th><th>Categoria</th><th class="mono">Valor</th><th>Obs</th><th class="mono">Sessão/Mês</th><th>Ação</th></tr></thead>
+  <tbody id="chargesDiagTable"></tbody>
+</table>
+<div class="small" style="margin-top:6px">Dica: se aparecer <strong>mensalidade</strong> e você gerou por teste, dá pra remover por mês (posso adicionar botão em lote).</div>
+
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">🧾 Últimos pagamentos</h4>
+<table class="finance-table">
+<thead>
+<tr><th>Data</th><th>Jogador</th><th>Valor</th><th>Ação</th></tr>
+</thead>
+<tbody id="paymentsTable"><tr><td colspan="4" class="small">Nenhum pagamento registrado.</td></tr></tbody>
+</table>
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Últimas despesas</h4>
+<table class="finance-table">
+<thead>
+<tr><th>Data</th><th>Categoria</th><th>Valor</th><th>Ação</th></tr>
+</thead>
+<tbody id="expensesTable"><tr><td colspan="4" class="small">Nenhuma despesa registrada.</td></tr></tbody>
+</table>
+</div><div class="card fin-card fin-audit">
+<h4>🗑️ Histórico / Auditoria</h4>
+<div class="audit-grid" style="margin-bottom:10px">
+<div class="form-group">
+<label>Filtro</label>
+<select id="auditFilter">
+<option value="all">Tudo</option>
+<option value="add_payment">Pagamentos</option>
+<option value="add_expense">Despesas</option>
+<option value="do_split">Rateios</option>
+<option value="gen_monthly_charges">Mensalidades (gerar cobranças)</option>
+<option value="undo">Desfazer (pagamento/rateio/despesa)</option>
+</select>
+</div>
+<div class="form-group" style="flex:1;min-width:220px">
+<label>Buscar</label>
+<input id="auditSearch" placeholder="Ex: Alisson, quadra, Pix..." type="text">
+</div>
+<button class="btn btn-outline btn-sm">Baixar historico.csv</button>
+<button class="btn btn-outline btn-sm">Baixar relatorio_geral.csv</button>
+<div class="form-group" style="min-width:170px"><label>PDF: itens</label><select id="printLimit"><option selected="" value="200">Últimos 200</option><option value="500">Últimos 500</option><option value="1000">Últimos 1000</option><option value="all">Tudo</option></select></div><div class="form-group" style="min-width:160px"><label>PDF: de</label><input id="printFrom" type="date"></div><div class="form-group" style="min-width:160px"><label>PDF: até</label><input id="printTo" type="date"></div>
+<button class="btn btn-outline btn-sm">PDF = mês das mensalidades</button><button class="btn btn-outline btn-sm">Imprimir / PDF</button>
+<button class="btn btn-danger btn-sm">Limpar histórico</button>
+</div>
+
+QuandoTipoDetalhes
+
+
+<div class="small" style="margin-top:6px">Obs: isso é apenas um log para auditoria. Não restaura automaticamente os itens.</div>
+</div><div class="card fin-card fin-export">
+<h4>📤 Exportar financeiro</h4>
+<button class="btn btn-outline" style="width:100%">Baixar financeiro.csv</button>
+</div></div><div class="panel" id="panelHelp">
+<div class="card">
+<h4>❓ Ajuda rápida (como usar do começo ao fim)</h4>
+<div class="help-note">Tudo fica salvo no seu navegador (celular/PC). Para usar em outro aparelho, use <strong>Backup</strong> e <strong>Restaurar</strong>.</div>
+</div>
+<div class="card">
+<h4>1) Primeira vez (setup)</h4>
+<div class="help-steps">
+<div class="help-step"><strong>1.</strong> Vá em <strong>Jogadores</strong> e cadastre ou carregue pelo <strong>CSV</strong>.</div>
+<div class="help-step"><strong>2.</strong> Vá em <strong>Financeiro</strong> e ajuste <strong>Mensalista</strong> e <strong>Avulso</strong>.</div>
+<div class="help-step"><strong>3.</strong> Em <strong>Movimentar o caixa</strong>, use <strong>Saldo inicial / Ajuste de caixa</strong> para começar com o caixa certo.</div>
+<div class="help-step"><strong>4.</strong> Faça um <strong>Backup</strong> e guarde o arquivo .json.</div>
+</div>
+</div>
+<div class="card">
+<h4>2) Jogadores</h4>
+<details class="help-details" open="">
+<summary>O que fazer aqui</summary>
+<ul class="help-list">
+<li><strong>Adicionar</strong> jogador (nome, posição, cobrança, foto).</li>
+<li><strong>Editar</strong> ou <strong>excluir</strong> jogadores.</li>
+<li>Marcar <strong>Vem/Falta</strong> (controle geral do grupo).</li>
+</ul>
+</details>
+</div>
+<div class="card">
+<h4>3) Campo (escalação)</h4>
+<details class="help-details" open="">
+<summary>Como escalar</summary>
+<ul class="help-list">
+<li>Escolha <strong>2 Times</strong> ou <strong>3 Times</strong> e o número <strong>por time</strong>.</li>
+<li>Arraste jogadores para <strong>TIME A</strong>, <strong>TIME B</strong> (e <strong>TIME C</strong>) e para o <strong>Banco de Reservas</strong>.</li>
+<li>No banco, o card mostra <strong>nome</strong> e <strong>posição</strong> (útil quando a foto não ajuda).</li>
+</ul>
+</details>
+</div>
+<div class="card">
+<h4>4) CSV (importar/exportar)</h4>
+<details class="help-details">
+<summary>Importar / Exportar</summary>
+<ul class="help-list">
+<li><strong>Carregar CSV</strong>: cole a URL Raw do jogadores.csv (GitHub) e carregue.</li>
+<li><strong>Exportar CSV</strong>: baixa o arquivo com todos os jogadores.</li>
+</ul>
+</details>
+<details class="help-details" open="">
+<summary>Backup / Restaurar (recomendado)</summary>
+<ul class="help-list">
+<li><strong>Backup</strong> baixa um .json com tudo do app neste aparelho.</li>
+<li><strong>Restaurar</strong> aplica o .json em outro aparelho (ou para recuperar dados).</li>
+</ul>
+</details>
+</div>
+<div class="card">
+<h4>5) Financeiro (rotina do dia)</h4>
+<details class="help-details" open="">
+<summary>Passo a passo</summary>
+<div class="help-steps">
+<div class="help-step"><strong>Etapa 1:</strong> Configure valores (Mensalista/Avulso).</div>
+<div class="help-step"><strong>Etapa 2:</strong> Em <strong>Pelada (por data)</strong>, escolha a data, carregue e marque presentes/ausentes. Gere cobranças de avulsos se necessário.</div>
+<div class="help-step"><strong>Etapa 2:</strong> Em <strong>Mensalidades</strong>, selecione o mês e clique <strong>Gerar cobranças</strong>.</div>
+<div class="help-step"><strong>Etapa 3:</strong> Use <strong>Saldo inicial / Ajuste de caixa</strong> para entradas/saídas sem jogador.</div>
+<div class="help-step"><strong>Etapa 3:</strong> Registre <strong>Pagamentos</strong> e <strong>Despesas</strong>.</div>
+<div class="help-step"><strong>Etapa 3:</strong> Para compras (bola/outros), use <strong>Ratear</strong> para gerar cobranças do rateio.</div>
+<div class="help-step"><strong>Etapa 4:</strong> Veja <strong>Pendências</strong> e use os botões rápidos para receber.</div>
+<div class="help-step"><strong>Etapa 4:</strong> Use <strong>Histórico/Auditoria</strong>, exporte CSV e gere PDF quando precisar.</div>
+</div>
+</details>
+</div>
+<div class="card">
+<h4>6) Dicas e problemas comuns</h4>
+<details class="help-details">
+<summary>Não aparece em outro celular/PC</summary>
+<div class="help-note">Cada aparelho tem seus dados. Use <strong>Backup</strong> (no aparelho A) e <strong>Restaurar</strong> (no aparelho B).</div>
+</details>
+<details class="help-details">
+<summary>Apareceu texto estranho (código) no fim da tela</summary>
+<div class="help-note">Atualize a página. Se persistir, use o Chrome padrão e evite extensões/bloqueadores. Se continuar acontecendo, refaça um Backup e me diga qual navegador para eu ajustar.</div>
+</details>
+</div>
+</div>
+</div>
+
+<div class="panel" id="panelRank">
+  <div class="card">
+    <h4>📊 Ranking / Artilharia</h4>
+    <div class="small">Lance gols, assistências, nota (0–5) e comentário por data. Rankings consideram apenas jogadores marcados como <strong>Presentes</strong> na pelada.</div>
+    <div class="hr"></div>
+    <div class="finance-row" style="flex-wrap:wrap">
+      <div class="form-group" style="min-width:160px">
+        <label>Ano</label>
+        <input id="rankYear" type="number" min="2020" step="1" value="">
+      </div>
+      <div class="form-group" style="min-width:170px">
+        <label>Mês (opcional)</label>
+        <input id="rankMonth" type="month">
+      </div>
+      <button class="btn btn-outline" type="button">Atualizar</button>
+      <button class="btn btn-outline" type="button">Baixar rankings.csv</button>
+      <button class="btn btn-outline" type="button">Baixar stats_peladas.csv</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin:0 0 8px;color:var(--green)">Ranking do mês</h4>
+    <div class="small" id="rankMonthInfo" style="margin-bottom:8px"></div>
+    <table class="finance-table">
+      <thead>
+        <tr>
+          <th>Jogador</th>
+          <th class="mono">Presenças</th>
+          <th class="mono">Gols</th>
+          <th class="mono">Assist.</th>
+          <th class="mono">Nota média</th>
+        </tr>
+      </thead>
+      <tbody id="rankMonthTable"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h4 style="margin:0 0 8px;color:var(--green)">Ranking do ano</h4>
+    <div class="small" id="rankYearInfo" style="margin-bottom:8px"></div>
+    <table class="finance-table">
+      <thead>
+        <tr>
+          <th>Jogador</th>
+          <th class="mono">Presenças</th>
+          <th class="mono">Gols</th>
+          <th class="mono">Assist.</th>
+          <th class="mono">Nota média</th>
+        </tr>
+      </thead>
+      <tbody id="rankYearTable"></tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
+</body></html>
+------MultipartBoundary--Dsg3BSX9EGgtj09E6I4rbE0ay4oaO4srTe6ARyruXf----
+Content-Type: text/css
+Content-Transfer-Encoding: binary
+Content-Location: cid:css-ebf5a760-2c20-464d-8aeb-cd7ec2e855de@mhtml.blink
+
+@charset "utf-8";
+
+:root { --green: #2e7d32; --green2: #388e3c; --primary: #1a73e8; --danger: #d32f2f; --bg: #f0f2f5; --white: #ffffff; --text: #222; --radius: 8px; }
+
+* { box-sizing: border-box; margin: 0px; padding: 0px; font-family: "Segoe UI", sans-serif; }
+
+body { background: var(--bg); color: var(--text); min-height: 100vh; }
+
+header { background: var(--white); padding: 10px 12px; box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 6px; position: sticky; top: 0px; z-index: 200; }
+
+.header-title { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+
+.header-controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+.btn { padding: 7px 12px; border: none; border-radius: var(--radius); cursor: pointer; font-weight: 600; font-size: 0.82rem; transition: 0.2s; white-space: nowrap; }
+
+.btn-primary { background: var(--primary); color: rgb(255, 255, 255); }
+
+.btn-green { background: var(--green); color: rgb(255, 255, 255); }
+
+.btn-outline { background: rgb(255, 255, 255); border: 2px solid var(--primary); color: var(--primary); }
+
+.btn-outline.active { background: var(--primary); color: rgb(255, 255, 255); }
+
+.btn-danger { background: var(--danger); color: rgb(255, 255, 255); }
+
+.btn-sm { padding: 4px 8px; font-size: 0.75rem; }
+
+.btn-icon { padding: 5px 8px; font-size: 0.8rem; }
+
+input[type="text"], input[type="number"], select { padding: 7px 9px; border: 1px solid rgb(204, 204, 204); border-radius: var(--radius); font-size: 0.85rem; width: 100%; }
+
+label { font-size: 0.8rem; font-weight: 600; color: rgb(85, 85, 85); display: block; margin-bottom: 3px; }
+
+.tabs { display: flex; background: var(--white); border-bottom: 2px solid rgb(224, 224, 224); }
+
+.tab-btn { flex: 1 1 0%; padding: 10px 4px; border-top: none; border-right: none; border-left: none; border-image: initial; background: none; font-size: 0.78rem; font-weight: 600; cursor: pointer; color: rgb(136, 136, 136); border-bottom: 3px solid transparent; transition: 0.2s; }
+
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.panel { display: none; padding: 12px; }
+
+.panel.active { display: block; }
+
+.card { background: var(--white); border-radius: var(--radius); box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 4px; padding: 14px; margin-bottom: 12px; }
+
+.card h4 { font-size: 0.95rem; margin-bottom: 10px; color: var(--green); }
+
+.form-group { display: flex; flex-direction: column; gap: 4px; flex: 1 1 0%; min-width: 120px; }
+
+.btn-row { display: flex; gap: 8px; margin-top: 8px; }
+
+.player-item { display: flex; align-items: center; gap: 10px; padding: 8px 0px; border-bottom: 1px solid rgb(240, 240, 240); }
+
+.player-item:last-child { border-bottom: none; }
+
+.avatar-sm { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); flex-shrink: 0; }
+
+.player-info { flex: 1 1 0%; }
+
+.player-info strong { font-size: 0.88rem; display: block; }
+
+.player-info small { font-size: 0.75rem; color: rgb(119, 119, 119); }
+
+.player-actions { display: flex; gap: 4px; }
+
+#panelField { padding: 8px; }
+
+.field-controls { background: var(--white); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 4px; }
+
+.field-controls span { font-size: 0.82rem; font-weight: 600; }
+
+.pitch-wrap { position: relative; width: 100%; padding-top: 140%; border-radius: 10px; overflow: hidden; border: 5px solid rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 18px; }
+
+.pitch-svg { position: absolute; inset: 0px; width: 100%; height: 100%; display: block; pointer-events: none; z-index: 0; }
+
+.pitch-inner { position: absolute; inset: 0px; display: flex; flex-direction: column; z-index: 2; }
+
+.team-zone { position: relative; flex: 1 1 0%; transition: background 0.2s; min-height: 0px; overflow: hidden; }
+
+.team-zone.dragover { background: rgba(255, 255, 255, 0.12); }
+
+.pcard { position: absolute; width: 54px; display: flex; flex-direction: column; align-items: center; cursor: grab; user-select: none; z-index: 10; touch-action: none; }
+
+.pcard:active { cursor: grabbing; }
+
+.pcard-photo { width: 42px; height: 42px; border-radius: 50%; border: 2.5px solid rgb(255, 255, 255); overflow: hidden; box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 6px; background: rgb(170, 170, 170); }
+
+.pcard-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.pcard-name { font-size: 9px; font-weight: 700; color: rgb(255, 255, 255); text-shadow: rgb(0, 0, 0) 0px 1px 3px; max-width: 54px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: center; margin-top: 2px; }
+
+.pcard-pos { font-size: 8px; color: rgb(238, 238, 238); text-shadow: rgb(0, 0, 0) 0px 1px 2px; }
+
+.bench-wrap { background: rgb(255, 255, 255); border-radius: var(--radius); padding: 10px 12px; margin-top: 10px; box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 4px; min-height: 90px; }
+
+.bench-wrap h5 { font-size: 0.82rem; color: rgb(85, 85, 85); margin-bottom: 8px; }
+
+.bench-slots { display: flex; flex-wrap: wrap; gap: 8px; min-height: 60px; padding: 4px; border: 2px dashed rgb(221, 221, 221); border-radius: var(--radius); }
+
+.bench-slots.dragover { border-color: var(--primary); background: rgb(232, 240, 254); }
+
+.bcard { width: 56px; display: flex; flex-direction: column; align-items: center; cursor: grab; user-select: none; touch-action: none; }
+
+.bcard-photo { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; background: rgb(204, 204, 204); }
+
+.bcard-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.bcard-name { font-size: 9px; font-weight: 700; color: rgb(51, 51, 51); text-align: center; margin-top: 2px; max-width: 56px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+.bcard-pos { font-size: 8px; color: rgb(119, 119, 119); text-align: center; }
+
+#panelCSV .card { margin-bottom: 12px; }
+
+@media (min-width: 768px) {
+  body { display: grid; grid-template-rows: auto auto 1fr; }
+  .app-body { display: grid; gap: 16px; padding: 16px; align-items: start; overflow: auto; }
+  body[data-view="field"] .app-body { grid-template-columns: 340px 1fr; }
+  body[data-view="finance"] .app-body, body[data-view="csv"] .app-body, body[data-view="players"] .app-body { grid-template-columns: 1fr; }
+  body[data-view="rank"] .app-body { grid-template-columns: 1fr; }
+  #panelCadastro, #panelField, #panelCSV, #panelFinance { padding: 0px; }
+  .csv-desktop { gap: 8px; align-items: center; display: flex !important; }
+  .pitch-wrap { padding-top: 62%; }
+  .pitch-inner { flex-direction: row; }
+  .pcard { width: 62px; }
+  .pcard-photo { width: 48px; height: 48px; }
+  .pcard-name { font-size: 10px; max-width: 62px; }
+}
+
+.csv-desktop { display: none; }
+
+.hidden { display: none !important; }
+
+.team-label { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; font-weight: 800; padding: 4px 12px; border-radius: 6px; white-space: nowrap; pointer-events: none; z-index: 5; letter-spacing: 1px; box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 6px; }
+
+.team-zone[data-team="A"] .team-label { background: rgb(255, 214, 0); color: rgb(0, 0, 0); }
+
+.team-zone[data-team="B"] .team-label { background: rgb(213, 0, 0); color: rgb(255, 255, 255); }
+
+.team-zone[data-team="C"] .team-label { background: rgb(26, 115, 232); color: rgb(255, 255, 255); }
+
+@media (max-width: 767px) {
+  .team-label { top: 50%; left: clamp(10px, 4vw, 18px); transform: translateY(-50%) rotate(-90deg); transform-origin: center center; font-size: 0.62rem; padding: 3px 8px; }
+}
+
+.finance-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+.finance-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.finance-row .form-group { min-width: 140px; }
+
+.finance-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+
+.finance-table th, .finance-table td { padding: 8px 6px; border-bottom: 1px solid rgb(238, 238, 238); text-align: left; }
+
+.finance-table th { font-size: 0.78rem; color: rgb(85, 85, 85); }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
+
+.badge-green { background: rgb(231, 246, 234); color: rgb(27, 94, 32); }
+
+.badge-red { background: rgb(253, 231, 231); color: rgb(183, 28, 28); }
+
+.badge-blue { background: rgb(232, 240, 254); color: rgb(26, 115, 232); }
+
+.mono { font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+.small { font-size: 0.78rem; color: rgb(102, 102, 102); }
+
+.hr { height: 1px; background: rgb(238, 238, 238); margin: 8px 0px; }
+
+#panelCadastro { grid-area: 1 / 1; }
+
+#panelField { grid-area: 1 / 2 / span 2; }
+
+.app-body { grid-template-columns: 340px 1fr; grid-auto-rows: auto; }
+
+.kpi { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 10px; font-weight: 800; color: rgb(255, 255, 255); letter-spacing: 0.2px; }
+
+.kpi small { font-weight: 700; opacity: 0.9; }
+
+.kpi-cash.pos { background: rgb(27, 143, 58); }
+
+.kpi-cash.neg { background: rgb(198, 40, 40); }
+
+.kpi-recv { background: rgb(26, 115, 232); }
+
+.kpi-meta { background: rgb(84, 110, 122); }
+
+.kpi .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+.pending-splits { display: flex; flex-direction: column; gap: 8px; }
+
+.pending-item { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px dashed rgb(217, 217, 217); border-radius: 10px; background: rgb(250, 250, 250); }
+
+.pending-item strong { font-size: 0.86rem; }
+
+.pending-item .small { margin: 0px; }
+
+.pending-item .left { display: flex; flex-direction: column; gap: 2px; }
+
+.trash-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+
+.trash-table td { vertical-align: top; }
+
+.trash-type { font-weight: 800; }
+
+.trash-muted { opacity: 0.8; }
+
+.audit-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 800; color: rgb(255, 255, 255); letter-spacing: 0.2px; }
+
+.audit-pay { background: rgb(27, 143, 58); }
+
+.audit-exp { background: rgb(198, 40, 40); }
+
+.audit-split { background: rgb(26, 115, 232); }
+
+.audit-monthly { background: rgb(106, 27, 154); }
+
+.audit-undo { background: rgb(239, 108, 0); }
+
+.audit-misc { background: rgb(69, 90, 100); }
+
+.audit-grid { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.audit-grid .form-group { min-width: 160px; }
+
+#financeSummary .kpi-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-start; }
+
+#financeSummary .kpi { display: inline-flex; align-items: center; gap: 8px; width: auto; flex: 0 0 auto; padding: 6px 10px; border-radius: 8px; border: 2px solid rgb(0, 0, 0); }
+
+#financeSummary .kpi small { font-weight: 800; font-size: 0.72rem; opacity: 0.95; }
+
+#financeSummary .kpi-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; justify-content: flex-start; }
+
+#financeSummary .kpi-item { display: flex; flex-direction: column; gap: 6px; width: auto; flex: 0 0 auto; }
+
+#financeSummary .kpi-label { font-weight: 900; font-size: 0.8rem; color: var(--green); line-height: 1; }
+
+#financeSummary .kpi-box { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 10px; border: 2px solid rgb(0, 0, 0); color: rgb(255, 255, 255); font-weight: 900; letter-spacing: 0.2px; width: auto; min-width: 140px; }
+
+#financeSummary .kpi-box .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-weight: 900; }
+
+#financeSummary .kpi-box.kpi-cash.pos { background: rgb(27, 143, 58); }
+
+#financeSummary .kpi-box.kpi-cash.neg { background: rgb(198, 40, 40); }
+
+#financeSummary .kpi-box.kpi-recv { background: rgb(26, 115, 232); }
+
+#financeSummary .kpi-box.kpi-meta { background: rgb(69, 90, 100); }
+
+#financeSummary .kpi-box { box-shadow: rgba(0, 0, 0, 0.16) 0px 6px 18px; transition: transform 0.12s, box-shadow 0.12s, filter 0.12s; }
+
+#financeSummary .kpi-box:hover { transform: translateY(-1px); box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 26px; filter: brightness(1.02); }
+
+#financeSummary .kpi-box .mono { font-size: 1.18rem; font-weight: 950; }
+
+@media (max-width: 420px) {
+  #financeSummary .kpi-box .mono { font-size: 1.06rem; }
+}
+
+#financeSummary .kpi-row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end; justify-content: center; margin: 6px 0px 10px; }
+
+#financeSummary .kpi-item { display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: flex-end; text-align: center; flex: 0 0 auto; min-width: 140px; }
+
+#financeSummary .kpi-label { font-weight: 900; font-size: 0.82rem; color: var(--green); line-height: 1; }
+
+#financeSummary .kpi-value { font-weight: 950; letter-spacing: 0.2px; line-height: 1.05; }
+
+#financeSummary .kpi-value .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 1.8rem; font-weight: 950; }
+
+#financeSummary .kpi-value.kpi-cash.pos { color: rgb(27, 143, 58); }
+
+#financeSummary .kpi-value.kpi-cash.neg { color: rgb(198, 40, 40); }
+
+#financeSummary .kpi-value.kpi-recv { color: rgb(26, 115, 232); }
+
+#financeSummary .kpi-value.kpi-meta { color: rgb(69, 90, 100); }
+
+@media (max-width: 520px) {
+  #financeSummary .kpi-row { gap: 16px; }
+  #financeSummary .kpi-item { min-width: 120px; }
+  #financeSummary .kpi-value .mono { font-size: 1.25rem; }
+}
+
+#financeSummary .kpi-value { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0px !important; }
+
+#financeSummary .kpi-value.kpi-cash.pos { color: rgb(27, 143, 58) !important; }
+
+#financeSummary .kpi-value.kpi-cash.neg { color: rgb(198, 40, 40) !important; }
+
+#financeSummary .kpi-value.kpi-recv { color: rgb(26, 115, 232) !important; }
+
+#financeSummary .kpi-value.kpi-meta { color: rgb(107, 114, 128) !important; }
+
+.backup-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-left: auto; }
+
+.backup-controls .btn { padding: 7px 10px; }
+
+#backupCard .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+#backupCard .btn-row .btn { flex: 1 1 0%; min-width: 180px; }
+
+@media (max-width: 767px) {
+  .backup-controls { width: 100%; margin-left: 0px; justify-content: flex-start; }
+}
+
+#panelFinance { background: rgb(209, 213, 219); border-radius: 16px; padding: 12px; }
+
+#panelFinance .fin-sep { margin: 4px 0px 10px; padding: 10px 12px; border-radius: 14px; border: 2px solid rgba(15, 23, 42, 0.1); background: rgba(255, 255, 255, 0.78); }
+
+#panelFinance .fin-sep-title { font-weight: 950; color: rgb(15, 23, 42); font-size: 0.92rem; }
+
+#panelFinance .fin-sep-sub { margin-top: 3px; color: rgb(71, 85, 105); font-size: 0.8rem; line-height: 1.25; }
+
+#panelFinance .fin-card { background: rgb(255, 255, 255); border: 2px solid rgba(15, 23, 42, 0.1); border-radius: 16px; box-shadow: rgba(15, 23, 42, 0.1) 0px 10px 22px; padding: 12px 12px 14px; margin: 0px 0px 12px; }
+
+#panelFinance .fin-card > h4 { margin: -12px -12px 12px; padding: 11px 12px 11px 14px; border-bottom: 2px solid rgb(238, 242, 247); background: linear-gradient(rgba(2, 6, 23, 0.06), rgba(2, 6, 23, 0)); border-top-left-radius: 16px; border-top-right-radius: 16px; position: relative; }
+
+#panelFinance .fin-card > h4::before { content: ""; position: absolute; left: 0px; top: 0px; bottom: 0px; width: 7px; background: var(--accent, #1b8f3a); border-top-left-radius: 16px; }
+
+#panelFinance .fin-config { --accent: #16a34a; }
+
+#panelFinance .fin-session { --accent: #0ea5e9; }
+
+#panelFinance .fin-monthly { --accent: #6366f1; }
+
+#panelFinance .fin-payment { --accent: #22c55e; }
+
+#panelFinance .fin-expense { --accent: #ef4444; }
+
+#panelFinance .fin-pendingsplit { --accent: #f59e0b; }
+
+#panelFinance .fin-donesplit { --accent: #8b5cf6; }
+
+#panelFinance .fin-debts { --accent: #1a73e8; }
+
+#panelFinance .fin-audit { --accent: #64748b; }
+
+#panelFinance .fin-export { --accent: #0f172a; }
+
+#panelFinance .hr { background: rgb(230, 237, 247); height: 2px; margin: 12px 0px; }
+
+#panelFinance .small { color: rgb(82, 96, 114); }
+
+#panelFinance .finance-row { gap: 10px; }
+
+#panelFinance .fin-step-1 { background: rgba(34, 197, 94, 0.1); border-color: rgba(22, 163, 74, 0.25); }
+
+#panelFinance .fin-step-2 { background: rgba(14, 165, 233, 0.1); border-color: rgba(14, 165, 233, 0.25); }
+
+#panelFinance .fin-step-3 { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.28); }
+
+#panelFinance .fin-step-4 { background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.25); }
+
+#panelFinance .fin-step-1 .fin-sep-title { color: rgb(20, 83, 45); }
+
+#panelFinance .fin-step-2 .fin-sep-title { color: rgb(12, 74, 110); }
+
+#panelFinance .fin-step-3 .fin-sep-title { color: rgb(124, 45, 18); }
+
+#panelFinance .fin-step-4 .fin-sep-title { color: rgb(49, 46, 129); }
+
+#panelFinance .fin-adjust { --accent: #0f172a; }
+
+#panelHelp .help-note { font-size: 0.9rem; color: rgb(51, 65, 85); line-height: 1.35; }
+
+#panelHelp .help-steps { display: flex; flex-direction: column; gap: 8px; }
+
+#panelHelp .help-step { font-size: 0.9rem; color: rgb(15, 23, 42); background: rgb(248, 250, 252); border: 1px solid rgb(226, 232, 240); border-radius: 12px; padding: 10px 12px; }
+
+#panelHelp .help-details { border: 1px solid rgb(226, 232, 240); border-radius: 12px; padding: 10px 12px; background: rgb(255, 255, 255); }
+
+#panelHelp .help-details summary { cursor: pointer; font-weight: 900; color: var(--green); margin: 0px 0px 8px; }
+
+#panelHelp .help-list { margin: 0px; padding-left: 18px; color: rgb(15, 23, 42); font-size: 0.92rem; line-height: 1.35; }
+
+#panelHelp .help-list li { margin: 6px 0px; }
+
+#sessionAttendanceField .session-att-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0px; border-bottom: 1px solid rgb(240, 240, 240); }
+
+#sessionAttendanceField .session-att-row .left { display: flex; flex-direction: column; }
+
+#sessionAttendanceField .session-att-row .left .nm { font-weight: 800; font-size: 0.88rem; }
+
+#sessionAttendanceField .session-att-row .left .sm { font-size: 0.78rem; color: rgb(100, 116, 139); }
+
+#sessionStatsField .session-stats-row { display: grid; grid-template-columns: 1fr 76px 92px 92px 1.3fr; gap: 8px; align-items: center; padding: 6px 0px; border-bottom: 1px solid rgb(240, 240, 240); }
+
+#sessionStatsField .session-stats-row .nm { font-weight: 800; font-size: 0.9rem; }
+
+#sessionStatsField .session-stats-row input[type="number"] { width: 100%; }
+
+#sessionStatsField .session-stats-row input[type="text"] { width: 100%; }
+
+#sessionStatsField .session-stats-head { display: grid; grid-template-columns: 1fr 76px 92px 92px 1.3fr; gap: 8px; font-size: 0.78rem; color: rgb(71, 85, 105); margin-bottom: 6px; }
+
+@media (max-width: 767px) {
+  #sessionStatsField .session-stats-row, #sessionStatsField .session-stats-head { grid-template-columns: 1fr 68px 84px 84px; }
+  #sessionStatsField .session-stats-row .cm, #sessionStatsField .session-stats-head .cm { grid-column: 1 / -1; }
+}
+
+.stat-stepper { display: flex; align-items: center; gap: 6px; }
+
+.stat-stepper .btn-step { width: 26px; height: 26px; padding: 0px; border-radius: 8px; font-weight: 950; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+
+.stat-stepper .stat-val { width: 44px; text-align: center; font-weight: 900; }
+
+.stat-stepper input.stat-val { height: 28px; padding: 0px 6px; border-radius: 8px; border: 1px solid rgb(229, 231, 235); }
+
+.star-rating { display: inline-flex; gap: 4px; align-items: center; user-select: none; }
+
+.star-rating .star { width: 18px; height: 18px; cursor: pointer; display: inline-block; }
+
+.star-rating .star svg { width: 18px; height: 18px; display: block; }
+
+.star-rating .star.off path { fill: rgb(229, 231, 235); }
+
+.star-rating .star.on path { fill: rgb(245, 158, 11); }
+
+.star-rating .star:focus { outline: rgba(26, 115, 232, 0.35) solid 2px; outline-offset: 2px; border-radius: 4px; }
+
+.star-rating .clear { margin-left: 6px; font-size: 11px; color: rgb(100, 116, 139); cursor: pointer; }
+
+@media (max-width: 767px) {
+  .stat-stepper { gap: 8px; }
+  .stat-stepper .btn-step { width: 36px; height: 36px; border-radius: 12px; font-size: 1.05rem; }
+  .stat-stepper .stat-val { width: 46px; height: 36px; font-size: 1rem; }
+  .star-rating { gap: 6px; }
+  .star-rating .star { width: 24px; height: 24px; }
+  .star-rating .star svg { width: 24px; height: 24px; }
+  .star-rating .clear { font-size: 12px; }
+}
+
+.stat-stepper .btn-step { font-weight: 1000; border-radius: 999px !important; border: none !important; color: rgb(255, 255, 255) !important; }
+
+.stat-stepper .btn-step.btn-plus { background: rgb(27, 143, 58) !important; }
+
+.stat-stepper .btn-step.btn-minus { background: rgb(198, 40, 40) !important; }
+
+.stat-stepper .btn-step:disabled { opacity: 0.55; filter: saturate(0.7); cursor: not-allowed; }
+
+#sessionStatsField .session-stats-row, #sessionStatsField .session-stats-head, #sessionStatsFin .session-stats-row, #sessionStatsFin .session-stats-head { grid-template-columns: 1fr 120px 120px 170px 1fr; }
+
+#sessionStatsField .session-stats-row input.cm, #sessionStatsFin .session-stats-row input.cm { min-width: 160px; }
+
+.score-banner { margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgb(219, 234, 254); background: rgb(239, 246, 255); color: rgb(15, 23, 42); }
+
+.score-banner .t { font-weight: 950; font-size: 14px; }
+
+.score-banner .s { margin-top: 4px; font-weight: 1000; font-size: 18px; letter-spacing: 0.3px; }
+
+.score-banner.confirmed { border-color: rgb(187, 247, 208); background: rgb(236, 253, 245); }
+
+.score-banner.confirmed .t { color: var(--green); }
+
+@media (max-width: 767px) {
+  #sessionStatsField .session-stats-row, #sessionStatsField .session-stats-head, #sessionStatsFin .session-stats-row, #sessionStatsFin .session-stats-head { grid-template-columns: 1fr 118px 118px 170px; }
+  .score-banner .s { font-size: 17px; }
+}
+
+.session-subtabs { display: none; gap: 8px; flex-wrap: wrap; margin: 10px 0px; width: 100%; }
+
+.session-subtabs .stbtn { padding: 7px 10px; border-radius: 999px; font-weight: 900; font-size: 0.78rem; border: 1px solid rgb(203, 213, 225); background: rgb(255, 255, 255); color: rgb(15, 23, 42); }
+
+.session-subtabs .stbtn.active { background: var(--primary); border-color: var(--primary); color: rgb(255, 255, 255); }
+
+@media (max-width: 767px) {
+  .session-subtabs { display: flex; position: sticky; top: 0px; z-index: 30; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(6px); padding: 8px 0px; margin: 0px 0px 10px; border-bottom: 1px solid rgb(226, 232, 240); }
+}
+
+@media (max-width: 767px) {
+  header { position: sticky; top: 0px; z-index: 80; background: rgb(255, 255, 255); }
+  .tabs { position: sticky; top: 48px; z-index: 79; background: rgb(255, 255, 255); }
+  .session-subtabs { top: 92px !important; }
+  #sessionStatsField .session-stats-row, #sessionStatsField .session-stats-head, #sessionStatsFin .session-stats-row, #sessionStatsFin .session-stats-head { grid-template-columns: 1fr 118px 118px; }
+  #sessionStatsField .session-stats-row .rt, #sessionStatsFin .session-stats-row .rt, #sessionStatsField .session-stats-head .rt, #sessionStatsFin .session-stats-head .rt { grid-column: 1 / -1; }
+  #sessionStatsField .session-stats-row .cm, #sessionStatsFin .session-stats-row .cm, #sessionStatsField .session-stats-head .cm, #sessionStatsFin .session-stats-head .cm { grid-column: 1 / -1; }
+  .star-rating { justify-content: flex-start; }
+}
+
+.btn-lite-green { font-weight: 900; background: rgb(34, 197, 94) !important; border: 1px solid rgb(34, 197, 94) !important; color: rgb(255, 255, 255) !important; }
+
+.btn-lite-green:hover { background: rgb(22, 163, 74) !important; border-color: rgb(22, 163, 74) !important; }
+
+.btn-lite-red { font-weight: 900; background: rgb(239, 68, 68) !important; border: 1px solid rgb(239, 68, 68) !important; color: rgb(255, 255, 255) !important; }
+
+.btn-lite-red:hover { background: rgb(220, 38, 38) !important; border-color: rgb(220, 38, 38) !important; }
+------MultipartBoundary--Dsg3BSX9EGgtj09E6I4rbE0ay4oaO4srTe6ARyruXf------
