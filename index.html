@@ -2836,6 +2836,7 @@ function deleteCurrentSession() {
     renderFinance();
     try { renderSessionToolsField(); } catch(e) {}
     try { renderSessionToolsFinance(); } catch(e) {}
+    try { renderRankings(); } catch(e) {}
 
     const removed = before - ledger.length;
     alert('✅ Pelada excluída. Lançamentos removidos: ' + removed);
