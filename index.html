@@ -3261,8 +3261,9 @@ function renderFinance() {
 
                 const badge = document.createElement('span');
                 badge.className = 'badge ' + (remain>0 ? 'badge-red' : 'badge-green');
+                badge.style.display = (remain>0 || paid>0) ? '' : 'none';
                 // Se deve: 'Devendo R$ X,XX'. Se ja quitou: mostra o valor pago no mes (sem a palavra Pago).
-                badge.textContent = remain>0 ? ('Devendo ' + money(remain)) : (paid>0 ? money(paid) : (total>0 ? money(total) : 'Pago'));
+                                badge.textContent = remain>0 ? ('Devendo ' + money(remain)) : (paid>0 ? money(paid) : '');
 
 // Botão/Status
                 let btnOrTxt;
@@ -3271,6 +3272,8 @@ function renderFinance() {
                     btn.className = (remain>0 ? 'btn btn-green btn-sm' : 'btn btn-outline btn-sm');
                     btn.textContent = 'Marcar pago';
                     btn.disabled = !(remain>0);
+                btn.style.display = remain>0 ? '' : 'none';
+                
                     btn.onclick = () => markMonthlyPaid(p.id);
                     btnOrTxt = btn;
                 } else {
