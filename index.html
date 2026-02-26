@@ -1101,7 +1101,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <input id="billingMonth" type="month"/>
 </div>
 <button class="btn btn-primary" onclick="generateMonthlyCharges()">Gerar cobranças</button>
-<button class="btn btn-danger" onclick="deleteMonthlyChargesForSelectedMonth()" type="button">Excluir cobranças do mês</button>
+<button class="btn btn-danger" onclick="deleteMonthlyCharges()" type="button">Excluir cobranças do mês</button>
 </div>
 <div class="small" style="margin-top:6px">Gera 1 cobrança por mensalista no mês escolhido (evita duplicar).</div>
 <div class="finance-row" style="margin-top:8px">
@@ -2940,6 +2940,26 @@ function monthlyChargeAmount(playerId, month) {
     return ch;
 }
 
+
+// Remove pagamentos de mensalidade que ficaram sem cobrana (evita aparecer 'Pago' sem cobrana)
+function cleanOrphanMonthlyPayments(month){
+    if (!month) return 0;
+    const hasCharge = new Set(
+        (ledger||[])
+          .filter(e => e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month && e.playerId!=null)
+          .map(e => String(e.playerId))
+    );
+    const before = (ledger||[]).length;
+    ledger = (ledger||[]).filter(e => !(
+        e.kind==='payment' &&
+        e.category==='mensalidade_pag' &&
+        e.refMonth===month &&
+        e.playerId!=null &&
+        !hasCharge.has(String(e.playerId))
+    ));
+    return before - (ledger||[]).length;
+}
+
 function markMonthlyPaid(playerId) {
     const month = document.getElementById('billingMonth').value || todayISO().slice(0,7);
     const total = monthlyChargeAmount(playerId, month);
@@ -3252,7 +3272,7 @@ function renderFinance() {
                 if (remain > 0) {
                     badge.className = 'badge badge-red';
                     badge.textContent = 'Devendo ' + money(remain);
-                } else if (paid > 0) {
+                } else if (paid > 0 && total > 0) {
                     badge.className = 'badge badge-green';
                     badge.textContent = money(paid);
                 } else {
@@ -3264,7 +3284,7 @@ function renderFinance() {
                 paidLabel.className = 'small';
                 paidLabel.style.color = 'var(--green)';
                 paidLabel.style.fontWeight = '900';
-                paidLabel.textContent = (paid > 0 ? 'Pago' : '');
+                paidLabel.textContent = ((paid > 0 && total > 0) ? 'Pago' : '');
 
                 // Botão 'Marcar pago' — só aparece se ainda deve
                 const btn = document.createElement('button');
