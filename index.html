@@ -3257,7 +3257,7 @@ function renderFinance() {
                 const left = document.createElement('div');
                 left.innerHTML = `<strong style="font-size:0.88rem">${p.name}</strong><div class="small">${total>0 ? ('Mensalidade ' + month + ': ' + money(total)) : 'Sem cobrança (clique em Gerar cobranças)'}`;
 
-                const right = document.createElement('div');
+                                const right = document.createElement('div');
                 right.style.display='flex';
                 right.style.alignItems='center';
                 right.style.gap='6px';
@@ -3274,7 +3274,14 @@ function renderFinance() {
                     badge.style.display = 'none';
                 }
 
-                // Botão "Pago" / "Marcar pago" — só aparece se ainda deve
+                // Texto fixo 'Pago' ao lado do valor (quando já quitou)
+                const paidLabel = document.createElement('span');
+                paidLabel.className = 'small';
+                paidLabel.style.color = 'var(--green)';
+                paidLabel.style.fontWeight = '900';
+                paidLabel.textContent = (paid > 0 ? 'Pago' : '');
+
+                // Botão 'Marcar pago' — só aparece se ainda deve
                 const btn = document.createElement('button');
                 btn.className = 'btn btn-green btn-sm';
                 btn.textContent = 'Marcar pago';
@@ -3291,14 +3298,15 @@ function renderFinance() {
                 if (!chargeEntry) btnDel.style.display = 'none';
                 btnDel.onclick = () => {
                     if (!confirm('Remover cobrança de mensalidade de ' + p.name + ' em ' + month + '?')) return;
-                    const idx = ledger.findIndex(e => e.id === chargeEntry.id);
-                    if (idx !== -1) { ledger.splice(idx, 1); saveFinance(); renderFinance(); }
+                    const idx2 = ledger.findIndex(e => e.id === chargeEntry.id);
+                    if (idx2 !== -1) { ledger.splice(idx2, 1); saveFinance(); renderFinance(); }
                 };
 
-                right.appendChild(badge);
+                if (badge.style.display !== 'none') right.appendChild(badge);
+                if (paid > 0) right.appendChild(paidLabel);
                 right.appendChild(btn);
                 right.appendChild(btnDel);
-                row.appendChild(left);
+row.appendChild(left);
                 row.appendChild(right);
                 ml.appendChild(row);
             });
