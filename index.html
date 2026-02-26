@@ -3225,7 +3225,8 @@ function renderFinance() {
 
                 const badge = document.createElement('span');
                 badge.className = 'badge ' + (remain>0 ? 'badge-red' : 'badge-green');
-                badge.textContent = remain>0 ? ('Devendo ' + money(remain)) : (total>0 ? money(total) : 'Pago');
+                // Se deve: 'Devendo R$ X,XX'. Se ja quitou: mostra o valor pago no mes (sem a palavra Pago).
+                badge.textContent = remain>0 ? ('Devendo ' + money(remain)) : (paid>0 ? money(paid) : (total>0 ? money(total) : 'Pago'));
 
 // Botão/Status
                 let btnOrTxt;
