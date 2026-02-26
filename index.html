@@ -762,6 +762,36 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 }
 #helpTopBtn:hover{ background:#fff5f5; }
 #helpTopBtn:active{ transform:translateY(1px); }
+
+
+/* ===== TEAM ZONE DIVIDERS (3 times) ===== */
+
+/* Desktop: vertical dividers between zones A | B | C */
+@media (min-width: 768px) {
+  .pitch-inner.three-teams .team-zone[data-team="A"] {
+    border-right: 3px dashed rgba(255,255,255,0.70);
+  }
+  .pitch-inner.three-teams .team-zone[data-team="B"] {
+    border-right: 3px dashed rgba(255,255,255,0.70);
+  }
+
+  /* Labels mais visíveis nos 3 times */
+  .pitch-inner.three-teams .team-label {
+    font-size: 0.78rem;
+    padding: 5px 14px;
+    letter-spacing: 1.5px;
+  }
+}
+
+/* Mobile: horizontal dividers between zones (stacked) */
+@media (max-width: 767px) {
+  .pitch-inner.three-teams .team-zone[data-team="A"] {
+    border-bottom: 3px dashed rgba(255,255,255,0.70);
+  }
+  .pitch-inner.three-teams .team-zone[data-team="B"] {
+    border-bottom: 3px dashed rgba(255,255,255,0.70);
+  }
+}
 </style>
 </head>
 <body>
