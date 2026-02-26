@@ -1040,60 +1040,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 </div>
 <div class="small" style="margin-top:6px">Dica: isso fica salvo no seu celular/PC (localStorage).</div>
-</div><div class="fin-sep fin-step-2"><div class="fin-sep-title">2) Gerar cobranças</div><div class="fin-sep-sub">Carregue a pelada do dia e/ou gere as mensalidades do mês.</div></div><div class="card fin-card fin-session">
-<h4>🗓️ Pelada (por data)</h4>
-<div class="finance-row">
-<div class="form-group" style="flex:1">
-<label>Data</label>
-<input id="sessionDate" type="date"/>
-</div>
-<button class="btn btn-outline" onclick="loadOrCreateSession()">Carregar</button>
-</div>
-<div class="finance-row" style="margin-top:8px">
-<button class="btn btn-outline btn-sm" onclick="sessionMarkAll(true)">Marcar todos presentes</button>
-<button class="btn btn-outline btn-sm" onclick="sessionMarkAll(false)">Marcar todos ausentes</button>
-<button class="btn btn-primary btn-sm" onclick="generateAvulsoCharges()">Gerar cobranças avulsos</button>
-<button class="btn btn-danger btn-sm" onclick="deleteCurrentSession()">Excluir pelada (teste)</button>
-</div>
-<div class="finance-row" style="margin-top:8px">
-<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#444">
-<input id="autoAvulso" onchange="toggleAutoAvulso()" type="checkbox"/>
-                    Cobrar avulso automaticamente ao marcar Presente
-                </label>
-</div>
-<div class="small" id="sessionInfo" style="margin-top:8px"></div>
-<div id="sessionAttendance" style="margin-top:8px"></div>
-<div class="hr"></div>
-<div class="finance-row" style="margin-top:8px">
-<button class="btn btn-outline btn-sm" onclick="resetSessionAttendance()" type="button">Limpar presença</button>
-<button class="btn btn-outline btn-sm" onclick="confirmScheduledAttendance('confirmed', true)" type="button">Confirmados (Vem) → Presentes</button>
-<button class="btn btn-outline btn-sm" onclick="confirmScheduledAttendance('field', true)" type="button">Campo/Banco → Presentes (limpar)</button>
-</div>
-<div class="card" id="sessionScoreFinance" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0; box-shadow:none; margin-top:8px">
-<div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
-<div class="form-group" style="min-width:120px">
-<label>Placar Time A</label>
-<input id="scoreA_fin" min="0" onchange="saveSessionScoreFromFinance()" step="1" type="number" value="0"/>
-</div>
-<div class="form-group" style="min-width:120px">
-<label>Placar Time B</label>
-<input id="scoreB_fin" min="0" onchange="saveSessionScoreFromFinance()" step="1" type="number" value="0"/>
-</div>
-<div class="form-group hidden" id="scoreCWrap_fin" style="min-width:120px">
-<label>Placar Time C</label>
-<input id="scoreC_fin" min="0" onchange="saveSessionScoreFromFinance()" step="1" type="number" value="0"/>
-</div>
-<div class="form-group" style="flex:1;min-width:220px">
-<label>Obs da pelada (opcional)</label>
-<input id="sessionNote_fin" oninput="saveSessionNoteFromFinance()" placeholder="Ex: chuva, bola nova, convidados..." type="text"/>
-</div>
-</div>
-</div>
-<div class="score-banner" id="scoreBannerFin" style="display:none"><div class="t"></div><div class="s mono"></div><div class="sub" id="statsConfirmInfoFin" style="margin-top:6px"></div><div id="statsConfirmActionsFin" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"></div></div>
-<div class="hr"></div>
-<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Lançamentos da pelada (somente presentes)</h4>
-<div class="session-subtabs" id="sessionSubTabsFin"><button class="stbtn" data-tab="stats" onclick="switchSessionSubTab('fin','stats')" type="button">Lançamentos</button><button class="stbtn" data-tab="summary" onclick="switchSessionSubTab('fin','summary')" type="button">Resumo / Confirmar</button></div><div id="sessionStatsFin"></div>
-</div><div class="card fin-card fin-monthly">
+</div><div class="fin-sep fin-step-2"><div class="fin-sep-title">2) Gerar cobranças</div><div class="fin-sep-sub">Carregue a pelada do dia e/ou gere as mensalidades do mês.</div></div><div class="card fin-card fin-monthly">
 <h4>📆 Mensalidades</h4>
 <div class="finance-row">
 <div class="form-group" style="flex:1">
@@ -1297,6 +1244,61 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-outline" onclick="exportMatchStatsCSV()" type="button">Baixar stats_peladas.csv</button>
 </div>
 </div>
+<div class="card fin-card fin-session">
+<h4>🗓️ Pelada (por data)</h4>
+<div class="finance-row">
+<div class="form-group" style="flex:1">
+<label>Data</label>
+<input id="sessionDate" type="date"/>
+</div>
+<button class="btn btn-outline" onclick="loadOrCreateSession()">Carregar</button>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<button class="btn btn-outline btn-sm" onclick="sessionMarkAll(true)">Marcar todos presentes</button>
+<button class="btn btn-outline btn-sm" onclick="sessionMarkAll(false)">Marcar todos ausentes</button>
+<button class="btn btn-primary btn-sm" onclick="generateAvulsoCharges()">Gerar cobranças avulsos</button>
+<button class="btn btn-danger btn-sm" onclick="deleteCurrentSession()">Excluir pelada (teste)</button>
+</div>
+<div class="finance-row" style="margin-top:8px">
+<label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#444">
+<input id="autoAvulso" onchange="toggleAutoAvulso()" type="checkbox"/>
+                    Cobrar avulso automaticamente ao marcar Presente
+                </label>
+</div>
+<div class="small" id="sessionInfo" style="margin-top:8px"></div>
+<div id="sessionAttendance" style="margin-top:8px"></div>
+<div class="hr"></div>
+<div class="finance-row" style="margin-top:8px">
+<button class="btn btn-outline btn-sm" onclick="resetSessionAttendance()" type="button">Limpar presença</button>
+<button class="btn btn-outline btn-sm" onclick="confirmScheduledAttendance('confirmed', true)" type="button">Confirmados (Vem) → Presentes</button>
+<button class="btn btn-outline btn-sm" onclick="confirmScheduledAttendance('field', true)" type="button">Campo/Banco → Presentes (limpar)</button>
+</div>
+<div class="card" id="sessionScoreFinance" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0; box-shadow:none; margin-top:8px">
+<div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+<div class="form-group" style="min-width:120px">
+<label>Placar Time A</label>
+<input id="scoreA_fin" min="0" onchange="saveSessionScoreFromFinance()" step="1" type="number" value="0"/>
+</div>
+<div class="form-group" style="min-width:120px">
+<label>Placar Time B</label>
+<input id="scoreB_fin" min="0" onchange="saveSessionScoreFromFinance()" step="1" type="number" value="0"/>
+</div>
+<div class="form-group hidden" id="scoreCWrap_fin" style="min-width:120px">
+<label>Placar Time C</label>
+<input id="scoreC_fin" min="0" onchange="saveSessionScoreFromFinance()" step="1" type="number" value="0"/>
+</div>
+<div class="form-group" style="flex:1;min-width:220px">
+<label>Obs da pelada (opcional)</label>
+<input id="sessionNote_fin" oninput="saveSessionNoteFromFinance()" placeholder="Ex: chuva, bola nova, convidados..." type="text"/>
+</div>
+</div>
+</div>
+<div class="score-banner" id="scoreBannerFin" style="display:none"><div class="t"></div><div class="s mono"></div><div class="sub" id="statsConfirmInfoFin" style="margin-top:6px"></div><div id="statsConfirmActionsFin" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"></div></div>
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Lançamentos da pelada (somente presentes)</h4>
+<div class="session-subtabs" id="sessionSubTabsFin"><button class="stbtn" data-tab="stats" onclick="switchSessionSubTab('fin','stats')" type="button">Lançamentos</button><button class="stbtn" data-tab="summary" onclick="switchSessionSubTab('fin','summary')" type="button">Resumo / Confirmar</button></div><div id="sessionStatsFin"></div>
+</div>
+
 <div class="card">
 <h4 style="margin:0 0 8px;color:var(--green)">Ranking do mês</h4>
 <div class="small" id="rankMonthInfo" style="margin-bottom:8px"></div>
@@ -1536,6 +1538,16 @@ function showTab(id, btn) {
         try { initFinanceUI(); } catch(e) {}
         try { renderFinance(); try{renderSessionToolsField();}catch(e){} try{renderSessionToolsFinance();}catch(e){} } catch(e) {}
     }
+
+    // atualiza UI do ranking + sess�o (pelada/lan�amentos) quando abrir a aba
+    if (view === 'rank') {
+        try { initFinanceUI(); } catch(e) {}
+        try { renderFinance(); } catch(e) {}
+        try { renderSessionToolsField(); } catch(e) {}
+        try { renderSessionToolsFinance(); } catch(e) {}
+        try { renderRankings(); } catch(e) {}
+    }
+
 
 
     // ajustes visuais
