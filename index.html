@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <!-- saved from url=(0103)https://tess-workflows-files.storage.googleapis.com/fad7d88331bf02728926fdb381977e79ec94ee5e/index.html -->
-<html lang="pt-br"><head><meta charset="UTF-8"/>
+<html lang="pt-br"><head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <title>Futebol de Terça</title>
 <style>
@@ -261,7 +261,6 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
         padding: 3px 8px;
     }
 }
-
 
 /* ===== FINANCEIRO ===== */
 .finance-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -753,57 +752,27 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
   font-weight:900;
 }
 .btn-lite-red:hover{ background:#dc2626 !important; border-color:#dc2626 !important; }
+#tabHelp{ display:none !important; }
 
-
-
-/* Hide Help tab button (Help will be accessed via header icon) */
-.tabs #tabHelp{ display:none !important; }
-
-
-/* ===== TOP HELP BUTTON (replaces Help tab) ===== */
-}
-
-
-/* ===== TOP HELP BUTTON (replaces Help tab) ===== */
 #helpTopBtn{
-  position:absolute;
-  right:10px;
-  top:10px;
-  background:#facc15; /* amarelo */
-  color:#dc2626;      /* vermelho (ícone) */
-  border:2px solid #b45309;
-  padding:6px 8px;
-  border-radius:10px;
-  z-index:400;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+  display:inline-flex;align-items:center;gap:4px;padding:3px 10px 3px 8px;
+  margin-left:6px;border-radius:999px;background:#ffffff;color:#111;
+  border:2px solid #dc2626;font-weight:700;font-size:0.82rem;cursor:pointer;
+  vertical-align:middle;white-space:nowrap;
 }
-#helpTopBtn svg{ color:#dc2626; }
-#helpTopBtn:hover{ filter:brightness(0.98); }
-#helpTopBtn:active{ transform: translateY(1px); }
-@media (max-width: 767px){
-  #helpTopBtn{ right:8px; top:8px; padding:6px 8px; }
-}
+#helpTopBtn:hover{ background:#fff5f5; }
+#helpTopBtn:active{ transform:translateY(1px); }
 </style>
 </head>
 <body>
 <header>
-<div class="header-title">⚽ Futebol de Terça<a href="https://youtu.be/69QDr-dyq4g" target="_blank" rel="noopener" title="Assistir tutorial no YouTube" style="display:inline-flex;align-items:center;justify-content:center;margin-left:8px;text-decoration:none;">
-  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="22" viewBox="0 0 32 22">
-    <rect width="32" height="22" rx="5" fill="#FF0000"/>
-    <polygon points="13,5 13,17 23,11" fill="white"/>
-  </svg>
-</a></div>
-</div>
+<div class="header-title">⚽ Futebol de Terça<a href="https://youtu.be/69QDr-dyq4g" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;margin-left:8px;text-decoration:none;" target="_blank" title="Assistir tutorial no YouTube">
+<svg height="22" viewbox="0 0 32 22" width="32" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#FF0000" height="22" rx="5" width="32"></rect>
+<polygon fill="white" points="13,5 13,17 23,11"></polygon>
+</svg>
+</a><button aria-label="Ajuda" id="helpTopBtn" onclick="showTab('panelHelp', document.getElementById('tabHelp'))" title="Ajuda" type="button"><span style="color:#dc2626;font-weight:900;font-size:1rem">?</span> Ajuda</button></div>
 
-<button id="helpTopBtn" class="btn btn-outline btn-icon" type="button"
-  onclick="showTab('panelHelp', document.getElementById('tabHelp'))"
-  title="Ajuda" aria-label="Ajuda">
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 2-3 4"/>
-    <path d="M12 17h.01"/>
-  </svg>
-</button>
 </header>
 <div class="tabs">
 <button class="tab-btn" onclick="showTab('panelCadastro',this)">👥 Jogadores</button>
@@ -840,7 +809,6 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <input id="pMonthlyStart" type="month"/>
 <div class="small">Se o jogador virou mensalista agora, deixe no mês atual. Evita cobrar meses anteriores.</div>
 </div>
-
 <div class="form-group" style="margin-bottom:6px">
 <label>URL da Foto</label>
 <input id="pFoto" placeholder="https://lh3.googleusercontent.com/d/..." type="text"/>
@@ -958,54 +926,48 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <h5>🪑 Banco de Reservas</h5>
 <div class="bench-slots" data-team="bench" id="bench"></div>
 <div class="card" id="sessionToolsField" style="margin-top:12px">
-  <h4>📅 Pelada agendada (por data)</h4>
-  <div class="small">Escolha a data, carregue a pelada e confirme a presença real. Os lançamentos (gols/assistências/nota) só aparecem para quem estiver <strong>Presente</strong>.</div>
-  <div class="hr"></div>
-
-  <div class="finance-row" style="flex-wrap:wrap">
-    <div class="form-group" style="min-width:180px">
-      <label>Data</label>
-      <input id="sessionDateField" type="date" />
-    </div>
-    <button class="btn btn-primary" type="button" onclick="loadOrCreateSessionFromField()">Carregar pelada</button>
-    <button class="btn btn-lite-red" type="button" onclick="resetSessionAttendance()">Limpar presença</button>
-<button class="btn btn-lite-red" type="button" onclick="deleteCurrentSession()">Excluir pelada (teste)</button>
-    <button class="btn btn-lite-green" type="button" onclick="confirmScheduledAttendance('confirmed', true)">Confirmados (Vem) → Presentes</button>
-<button class="btn btn-lite-green" type="button" onclick="sessionMarkAll(true)">Marcar todos presentes</button>
+<h4>📅 Pelada agendada (por data)</h4>
+<div class="small">Escolha a data, carregue a pelada e confirme a presença real. Os lançamentos (gols/assistências/nota) só aparecem para quem estiver <strong>Presente</strong>.</div>
+<div class="hr"></div>
+<div class="finance-row" style="flex-wrap:wrap">
+<div class="form-group" style="min-width:180px">
+<label>Data</label>
+<input id="sessionDateField" type="date"/>
 </div>
-
-  <div class="small" id="sessionInfoField" style="margin:8px 0"></div>
-
-  <div class="hr"></div>
-  <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Confirmar presença (confirmados)</h4>
-  <div id="sessionAttendanceField"></div>
-
-  <div class="card" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0; box-shadow:none">
-    <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
-      <div class="form-group" style="min-width:120px">
-        <label>Placar Time A</label>
-        <input id="scoreA" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromField()" />
-      </div>
-      <div class="form-group" style="min-width:120px">
-        <label>Placar Time B</label>
-        <input id="scoreB" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromField()" />
-      </div>
-      <div class="form-group hidden" style="min-width:120px" id="scoreCWrap">
-        <label>Placar Time C</label>
-        <input id="scoreC" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromField()" />
-      </div>
-      <div class="form-group" style="flex:1;min-width:220px">
-        <label>Obs da pelada (opcional)</label>
-        <input id="sessionNoteField" type="text" placeholder="Ex: chuva, bola nova, convidados..." oninput="saveSessionNoteFromField()" />
-      </div>
-    </div>
-  </div>
-
-  <div class="hr"></div>
-  <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Lançamentos da pelada (somente presentes)</h4>
-  <div id="sessionSubTabsField" class="session-subtabs"><button type="button" class="stbtn" data-tab="stats" onclick="switchSessionSubTab('field','stats')">Lançamentos</button><button type="button" class="stbtn" data-tab="summary" onclick="switchSessionSubTab('field','summary')">Resumo / Confirmar</button></div><div id="sessionStatsField"></div>
+<button class="btn btn-primary" onclick="loadOrCreateSessionFromField()" type="button">Carregar pelada</button>
+<button class="btn btn-lite-red" onclick="resetSessionAttendance()" type="button">Limpar presença</button>
+<button class="btn btn-lite-red" onclick="deleteCurrentSession()" type="button">Excluir pelada (teste)</button>
+<button class="btn btn-lite-green" onclick="confirmScheduledAttendance('confirmed', true)" type="button">Confirmados (Vem) → Presentes</button>
+<button class="btn btn-lite-green" onclick="sessionMarkAll(true)" type="button">Marcar todos presentes</button>
 </div>
-
+<div class="small" id="sessionInfoField" style="margin:8px 0"></div>
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Confirmar presença (confirmados)</h4>
+<div id="sessionAttendanceField"></div>
+<div class="card" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0; box-shadow:none">
+<div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+<div class="form-group" style="min-width:120px">
+<label>Placar Time A</label>
+<input id="scoreA" min="0" onchange="saveSessionScoreFromField()" step="1" type="number" value="0"/>
+</div>
+<div class="form-group" style="min-width:120px">
+<label>Placar Time B</label>
+<input id="scoreB" min="0" onchange="saveSessionScoreFromField()" step="1" type="number" value="0"/>
+</div>
+<div class="form-group hidden" id="scoreCWrap" style="min-width:120px">
+<label>Placar Time C</label>
+<input id="scoreC" min="0" onchange="saveSessionScoreFromField()" step="1" type="number" value="0"/>
+</div>
+<div class="form-group" style="flex:1;min-width:220px">
+<label>Obs da pelada (opcional)</label>
+<input id="sessionNoteField" oninput="saveSessionNoteFromField()" placeholder="Ex: chuva, bola nova, convidados..." type="text"/>
+</div>
+</div>
+</div>
+<div class="hr"></div>
+<h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Lançamentos da pelada (somente presentes)</h4>
+<div class="session-subtabs" id="sessionSubTabsField"><button class="stbtn" data-tab="stats" onclick="switchSessionSubTab('field','stats')" type="button">Lançamentos</button><button class="stbtn" data-tab="summary" onclick="switchSessionSubTab('field','summary')" type="button">Resumo / Confirmar</button></div><div id="sessionStatsField"></div>
+</div>
 </div>
 </div>
 <!-- CSV MOBILE -->
@@ -1071,41 +1033,36 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 <div class="small" id="sessionInfo" style="margin-top:8px"></div>
 <div id="sessionAttendance" style="margin-top:8px"></div>
-
 <div class="hr"></div>
 <div class="finance-row" style="margin-top:8px">
-  <button class="btn btn-outline btn-sm" type="button" onclick="resetSessionAttendance()">Limpar presença</button>
-  <button class="btn btn-outline btn-sm" type="button" onclick="confirmScheduledAttendance('confirmed', true)">Confirmados (Vem) → Presentes</button>
-  <button class="btn btn-outline btn-sm" type="button" onclick="confirmScheduledAttendance('field', true)">Campo/Banco → Presentes (limpar)</button>
+<button class="btn btn-outline btn-sm" onclick="resetSessionAttendance()" type="button">Limpar presença</button>
+<button class="btn btn-outline btn-sm" onclick="confirmScheduledAttendance('confirmed', true)" type="button">Confirmados (Vem) → Presentes</button>
+<button class="btn btn-outline btn-sm" onclick="confirmScheduledAttendance('field', true)" type="button">Campo/Banco → Presentes (limpar)</button>
 </div>
-
 <div class="card" id="sessionScoreFinance" style="padding:10px 12px;background:#f8fafc;border:1px solid #e2e8f0; box-shadow:none; margin-top:8px">
-  <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
-    <div class="form-group" style="min-width:120px">
-      <label>Placar Time A</label>
-      <input id="scoreA_fin" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromFinance()" />
-    </div>
-    <div class="form-group" style="min-width:120px">
-      <label>Placar Time B</label>
-      <input id="scoreB_fin" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromFinance()" />
-    </div>
-    <div class="form-group hidden" style="min-width:120px" id="scoreCWrap_fin">
-      <label>Placar Time C</label>
-      <input id="scoreC_fin" type="number" min="0" step="1" value="0" onchange="saveSessionScoreFromFinance()" />
-    </div>
-    <div class="form-group" style="flex:1;min-width:220px">
-      <label>Obs da pelada (opcional)</label>
-      <input id="sessionNote_fin" type="text" placeholder="Ex: chuva, bola nova, convidados..." oninput="saveSessionNoteFromFinance()" />
-    </div>
-  </div>
+<div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+<div class="form-group" style="min-width:120px">
+<label>Placar Time A</label>
+<input id="scoreA_fin" min="0" onchange="saveSessionScoreFromFinance()" step="1" type="number" value="0"/>
 </div>
-
-<div id="scoreBannerFin" class="score-banner" style="display:none"><div class="t"></div><div class="s mono"></div><div class="sub" id="statsConfirmInfoFin" style="margin-top:6px"></div><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap" id="statsConfirmActionsFin"></div></div>
-
+<div class="form-group" style="min-width:120px">
+<label>Placar Time B</label>
+<input id="scoreB_fin" min="0" onchange="saveSessionScoreFromFinance()" step="1" type="number" value="0"/>
+</div>
+<div class="form-group hidden" id="scoreCWrap_fin" style="min-width:120px">
+<label>Placar Time C</label>
+<input id="scoreC_fin" min="0" onchange="saveSessionScoreFromFinance()" step="1" type="number" value="0"/>
+</div>
+<div class="form-group" style="flex:1;min-width:220px">
+<label>Obs da pelada (opcional)</label>
+<input id="sessionNote_fin" oninput="saveSessionNoteFromFinance()" placeholder="Ex: chuva, bola nova, convidados..." type="text"/>
+</div>
+</div>
+</div>
+<div class="score-banner" id="scoreBannerFin" style="display:none"><div class="t"></div><div class="s mono"></div><div class="sub" id="statsConfirmInfoFin" style="margin-top:6px"></div><div id="statsConfirmActionsFin" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"></div></div>
 <div class="hr"></div>
 <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">Lançamentos da pelada (somente presentes)</h4>
-<div id="sessionSubTabsFin" class="session-subtabs"><button type="button" class="stbtn" data-tab="stats" onclick="switchSessionSubTab('fin','stats')">Lançamentos</button><button type="button" class="stbtn" data-tab="summary" onclick="switchSessionSubTab('fin','summary')">Resumo / Confirmar</button></div><div id="sessionStatsFin"></div>
-
+<div class="session-subtabs" id="sessionSubTabsFin"><button class="stbtn" data-tab="stats" onclick="switchSessionSubTab('fin','stats')" type="button">Lançamentos</button><button class="stbtn" data-tab="summary" onclick="switchSessionSubTab('fin','summary')" type="button">Resumo / Confirmar</button></div><div id="sessionStatsFin"></div>
 </div><div class="card fin-card fin-monthly">
 <h4>📆 Mensalidades</h4>
 <div class="finance-row">
@@ -1210,41 +1167,39 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </thead>
 <tbody id="debtsTable"></tbody>
 </table>
-
 <div class="hr"></div>
 <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">🧹 Limpeza / Diagnóstico (cobranças)</h4>
 <div class="small" id="chargesDiagSummary" style="margin-bottom:8px">Use os filtros para achar cobranças de teste. Você pode remover cobranças individualmente.</div>
 <div class="audit-grid" style="margin-bottom:10px">
-  <div class="form-group" style="min-width:160px"><label>De</label><input id="chargesDiagFrom" type="date" oninput="renderChargesDiag()"/></div>
-  <div class="form-group" style="min-width:160px"><label>Até</label><input id="chargesDiagTo" type="date" oninput="renderChargesDiag()"/></div>
-  <div class="form-group" style="min-width:170px"><label>Categoria</label>
-    <select id="chargesDiagCat" onchange="renderChargesDiag()">
-      <option value="all">Todas</option>
-      <option value="avulso">avulso</option>
-      <option value="mensalidade">mensalidade</option>
-      <option value="rateio">rateio</option>
-      <option value="ajuste_caixa">ajuste_caixa</option>
-    </select>
-  </div>
-  <div class="form-group" style="flex:1;min-width:220px"><label>Buscar</label>
-    <input id="chargesDiagSearch" type="text" placeholder="Ex: 2026-02-24, avulso, Pelada..." oninput="renderChargesDiag()"/>
-  </div>
-  <div class="form-group" style="min-width:180px"><label>Mostrar</label>
-    <select id="chargesDiagScope" onchange="renderChargesDiag()">
-      <option value="owing" selected>Somente quem está devendo</option>
-      <option value="all">Todas as cobranças</option>
-    </select>
-  </div>
-  <button class="btn btn-outline btn-sm" type="button" onclick="renderChargesDiag()">Atualizar</button>
-<button class="btn btn-danger btn-sm" type="button" onclick="cleanOrphanRateioCharges()">Limpar rateios órfãos</button>
-<button class="btn btn-danger btn-sm" type="button" onclick="removeChargesDiagListed()">Remover cobranças listadas</button>
+<div class="form-group" style="min-width:160px"><label>De</label><input id="chargesDiagFrom" oninput="renderChargesDiag()" type="date"/></div>
+<div class="form-group" style="min-width:160px"><label>Até</label><input id="chargesDiagTo" oninput="renderChargesDiag()" type="date"/></div>
+<div class="form-group" style="min-width:170px"><label>Categoria</label>
+<select id="chargesDiagCat" onchange="renderChargesDiag()">
+<option value="all">Todas</option>
+<option value="avulso">avulso</option>
+<option value="mensalidade">mensalidade</option>
+<option value="rateio">rateio</option>
+<option value="ajuste_caixa">ajuste_caixa</option>
+</select>
+</div>
+<div class="form-group" style="flex:1;min-width:220px"><label>Buscar</label>
+<input id="chargesDiagSearch" oninput="renderChargesDiag()" placeholder="Ex: 2026-02-24, avulso, Pelada..." type="text"/>
+</div>
+<div class="form-group" style="min-width:180px"><label>Mostrar</label>
+<select id="chargesDiagScope" onchange="renderChargesDiag()">
+<option selected="" value="owing">Somente quem está devendo</option>
+<option value="all">Todas as cobranças</option>
+</select>
+</div>
+<button class="btn btn-outline btn-sm" onclick="renderChargesDiag()" type="button">Atualizar</button>
+<button class="btn btn-danger btn-sm" onclick="cleanOrphanRateioCharges()" type="button">Limpar rateios órfãos</button>
+<button class="btn btn-danger btn-sm" onclick="removeChargesDiagListed()" type="button">Remover cobranças listadas</button>
 </div>
 <table class="finance-table">
-  <thead><tr><th>Data</th><th>Jogador</th><th>Categoria</th><th class="mono">Valor</th><th>Obs</th><th class="mono">Sessão/Mês</th><th>Ação</th></tr></thead>
-  <tbody id="chargesDiagTable"></tbody>
+<thead><tr><th>Data</th><th>Jogador</th><th>Categoria</th><th class="mono">Valor</th><th>Obs</th><th class="mono">Sessão/Mês</th><th>Ação</th></tr></thead>
+<tbody id="chargesDiagTable"></tbody>
 </table>
 <div class="small" style="margin-top:6px">Dica: se aparecer <strong>mensalidade</strong> e você gerou por teste, dá pra remover por mês (posso adicionar botão em lote).</div>
-
 <div class="hr"></div>
 <h4 style="font-size:0.92rem;margin:0 0 8px;color:var(--green)">🧾 Últimos pagamentos</h4>
 <table class="finance-table">
@@ -1293,7 +1248,58 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div><div class="card fin-card fin-export">
 <h4>📤 Exportar financeiro</h4>
 <button class="btn btn-outline" onclick="exportFinanceCSV()" style="width:100%">Baixar financeiro.csv</button>
-</div></div><div class="panel" id="panelHelp">
+</div></div><div class="panel" id="panelRank">
+<div class="card">
+<h4>📊 Ranking / Artilharia</h4>
+<div class="small">Lance gols, assistências, nota (0–5) e comentário por data. Rankings consideram apenas jogadores marcados como <strong>Presentes</strong> na pelada.</div>
+<div class="hr"></div>
+<div class="finance-row" style="flex-wrap:wrap">
+<div class="form-group" style="min-width:160px">
+<label>Ano</label>
+<input id="rankYear" min="2020" step="1" type="number" value=""/>
+</div>
+<div class="form-group" style="min-width:170px">
+<label>Mês (opcional)</label>
+<input id="rankMonth" type="month"/>
+</div>
+<button class="btn btn-outline" onclick="renderRankings()" type="button">Atualizar</button>
+<button class="btn btn-outline" onclick="exportRankingsCSV()" type="button">Baixar rankings.csv</button>
+<button class="btn btn-outline" onclick="exportMatchStatsCSV()" type="button">Baixar stats_peladas.csv</button>
+</div>
+</div>
+<div class="card">
+<h4 style="margin:0 0 8px;color:var(--green)">Ranking do mês</h4>
+<div class="small" id="rankMonthInfo" style="margin-bottom:8px"></div>
+<table class="finance-table">
+<thead>
+<tr>
+<th>Jogador</th>
+<th class="mono">Presenças</th>
+<th class="mono">Gols</th>
+<th class="mono">Assist.</th>
+<th class="mono">Nota média</th>
+</tr>
+</thead>
+<tbody id="rankMonthTable"></tbody>
+</table>
+</div>
+<div class="card">
+<h4 style="margin:0 0 8px;color:var(--green)">Ranking do ano</h4>
+<div class="small" id="rankYearInfo" style="margin-bottom:8px"></div>
+<table class="finance-table">
+<thead>
+<tr>
+<th>Jogador</th>
+<th class="mono">Presenças</th>
+<th class="mono">Gols</th>
+<th class="mono">Assist.</th>
+<th class="mono">Nota média</th>
+</tr>
+</thead>
+<tbody id="rankYearTable"></tbody>
+</table>
+</div>
+</div><div class="panel" id="panelHelp">
 <div class="card">
 <h4>❓ Ajuda rápida (como usar do começo ao fim)</h4>
 <div class="help-note">Tudo fica salvo no seu navegador (celular/PC). Para usar em outro aparelho, use <strong>Backup</strong> e <strong>Restaurar</strong>.</div>
@@ -1376,61 +1382,6 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 </div>
 
-</div></div><div class="panel" id="panelRank">
-  <div class="card">
-    <h4>📊 Ranking / Artilharia</h4>
-    <div class="small">Lance gols, assistências, nota (0–5) e comentário por data. Rankings consideram apenas jogadores marcados como <strong>Presentes</strong> na pelada.</div>
-    <div class="hr"></div>
-    <div class="finance-row" style="flex-wrap:wrap">
-      <div class="form-group" style="min-width:160px">
-        <label>Ano</label>
-        <input id="rankYear" type="number" min="2020" step="1" value="" />
-      </div>
-      <div class="form-group" style="min-width:170px">
-        <label>Mês (opcional)</label>
-        <input id="rankMonth" type="month" />
-      </div>
-      <button class="btn btn-outline" type="button" onclick="renderRankings()">Atualizar</button>
-      <button class="btn btn-outline" type="button" onclick="exportRankingsCSV()">Baixar rankings.csv</button>
-      <button class="btn btn-outline" type="button" onclick="exportMatchStatsCSV()">Baixar stats_peladas.csv</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h4 style="margin:0 0 8px;color:var(--green)">Ranking do mês</h4>
-    <div class="small" id="rankMonthInfo" style="margin-bottom:8px"></div>
-    <table class="finance-table">
-      <thead>
-        <tr>
-          <th>Jogador</th>
-          <th class="mono">Presenças</th>
-          <th class="mono">Gols</th>
-          <th class="mono">Assist.</th>
-          <th class="mono">Nota média</th>
-        </tr>
-      </thead>
-      <tbody id="rankMonthTable"></tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <h4 style="margin:0 0 8px;color:var(--green)">Ranking do ano</h4>
-    <div class="small" id="rankYearInfo" style="margin-bottom:8px"></div>
-    <table class="finance-table">
-      <thead>
-        <tr>
-          <th>Jogador</th>
-          <th class="mono">Presenças</th>
-          <th class="mono">Gols</th>
-          <th class="mono">Assist.</th>
-          <th class="mono">Nota média</th>
-        </tr>
-      </thead>
-      <tbody id="rankYearTable"></tbody>
-    </table>
-  </div>
-</div>
-
 <script>
 
 const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%23aaa'/%3E%3Ccircle cx='25' cy='19' r='9' fill='%23fff'/%3E%3Cellipse cx='25' cy='40' rx='14' ry='10' fill='%23fff'/%3E%3C/svg%3E";
@@ -1483,6 +1434,7 @@ window.onload = () => {
         document.body.dataset.view = active ? (active.id === 'panelField' ? 'field' : (active.id === 'panelCSV' ? 'csv' : (active.id === 'panelFinance' ? 'finance' : 'players'))) : 'field';
     }
     initDropZones();
+    try { updateHeaderHeight(); } catch(e) {}
     window.addEventListener('resize', adaptSVG);
 };
 
@@ -1502,6 +1454,16 @@ function updateMonthlyStartVisibility() {
     }
 }
 /* Troca SVG mobile/desktop */
+
+
+function updateHeaderHeight(){
+    try {
+        const h = document.querySelector('header');
+        if (!h) return;
+        const px = (h.offsetHeight||56) + 'px';
+        document.documentElement.style.setProperty('--header-h', px);
+    } catch(e) {}
+}
 function adaptSVG() {
     const isDesktop = window.innerWidth >= 768;
     document.getElementById('svgMobile').style.display  = isDesktop ? 'none'  : 'block';
@@ -4244,56 +4206,7 @@ function openPrintReport() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Relatório Financeiro</title>
-<style>
-:root{--green:#1b8f3a;--red:#c62828;--blue:#1a73e8;--gray:#6b7280;--line:#eaeaea}
-*{box-sizing:border-box;font-family:Segoe UI,system-ui,-apple-system,Arial,sans-serif}
-body{margin:0;background:#fff;color:#111}
-header{padding:14px 16px;border-bottom:1px solid var(--line)}
-h1{margin:0;font-size:18px}
-.sub{margin-top:4px;color:#555;font-size:12px;line-height:1.35}
-.wrap{padding:14px 16px}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
 
-.kpis{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 16px;align-items:stretch}
-.kpi{border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:210px;flex:0 0 auto;background:#fff}
-.kpi .lbl{font-size:11px;font-weight:900;color:#444;margin-bottom:6px}
-.kpi .val{font-size:16px;font-weight:950;letter-spacing:.2px}
-.kpi.pos .val{color:var(--green)}
-.kpi.neg .val{color:var(--red)}
-.kpi.blue .val{color:var(--blue)}
-.kpi.gray .val{color:var(--gray)}
-
-.sec{margin:14px 0 18px}
-.sec h2{margin:0 0 8px;font-size:14px}
-
-table{width:100%;border-collapse:collapse;font-size:12px}
-th,td{border-bottom:1px solid var(--line);padding:6px 6px;text-align:left;vertical-align:top}
-th{color:#444;font-size:11px}
-.pill{display:inline-block;padding:2px 8px;border-radius:999px;color:#fff;font-weight:900;font-size:11px}
-.pill.pos{background:var(--green)}
-.pill.neg{background:var(--red)}
-.muted{color:#666}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width: 720px){.grid2{grid-template-columns:1fr}.kpi{min-width:180px}}
-@media print{.pagebreak{break-before:page}}
-
-/* ===== SESSION ATTENDANCE (FIELD) ===== */
-#sessionAttendanceField .session-att-row{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 0; border-bottom:1px solid #f0f0f0}
-#sessionAttendanceField .session-att-row .left{display:flex; flex-direction:column}
-#sessionAttendanceField .session-att-row .left .nm{font-weight:800; font-size:0.88rem}
-#sessionAttendanceField .session-att-row .left .sm{font-size:0.78rem; color:#64748b}
-
-/* ===== SESSION STATS (FIELD) ===== */
-#sessionStatsField .session-stats-row{display:grid; grid-template-columns: 1fr 76px 92px 92px 1.3fr; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid #f0f0f0}
-#sessionStatsField .session-stats-row .nm{font-weight:800; font-size:0.9rem}
-#sessionStatsField .session-stats-row input[type=number]{width:100%}
-#sessionStatsField .session-stats-row input[type=text]{width:100%}
-#sessionStatsField .session-stats-head{display:grid; grid-template-columns: 1fr 76px 92px 92px 1.3fr; gap:8px; font-size:0.78rem; color:#475569; margin-bottom:6px}
-@media (max-width: 767px){
-  #sessionStatsField .session-stats-row, #sessionStatsField .session-stats-head{grid-template-columns: 1fr 68px 84px 84px}
-  #sessionStatsField .session-stats-row .cm, #sessionStatsField .session-stats-head .cm{grid-column:1 / -1}
-}
-</style>
 </head><body>
 <header>
   <h1>Futebol de Terça — Relatório Financeiro</h1>
