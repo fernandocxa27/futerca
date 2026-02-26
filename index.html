@@ -3258,39 +3258,46 @@ function renderFinance() {
                 left.innerHTML = `<strong style="font-size:0.88rem">${p.name}</strong><div class="small">${total>0 ? ('Mensalidade ' + month + ': ' + money(total)) : 'Sem cobrança (clique em Gerar cobranças)'}`;
 
                 const right = document.createElement('div');
-
-                const badge = document.createElement('span');
-                badge.className = 'badge ' + (remain>0 ? 'badge-red' : 'badge-green');
-                badge.style.display = (remain>0 || paid>0) ? '' : 'none';
-                // Se deve: 'Devendo R$ X,XX'. Se ja quitou: mostra o valor pago no mes (sem a palavra Pago).
-                                badge.textContent = remain>0 ? ('Devendo ' + money(remain)) : (paid>0 ? money(paid) : '');
-
-// Botão/Status
-                let btnOrTxt;
-                if (remain>0) {
-                    const btn = document.createElement('button');
-                    btn.className = (remain>0 ? 'btn btn-green btn-sm' : 'btn btn-outline btn-sm');
-                    btn.textContent = 'Marcar pago';
-                    btn.disabled = !(remain>0);
-                btn.style.display = remain>0 ? '' : 'none';
-                
-                    btn.onclick = () => markMonthlyPaid(p.id);
-                    btnOrTxt = btn;
-                } else {
-                    const t = document.createElement('span');
-                    t.className = 'small';
-                    t.style.fontWeight = '900';
-                    t.style.color = 'var(--green)';
-                    t.textContent = 'Pago';
-                    btnOrTxt = t;
-                }
-
-                right.appendChild(badge);
-                right.appendChild(btnOrTxt);
                 right.style.display='flex';
                 right.style.alignItems='center';
                 right.style.gap='6px';
 
+                // Badge: valor pago (verde) ou devendo (vermelho)
+                const badge = document.createElement('span');
+                if (remain > 0) {
+                    badge.className = 'badge badge-red';
+                    badge.textContent = 'Devendo ' + money(remain);
+                } else if (paid > 0) {
+                    badge.className = 'badge badge-green';
+                    badge.textContent = money(paid);
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                // Botão "Pago" / "Marcar pago" — só aparece se ainda deve
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-green btn-sm';
+                btn.textContent = 'Marcar pago';
+                btn.disabled = !(remain > 0);
+                if (remain <= 0) btn.style.display = 'none';
+                btn.onclick = () => markMonthlyPaid(p.id);
+
+                // Botão remover cobrança do mês (X vermelho) — aparece se houver cobrança gerada
+                const chargeEntry = ledger.find(e => e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month && e.playerId==p.id);
+                const btnDel = document.createElement('button');
+                btnDel.className = 'btn btn-danger btn-sm';
+                btnDel.title = 'Remover cobrança deste mês';
+                btnDel.textContent = '✕';
+                if (!chargeEntry) btnDel.style.display = 'none';
+                btnDel.onclick = () => {
+                    if (!confirm('Remover cobrança de mensalidade de ' + p.name + ' em ' + month + '?')) return;
+                    const idx = ledger.findIndex(e => e.id === chargeEntry.id);
+                    if (idx !== -1) { ledger.splice(idx, 1); saveFinance(); renderFinance(); }
+                };
+
+                right.appendChild(badge);
+                right.appendChild(btn);
+                right.appendChild(btnDel);
                 row.appendChild(left);
                 row.appendChild(right);
                 ml.appendChild(row);
