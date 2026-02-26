@@ -2990,35 +2990,20 @@ function generateMonthlyCharges() {
 }
 
 
-function deleteMonthlyChargesForSelectedMonth() {
-    const month = (document.getElementById('billingMonth')||{}).value || '';
-    if (!month) return alert('Selecione o mês primeiro.');
-
-    const items = (ledger||[]).filter(e => e.kind==='charge' && e.category==='mensalidade' && String(e.refMonth||'')===String(month));
-    if (!items.length) return alert('Nenhuma cobrança de mensalidade encontrada para ' + month + '.');
-
-    let sum = 0;
-    items.forEach(e => sum += Number(e.amount)||0);
-
-    const msg = `Excluir TODAS as cobranças de mensalidade do mês ${month}?
-
-Quantidade: ${items.length}
-Soma: ${money(sum)}
-
-Obs: isso remove apenas cobranças (kind=charge, categoria=mensalidade) desse mês.
-Não remove pagamentos nem despesas. Use somente para desfazer testes.`;
-
-if (!confirm(msg)) return;
-
-    const ids = new Set(items.map(e => e.id));
-    const before = ledger.length;
-    ledger = ledger.filter(e => !(e.kind==='charge' && e.category==='mensalidade' && ids.has(e.id)));
-
-    try { logTrash('delete_monthly_charges_month', { month: month, removedCount: (before-ledger.length), removedTotal: sum }); } catch(e) {}
-
+function deleteMonthlyCharges() {
+    const month = document.getElementById('billingMonth').value || todayISO().slice(0,7);
+    const countCharges = ledger.filter(e => e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month).length;
+    const countPaid    = ledger.filter(e => e.kind==='payment' && e.category==='mensalidade_pag' && e.refMonth===month).length;
+    if (countCharges===0 && countPaid===0) return alert('Nenhuma cobrança ou pagamento de mensalidade encontrado para este mês.');
+    const msg = `Excluir cobranças do mês ${month}?\n\nCobranças: ${countCharges}\nPagamentos vinculados: ${countPaid}\n\nOs pagamentos de mensalidade deste mês também serão removidos.`;
+    if (!confirm(msg)) return;
+    ledger = ledger.filter(e => !(
+        (e.kind==='charge'  && e.category==='mensalidade'     && e.refMonth===month) ||
+        (e.kind==='payment' && e.category==='mensalidade_pag' && e.refMonth===month)
+    ));
     saveFinance();
     renderFinance();
-    alert('✅ Cobranças removidas do mês ' + month + ': ' + (before - ledger.length));
+    alert('✅ Cobranças e pagamentos de mensalidade de ' + month + ' removidos.');
 }
 
 function addPayment() {
