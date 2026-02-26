@@ -1101,7 +1101,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <input id="billingMonth" type="month"/>
 </div>
 <button class="btn btn-primary" onclick="generateMonthlyCharges()">Gerar cobranÃ§as</button>
-<button class="btn btn-danger" onclick="deleteMonthlyCharges()" type="button">Excluir cobranÃ§as do mÃªs</button>
+<button class="btn btn-danger" onclick="deleteMonthlyChargesForSelectedMonth()" type="button">Excluir cobranÃ§as do mÃªs</button>
 </div>
 <div class="small" style="margin-top:6px">Gera 1 cobranÃ§a por mensalista no mÃªs escolhido (evita duplicar).</div>
 <div class="finance-row" style="margin-top:8px">
@@ -2940,26 +2940,6 @@ function monthlyChargeAmount(playerId, month) {
     return ch;
 }
 
-
-// Remove pagamentos de mensalidade que ficaram sem cobrana (evita aparecer 'Pago' sem cobrana)
-function cleanOrphanMonthlyPayments(month){
-    if (!month) return 0;
-    const hasCharge = new Set(
-        (ledger||[])
-          .filter(e => e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month && e.playerId!=null)
-          .map(e => String(e.playerId))
-    );
-    const before = (ledger||[]).length;
-    ledger = (ledger||[]).filter(e => !(
-        e.kind==='payment' &&
-        e.category==='mensalidade_pag' &&
-        e.refMonth===month &&
-        e.playerId!=null &&
-        !hasCharge.has(String(e.playerId))
-    ));
-    return before - (ledger||[]).length;
-}
-
 function markMonthlyPaid(playerId) {
     const month = document.getElementById('billingMonth').value || todayISO().slice(0,7);
     const total = monthlyChargeAmount(playerId, month);
@@ -3272,7 +3252,7 @@ function renderFinance() {
                 if (remain > 0) {
                     badge.className = 'badge badge-red';
                     badge.textContent = 'Devendo ' + money(remain);
-                } else if (paid > 0 && total > 0) {
+                } else if (paid > 0) {
                     badge.className = 'badge badge-green';
                     badge.textContent = money(paid);
                 } else {
@@ -3284,7 +3264,7 @@ function renderFinance() {
                 paidLabel.className = 'small';
                 paidLabel.style.color = 'var(--green)';
                 paidLabel.style.fontWeight = '900';
-                paidLabel.textContent = ((paid > 0 && total > 0) ? 'Pago' : '');
+                paidLabel.textContent = (paid > 0 ? 'Pago' : '');
 
                 // BotÃ£o 'Marcar pago' â€” sÃ³ aparece se ainda deve
                 const btn = document.createElement('button');
@@ -3338,18 +3318,79 @@ row.appendChild(left);
             dueTd.appendChild(badge);
             const actTd=document.createElement('td');
             if (r.due>0) {
-                const b15=document.createElement('button');
-                b15.className='btn btn-outline btn-sm';
-                b15.textContent = 'Receber 15';
-                b15.onclick = () => quickPay(r.p.id, 15);
-                const ball=document.createElement('button');
-                ball.className='btn btn-outline btn-sm';
-                ball.style.marginLeft='6px';
-                ball.textContent = 'Receber tudo';
-                ball.onclick = () => quickPay(r.p.id, r.due);
-                actTd.appendChild(b15);
-                actTd.appendChild(ball);
-                const hasPay = ledger.some(e => e.kind==='payment' && e.playerId==r.p.id);
+                const pid = r.p.id;
+                const isGuest = (r.p.billingType === 'avulso');
+
+                // Quebra de pendência por categoria (heurística): pagamentos cobrem 1) mensalidade 2) avulso 3) rateio
+                let chMensal = 0, chAv = 0, chRate = 0, chOther = 0, payTot = 0;
+                ledger.forEach(e => {
+                    if (e.playerId != pid) return;
+                    if (e.kind === 'charge') {
+                        const a = Number(e.amount)||0;
+                        if ((e.category||'') === 'mensalidade') chMensal += a;
+                        else if ((e.category||'') === 'avulso') chAv += a;
+                        else if ((e.category||'') === 'rateio') chRate += a;
+                        else chOther += a;
+                    }
+                    if (e.kind === 'payment') {
+                        payTot += Number(e.amount)||0;
+                    }
+                });
+
+                let remPay = payTot;
+                const payMensal = Math.min(remPay, chMensal); remPay -= payMensal;
+                const payAv     = Math.min(remPay, chAv);     remPay -= payAv;
+                const payRate   = Math.min(remPay, chRate);   remPay -= payRate;
+                // (chOther fica por último, não precisamos calcular aqui para os botões)
+
+                const dueMensal = Math.max(0, chMensal - payMensal);
+                const dueAv     = Math.max(0, chAv - payAv);
+                const dueRate   = Math.max(0, chRate - payRate);
+
+                // Botão 1: só aparece para Convidado (avulso) OU quando existe rateio pendente
+                // - Se houver rateio pendente: mostra o valor do rateio
+                // - Senão (e se for convidado): mostra Receber 15 (até o que faltar do avulso)
+                let firstAmt = 0;
+                let firstLabel = '';
+
+                if (dueRate > 0.001) {
+                    firstAmt = Math.round(dueRate * 100) / 100;
+                    firstLabel = 'Receber ' + money(firstAmt);
+                } else if (isGuest && dueAv > 0.001) {
+                    firstAmt = Math.min(15, Math.round(dueAv * 100) / 100);
+                    firstLabel = 'Receber 15';
+                }
+
+                if (firstAmt > 0) {
+                    const b1=document.createElement('button');
+                    b1.className='btn btn-outline btn-sm';
+                    b1.textContent = firstLabel;
+                    b1.onclick = () => quickPay(pid, firstAmt);
+                    actTd.appendChild(b1);
+                }
+
+                // Botão 2: Receber tudo
+                // - Mensalista: recebe tudo (mensalidade + rateio + etc.)
+                // - Convidado: recebe 15 (se houver avulso pendente) + rateio pendente
+                let allAmt = 0;
+                if (isGuest) {
+                    const part15 = (dueAv > 0.001) ? Math.min(15, Math.round(dueAv * 100) / 100) : 0;
+                    allAmt = part15 + Math.round(dueRate * 100) / 100;
+                    if (allAmt > r.due) allAmt = r.due;
+                } else {
+                    allAmt = r.due;
+                }
+
+                if (allAmt > 0.001) {
+                    const ball=document.createElement('button');
+                    ball.className='btn btn-outline btn-sm';
+                    ball.style.marginLeft = (firstAmt > 0 ? '6px' : '0');
+                    ball.textContent = 'Receber tudo';
+                    ball.onclick = () => quickPay(pid, allAmt);
+                    actTd.appendChild(ball);
+                }
+
+                const hasPay = ledger.some(e => e.kind==='payment' && e.playerId==pid);
                 if (hasPay) {
 
                 const bun=document.createElement('button');
