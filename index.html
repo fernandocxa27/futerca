@@ -792,6 +792,24 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
     border-bottom: 3px dashed rgba(255,255,255,0.70);
   }
 }
+
+
+/* ===== RATEIO MANUAL (modal) ===== */
+.rateio-modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,0.55);z-index:2000;display:flex;align-items:flex-end;justify-content:center;padding:14px}
+@media (min-width:768px){.rateio-modal-backdrop{align-items:center}}
+.rateio-modal{width:min(720px,100%);max-height:85vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.25);border:1px solid #e5e7eb}
+.rateio-modal .hd{padding:12px 14px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rateio-modal .hd .t{font-weight:950;color:#0f172a}
+.rateio-modal .bd{padding:12px 14px}
+.rateio-modal .ft{padding:12px 14px;border-top:1px solid #e5e7eb;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.rateio-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.rateio-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 10px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc}
+.rateio-item .nm{font-weight:900;color:#0f172a}
+.rateio-item .sm{font-size:0.82rem;color:#64748b}
+.rateio-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.rateio-tools .btn{padding:6px 10px}
+.rateio-hint{font-size:0.82rem;color:#475569;margin-top:6px}
+
 </style>
 </head>
 <body>
@@ -1072,6 +1090,16 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <label>Jogador</label>
 <select id="payPlayer"></select>
 </div>
+<div class="form-group" style="min-width:180px">
+<label>Tipo</label>
+<select id="payType">
+<option value="pagamento">Pagamento (geral)</option>
+<option value="mensalidade_pag">Mensalidade</option>
+<option value="avulso_pag">Avulso</option>
+<option value="rateio_pag">Rateio</option>
+<option value="outros_pag">Outros\/credito</option>
+</select>
+</div>
 <div class="form-group">
 <label>Valor (R$)</label>
 <input id="payAmount" min="0" step="1" type="number" value="15"/>
@@ -1114,6 +1142,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <label>Ratear compra (gera cobranças)</label>
 <select id="splitMode">
 <option value="none">Não ratear (sai do caixa)</option>
+<option value="manual_pick">Escolher participantes do rateio</option>
 <option value="mensal_all">Entre mensalistas (todos)</option>
 <option value="mensal_present">Entre mensalistas presentes (pelada carregada)</option>
 <option value="session_present">Entre presentes da pelada carregada</option>
@@ -1941,7 +1970,7 @@ function getConfirmedParticipantsList(session) {
 }
 
 function addLedger(entry) {
-    const created = { id: uuid(), date: todayISO(), note: '', ...entry };
+    const created = Object.assign({ id: uuid(), date: todayISO(), note: '' }, (entry||{}));
     ledger.push(created);
 
     // auditoria (sem poluir): loga somente pagamentos e despesas manuais
@@ -1971,16 +2000,64 @@ function addLedger(entry) {
     renderFinance(); try{renderSessionToolsField();}catch(e){}
 }
 
-function playerDue(playerId) {
-    let charges = 0, payments = 0;
-    ledger.forEach(e => {
-        if (e.playerId == playerId) {
-            if (e.kind === 'charge') charges += Number(e.amount)||0;
-            if (e.kind === 'payment') payments += Number(e.amount)||0;
+function playerBalances(playerId) {
+    const ch = { mensal: 0, avulso: 0, rateio: 0, other: 0 };
+    const pay = { mensal: 0, avulso: 0, rateio: 0, other: 0, general: 0 };
+
+    (ledger||[]).forEach(e => {
+        if (!e || e.playerId != playerId) return;
+        const a = Number(e.amount)||0;
+
+        if (e.kind === 'charge') {
+            const c = (e.category||'');
+            if (c === 'mensalidade') ch.mensal += a;
+            else if (c === 'avulso') ch.avulso += a;
+            else if (c === 'rateio') ch.rateio += a;
+            else ch.other += a;
+        }
+
+        if (e.kind === 'payment') {
+            const c = (e.category||'');
+            if (c === 'mensalidade_pag') pay.mensal += a;
+            else if (c === 'avulso_pag') pay.avulso += a;
+            else if (c === 'rateio_pag') pay.rateio += a;
+            else if (c === 'outros_pag') pay.other += a;
+            else pay.general += a; // pagamento geral/legado
         }
     });
-    return charges - payments;
+
+    // apply tagged payments first
+    const due = {
+        mensal: Math.round((ch.mensal - pay.mensal) * 100) / 100,
+        avulso: Math.round((ch.avulso - pay.avulso) * 100) / 100,
+        rateio: Math.round((ch.rateio - pay.rateio) * 100) / 100,
+        other:  Math.round((ch.other  - pay.other)  * 100) / 100
+    };
+
+    // allocate general payments (legacy) to positive dues in priority order
+    let rem = Math.round(pay.general * 100) / 100;
+    ['mensal','avulso','rateio','other'].forEach(k => {
+        if (rem <= 0) return;
+        const need = Math.max(0, Number(due[k])||0);
+        const used = Math.min(rem, need);
+        due[k] = Math.round((due[k] - used) * 100) / 100;
+        rem = Math.round((rem - used) * 100) / 100;
+    });
+
+    // remaining general payment becomes credit in "other"
+    if (rem > 0.001) {
+        due.other = Math.round((due.other - rem) * 100) / 100;
+        rem = 0;
+    }
+
+    const total = Math.round((due.mensal + due.avulso + due.rateio + due.other) * 100) / 100;
+    return { charges: ch, payments: pay, due: due, total: total };
 }
+
+function playerDue(playerId) {
+    return (playerBalances(playerId).total || 0);
+}
+
 
 function cashBalance() {
     let pay = 0, exp = 0;
@@ -3023,11 +3100,16 @@ function addPayment() {
     const pid = document.getElementById('payPlayer').value;
     const amount = parseFloat(document.getElementById('payAmount').value) || 0;
     const note = (document.getElementById('payNote').value||'').trim();
+    const typeEl = document.getElementById('payType');
+    const cat = typeEl ? (typeEl.value || 'pagamento') : 'pagamento';
+
     if (!pid) return alert('Selecione um jogador.');
-    if (amount <= 0) return alert('Digite um valor válido.');
-    addLedger({ kind:'payment', category:'pagamento', playerId: pid, amount, note, date: todayISO() });
+    if (amount <= 0) return alert('Digite um valor valido.');
+
+    addLedger({ kind:'payment', category: cat, playerId: pid, amount, note, date: todayISO() });
     document.getElementById('payNote').value='';
 }
+
 
 function addExpense() {
     const cat = document.getElementById('expCategory').value;
@@ -3070,6 +3152,10 @@ function splitExpenseById(expenseId) {
     const mode = (document.getElementById('splitMode') ? document.getElementById('splitMode').value : 'none');
     if (mode === 'none') {
         return alert('Selecione um modo de rateio (ou deixe sem rateio).');
+    }
+
+    if (mode === 'manual_pick') {
+        return openManualSplitPicker(exp);
     }
 
     const isMensalista = (p) => p && p.billingType === 'mensalista';
@@ -3133,11 +3219,464 @@ function splitLastExpense() {
 }
 
 
-function quickPay(pid, amount) {
+// ===== RATEIO MANUAL: escolher participantes e salvar seleção na despesa =====
+function openManualSplitPicker(exp, opts) {
+    opts = opts || {};
+    if (!exp) return;
+
+    const allowEdit = !!opts.allowEdit;
+
+    const existingCharges = (ledger||[]).filter(e => e.kind==='charge' && e.category==='rateio' && e.refId===exp.id);
+    const already = existingCharges.length > 0;
+
+    if (already && !allowEdit) {
+        return alert('Esta despesa ja foi rateada. Se quiser mudar os participantes/valores, use "Editar rateio" na lista de Rateios realizados.');
+    }
+
+    // selecionados salvos na propria despesa (antes de ratear) OU vindos das cobrancas (edit)
+    let savedIds = [];
+    let savedAmounts = {};
+
+    if (already) {
+        existingCharges.forEach(ch => {
+            const pid = String(ch.playerId);
+            if (!savedIds.includes(pid)) savedIds.push(pid);
+            savedAmounts[pid] = Number(ch.amount)||0;
+        });
+    } else {
+        savedIds = Array.isArray(exp.manualSplitPids) ? exp.manualSplitPids.map(String) : [];
+        savedAmounts = (exp.manualSplitAmounts && typeof exp.manualSplitAmounts==='object') ? exp.manualSplitAmounts : {};
+    }
+
+    // modo salvo (equal/custom)
+    let savedMode = exp.manualSplitMode || '';
+    if (!savedMode) {
+        if (already && savedIds.length) {
+            const v0 = Number(savedAmounts[String(savedIds[0])]||0);
+            const allEq = savedIds.every(pid => Math.abs((Number(savedAmounts[String(pid)]||0) - v0)) < 0.009);
+            savedMode = allEq ? 'equal' : 'custom';
+        } else {
+            savedMode = 'equal';
+        }
+    }
+
+    const back = document.createElement('div');
+    back.className = 'rateio-modal-backdrop';
+
+    const modal = document.createElement('div');
+    modal.className = 'rateio-modal';
+
+    const hd = document.createElement('div');
+    hd.className = 'hd';
+    const title = document.createElement('div');
+    title.className = 't';
+    title.textContent = allowEdit ? 'Editar rateio' : 'Escolher participantes do rateio';
+    const close = document.createElement('button');
+    close.className = 'btn btn-outline btn-sm';
+    close.type = 'button';
+    close.textContent = 'Fechar';
+    close.onclick = () => { try { document.body.removeChild(back); } catch(e) {} };
+    hd.appendChild(title);
+    hd.appendChild(close);
+
+    const bd = document.createElement('div');
+    bd.className = 'bd';
+
+    const info = document.createElement('div');
+    info.className = 'small';
+    info.innerHTML = `<div><strong>Despesa:</strong> ${escapeHtml(String(exp.category||'Despesa'))} - <strong>Valor:</strong> ${escapeHtml(money(exp.amount||0))}</div>` + (exp.note ? `<div style="margin-top:4px"><strong>Obs:</strong> ${escapeHtml(String(exp.note))}</div>` : '');
+    bd.appendChild(info);
+
+    // modo: equal/custom
+    const modeWrap = document.createElement('div');
+    modeWrap.className = 'rateio-tools';
+    modeWrap.style.marginTop = '10px';
+
+    const r1 = document.createElement('label');
+    r1.style.display='flex';
+    r1.style.alignItems='center';
+    r1.style.gap='8px';
+    r1.style.fontSize='0.9rem';
+    const inEq = document.createElement('input');
+    inEq.type='radio';
+    inEq.name='rateioMode';
+    inEq.value='equal';
+    inEq.checked = (savedMode === 'equal');
+    r1.appendChild(inEq);
+    r1.appendChild(document.createTextNode('Dividir por igual'));
+
+    const r2 = document.createElement('label');
+    r2.style.display='flex';
+    r2.style.alignItems='center';
+    r2.style.gap='8px';
+    r2.style.fontSize='0.9rem';
+    const inCu = document.createElement('input');
+    inCu.type='radio';
+    inCu.name='rateioMode';
+    inCu.value='custom';
+    inCu.checked = (savedMode === 'custom');
+    r2.appendChild(inCu);
+    r2.appendChild(document.createTextNode('Valores diferentes por jogador'));
+
+    modeWrap.appendChild(r1);
+    modeWrap.appendChild(r2);
+    bd.appendChild(modeWrap);
+
+    const hint = document.createElement('div');
+    hint.className = 'rateio-hint';
+    hint.textContent = allowEdit ? 'Edite participantes e/ou valores. Isso altera as cobrancas de rateio deste lancamento.' : 'Dica: esta selecao fica salva neste lancamento ate voce ratear.';
+    bd.appendChild(hint);
+
+    const searchWrap = document.createElement('div');
+    searchWrap.className = 'form-group';
+    searchWrap.style.marginTop = '10px';
+    const search = document.createElement('input');
+    search.type = 'text';
+    search.placeholder = 'Buscar jogador...';
+    searchWrap.appendChild(search);
+    bd.appendChild(searchWrap);
+
+    const tools = document.createElement('div');
+    tools.className = 'rateio-tools';
+
+    const btnAll = document.createElement('button');
+    btnAll.type='button';
+    btnAll.className='btn btn-outline btn-sm';
+    btnAll.textContent='Selecionar todos';
+
+    const btnNone = document.createElement('button');
+    btnNone.type='button';
+    btnNone.className='btn btn-outline btn-sm';
+    btnNone.textContent='Limpar';
+
+    tools.appendChild(btnAll);
+    tools.appendChild(btnNone);
+    bd.appendChild(tools);
+
+    const list = document.createElement('div');
+    list.className = 'rateio-list';
+    bd.appendChild(list);
+
+    const ft = document.createElement('div');
+    ft.className = 'ft';
+
+    const cancel = document.createElement('button');
+    cancel.type='button';
+    cancel.className='btn btn-outline';
+    cancel.textContent='Cancelar';
+    cancel.onclick = () => { try { document.body.removeChild(back); } catch(e) {} };
+
+    const apply = document.createElement('button');
+    apply.type='button';
+    apply.className='btn btn-primary';
+    apply.textContent = allowEdit ? 'Salvar alteracoes' : 'Aplicar e ratear';
+
+    ft.appendChild(cancel);
+    ft.appendChild(apply);
+
+    modal.appendChild(hd);
+    modal.appendChild(bd);
+    modal.appendChild(ft);
+    back.appendChild(modal);
+
+    // jogadores: nunca inclui goleiros isentos
+    let items = (players||[]).slice();
+
+    const state = {
+        selected: new Set(savedIds),
+        mode: (savedMode === 'custom' ? 'custom' : 'equal'),
+        amounts: { ...savedAmounts }
+    };
+
+    function currentMode() {
+        return inCu.checked ? 'custom' : 'equal';
+    }
+
+    function sanitizeAmount(v) {
+        const n = Number(String(v||'').replace(',', '.'));
+        if (!isFinite(n) || n < 0) return 0;
+        return Math.round(n * 100) / 100;
+    }
+
+    function renderList() {
+        state.mode = currentMode();
+        const q = String(search.value||'').trim().toLowerCase();
+        list.innerHTML = '';
+
+        const showCustom = (state.mode === 'custom');
+
+        items
+          .filter(p => !q || String(p.name||'').toLowerCase().includes(q))
+          .sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')))
+          .forEach(p => {
+            const pid = String(p.id);
+            const row = document.createElement('div');
+            row.className = 'rateio-item';
+
+            const left = document.createElement('div');
+            const nm = document.createElement('div');
+            nm.className = 'nm';
+            nm.textContent = p.name;
+            const sm = document.createElement('div');
+            sm.className = 'sm';
+            sm.textContent = (p.billingType==='mensalista' ? 'Mensalista' : (p.billingType==='avulso' ? 'Avulso' : ''));
+            left.appendChild(nm);
+            left.appendChild(sm);
+
+            const right = document.createElement('div');
+            right.style.display='flex';
+            right.style.alignItems='center';
+            right.style.gap='10px';
+
+            let amtInput = null;
+            if (showCustom) {
+                amtInput = document.createElement('input');
+                amtInput.type = 'number';
+                amtInput.step = '0.01';
+                amtInput.min = '0';
+                amtInput.style.width = '110px';
+                amtInput.placeholder = 'R$';
+                const cur = (state.amounts[pid] != null) ? Number(state.amounts[pid]) : 0;
+                amtInput.value = String(Math.round(cur*100)/100);
+                amtInput.oninput = () => {
+                    state.amounts[pid] = sanitizeAmount(amtInput.value);
+                };
+                amtInput.disabled = !state.selected.has(pid);
+                right.appendChild(amtInput);
+            }
+
+            const chk = document.createElement('input');
+            chk.type = 'checkbox';
+            chk.checked = state.selected.has(pid);
+            chk.onchange = () => {
+                if (chk.checked) state.selected.add(pid);
+                else state.selected.delete(pid);
+                if (amtInput) amtInput.disabled = !chk.checked;
+            };
+
+            row.onclick = (ev) => {
+                if (ev && ev.target && ev.target.tagName) {
+                    const tg = ev.target.tagName.toLowerCase();
+                    if (tg === 'input' || tg === 'button' || tg === 'select') return;
+                }
+                chk.checked = !chk.checked;
+                chk.dispatchEvent(new Event('change'));
+            };
+
+            right.appendChild(chk);
+
+            row.appendChild(left);
+            row.appendChild(right);
+            list.appendChild(row);
+          });
+    }
+
+    btnAll.onclick = () => { items.forEach(p => state.selected.add(String(p.id))); renderList(); };
+    btnNone.onclick = () => { state.selected = new Set(); renderList(); };
+    search.oninput = renderList;
+    inEq.onchange = renderList;
+    inCu.onchange = renderList;
+
+    apply.onclick = () => {
+        const ids = Array.from(state.selected);
+        if (!ids.length) return alert('Selecione pelo menos 1 jogador para ratear.');
+
+        const mode = currentMode();
+        let amountMap = {};
+
+        if (mode === 'custom') {
+            let sum = 0;
+            ids.forEach(pid => {
+                const v = sanitizeAmount(state.amounts[String(pid)]);
+                amountMap[String(pid)] = v;
+                sum += v;
+            });
+            sum = Math.round(sum*100)/100;
+            const target = Math.round((Number(exp.amount||0))*100)/100;
+            if (Math.abs(sum - target) > 0.01) {
+                return alert('A soma dos valores por jogador precisa ser igual ao valor da despesa.\n\nSoma: ' + money(sum) + '\nDespesa: ' + money(target));
+            }
+        }
+
+        exp.manualSplitPids = ids;
+        exp.manualSplitMode = mode;
+        exp.manualSplitAmounts = (mode === 'custom' ? amountMap : {});
+        saveFinance();
+
+        applyManualSplit(exp, ids, mode, amountMap);
+
+        try { document.body.removeChild(back); } catch(e) {}
+    };
+
+    back.addEventListener('click', (e) => {
+        if (e.target === back) {
+            try { document.body.removeChild(back); } catch(err) {}
+        }
+    });
+
+    document.body.appendChild(back);
+    renderList();
+}
+
+function doManualSplit(exp, ids) {
+    // legado: divide por igual
+    return applyManualSplit(exp, ids, 'equal', {});
+}
+
+function applyManualSplit(exp, ids, mode, amountMap) {
+    if (!exp) return;
+
+    const selected = (ids||[]).map(String);
+
+    const targets = selected
+        .map(id => players.find(p => String(p.id)===String(id)))
+        .filter(Boolean);
+
+    if (!targets.length) return alert('Nao ha jogadores suficientes para ratear.');
+
+    const total = Math.round((Number(exp.amount||0)) * 100) / 100;
+
+    const perPid = {};
+
+    if (mode === 'custom') {
+        let sum = 0;
+        targets.forEach(p => {
+            const v = Math.round((Number(amountMap[String(p.id)])||0) * 100) / 100;
+            perPid[String(p.id)] = v;
+            sum += v;
+        });
+        sum = Math.round(sum*100)/100;
+        if (Math.abs(sum - total) > 0.01) {
+            return alert('Soma dos valores diferente do total da despesa.');
+        }
+    } else {
+        const base = Math.floor((Math.round(total*100)) / targets.length); // cents
+        let used = 0;
+        targets.forEach(p => {
+            const cents = base;
+            used += cents;
+            perPid[String(p.id)] = cents / 100;
+        });
+        const rem = Math.round(total*100) - used;
+        if (rem !== 0) {
+            const f = String(targets[0].id);
+            perPid[f] = Math.round((perPid[f] + (rem/100)) * 100) / 100;
+        }
+    }
+
+    // map existing charge indices by pid
+    const idxByPid = {};
+    for (let i=0;i<(ledger||[]).length;i++) {
+        const e = ledger[i];
+        if (e && e.kind==='charge' && e.category==='rateio' && e.refId===exp.id) {
+            const pid = String(e.playerId);
+            if (!idxByPid[pid]) idxByPid[pid] = [];
+            idxByPid[pid].push(i);
+        }
+    }
+
+    // remove charges for pids not selected
+    const selectedSet = new Set(targets.map(p => String(p.id)));
+    const toRemove = [];
+    Object.keys(idxByPid).forEach(pid => {
+        if (!selectedSet.has(String(pid))) {
+            idxByPid[pid].forEach(ix => toRemove.push(ix));
+        }
+    });
+    toRemove.sort((a,b)=>b-a).forEach(ix => { ledger.splice(ix,1); });
+
+    // refresh idxByPid after removals
+    const idxByPid2 = {};
+    for (let i=0;i<(ledger||[]).length;i++) {
+        const e = ledger[i];
+        if (e && e.kind==='charge' && e.category==='rateio' && e.refId===exp.id) {
+            const pid = String(e.playerId);
+            if (!idxByPid2[pid]) idxByPid2[pid] = [];
+            idxByPid2[pid].push(i);
+        }
+    }
+
+    // upsert charges
+    targets.forEach(p => {
+        const pid = String(p.id);
+        const amt = Math.round((Number(perPid[pid])||0) * 100) / 100;
+        const arr = idxByPid2[pid] || [];
+        if (arr.length) {
+            const ix = arr[0];
+            ledger[ix].amount = amt;
+            ledger[ix].date = ledger[ix].date || todayISO();
+            ledger[ix].note = ledger[ix].note || (`Rateio: ${exp.category} (${exp.id})`);
+            for (let k=arr.length-1;k>=1;k--) ledger.splice(arr[k],1);
+        } else {
+            ledger.push({
+                id: uuid(),
+                kind: 'charge',
+                category: 'rateio',
+                playerId: p.id,
+                amount: amt,
+                date: todayISO(),
+                note: (mode==='custom' ? `Rateio (manual): ${exp.category} (${exp.id})` : `Rateio: ${exp.category} (${exp.id})`),
+                refId: exp.id
+            });
+        }
+    });
+
+    try {
+        logTrash('do_split', {
+            expenseId: exp.id,
+            category: exp.category||'',
+            expenseAmount: exp.amount||0,
+            targetsCount: targets.length,
+            perPlayer: (mode==='custom' ? null : (total / targets.length)),
+            mode: (mode==='custom' ? 'manual_custom' : 'manual_equal'),
+            participants: targets.map(x => x.id),
+            amounts: (mode==='custom' ? perPid : null)
+        });
+    } catch(e) {}
+
+    saveFinance();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
+
+    alert('Rateio aplicado: ' + targets.length + ' jogadores.');
+}
+
+
+
+function quickPay(pid, amount, payCategory, note) {
     const a = Number(amount)||0;
     if (a<=0) return;
-    addLedger({ kind:'payment', category:'pagamento', playerId: pid, amount: a, date: todayISO(), note: 'Pagamento rápido' });
+    const cat = payCategory || 'pagamento';
+    addLedger({ kind:'payment', category: cat, playerId: pid, amount: a, date: todayISO(), note: (note || 'Pagamento') });
 }
+
+function addLedgerBatch(entries) {
+    (entries||[]).forEach(entry => {
+        const created = Object.assign({ id: uuid(), date: todayISO(), note: '' }, (entry||{}));
+        ledger.push(created);
+    });
+    saveFinance();
+    if (financeConfig.autoAvulso) syncAvulsoChargesForCurrentSession();
+    renderFinance(); try{renderSessionToolsField();}catch(e){}
+}
+
+function payAllDueForPlayer(pid) {
+    const b = playerBalances(pid);
+    const d = b && b.due ? b.due : {mensal:0,avulso:0,rateio:0,other:0};
+    const entries = [];
+    const pushPay = (cat, amt, label) => {
+        const a = Math.round((Number(amt)||0) * 100) / 100;
+        if (a > 0.001) entries.push({ kind:'payment', category: cat, playerId: pid, amount: a, date: todayISO(), note: label });
+    };
+
+    pushPay('mensalidade_pag', d.mensal, 'Pagamento mensalidade');
+    pushPay('avulso_pag',     d.avulso, 'Pagamento avulso');
+    pushPay('rateio_pag',     d.rateio, 'Pagamento rateio');
+    pushPay('outros_pag',     d.other,  'Pagamento');
+
+    if (!entries.length) return;
+    addLedgerBatch(entries);
+}
+
 
 function exportFinanceCSV() {
     var csv = 'tipo,data,categoria,jogador_id,jogador_nome,valor,obs\n';
@@ -3281,7 +3820,7 @@ function renderFinance() {
                 paidLabel.className = 'small';
                 paidLabel.style.color = 'var(--green)';
                 paidLabel.style.fontWeight = '900';
-                paidLabel.textContent = (paid > 0 ? 'Pago' : '');
+                paidLabel.textContent = (chargeEntry && paid > 0 ? 'Pago' : '');
 
                 // Botão 'Marcar pago' — só aparece se ainda deve
                 const btn = document.createElement('button');
@@ -3331,7 +3870,22 @@ row.appendChild(left);
             dueTd.className='mono';
             const badge = document.createElement('span');
             badge.className = 'badge ' + (r.due>0 ? 'badge-red' : 'badge-green');
-            badge.textContent = (r.due>0 ? ('Devendo ' + money(r.due)) : ('Crédito ' + money(-r.due)));
+            badge.textContent = (r.due>0 ? ('Total devendo ' + money(r.due)) : ('Credito ' + money(-r.due)));
+            try {
+                const b = playerBalances(r.p.id);
+                const parts = [];
+                if (b.due.mensal > 0.001) parts.push('Mensal: ' + money(b.due.mensal));
+                if (b.due.avulso > 0.001) parts.push('Avulso: ' + money(b.due.avulso));
+                if (b.due.rateio > 0.001) parts.push('Rateio: ' + money(b.due.rateio));
+                if (b.due.other > 0.001) parts.push('Outros: ' + money(b.due.other));
+                if (parts.length) {
+                    const br = document.createElement('div');
+                    br.className = 'small';
+                    br.style.marginTop = '4px';
+                    br.textContent = parts.join(' | ');
+                    dueTd.appendChild(br);
+                }
+            } catch(e) {}
             dueTd.appendChild(badge);
             const actTd=document.createElement('td');
             if (r.due>0) {
@@ -3382,7 +3936,7 @@ row.appendChild(left);
                     const b1=document.createElement('button');
                     b1.className='btn btn-outline btn-sm';
                     b1.textContent = firstLabel;
-                    b1.onclick = () => quickPay(pid, firstAmt);
+                    b1.onclick = () => quickPay(pid, firstAmt, (dueRate > 0.001 ? 'rateio_pag' : 'avulso_pag'), 'Pagamento');
                     actTd.appendChild(b1);
                 }
 
