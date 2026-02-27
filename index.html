@@ -3059,25 +3059,31 @@ function markAllMonthlyPaid() {
     if (count) alert('✅ Mensalidades marcadas como pagas: ' + count);
 }
 function generateMonthlyCharges() {
-    const month = document.getElementById('billingMonth').value || todayISO().slice(0,7);
-    const fee = Number(financeConfig.feeMonthly) || 0;
-    let created = 0;
-    players.forEach(p => {
-        if (p.billingType !== 'mensalista') return;
-        const startM = p.monthlyStartMonth || '';
-        if (startM && month < startM) return;
-        const exists = ledger.some(e => e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month && e.playerId==p.id);
-        if (exists) return;
-        ledger.push({ id: uuid(), kind:'charge', category:'mensalidade', playerId: p.id, amount: fee, date: month + '-01', note: 'Mensalidade ' + month, refMonth: month });
-        created++;
-    });
     try {
-        logTrash('gen_monthly_charges', { month: month, created: created, fee: fee });
-    } catch(e) {}
-    saveFinance();
-    renderFinance(); try{renderSessionToolsField();}catch(e){}
-    alert('✅ Cobranças mensalistas geradas: ' + created);
+        const month = document.getElementById('billingMonth').value || todayISO().slice(0,7);
+        const fee = Number(financeConfig.feeMonthly) || 0;
+        let created = 0;
+        players.forEach(p => {
+            if (p.billingType !== 'mensalista') return;
+            const startM = p.monthlyStartMonth || '';
+            if (startM && month < startM) return;
+            const exists = ledger.some(e => e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month && e.playerId==p.id);
+            if (exists) return;
+            ledger.push({ id: uuid(), kind:'charge', category:'mensalidade', playerId: p.id, amount: fee, date: month + '-01', note: 'Mensalidade ' + month, refMonth: month });
+            created++;
+        });
+        try {
+            logTrash('gen_monthly_charges', { month: month, created: created, fee: fee });
+        } catch(e) {}
+        saveFinance();
+        renderFinance(); try{renderSessionToolsField();}catch(e){}
+        alert('Cobranças mensalistas geradas para ' + month + ': ' + created);
+    } catch(err) {
+        console.error(err);
+        alert('Erro ao gerar cobranças de mensalista: ' + (err && err.message ? err.message : String(err)));
+    }
 }
+
 
 
 function deleteMonthlyCharges() {
