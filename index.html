@@ -3191,7 +3191,7 @@ function renderFinance() {
             att.innerHTML = '';
 
             // Se a pelada estiver confirmada, mostra apenas quem compareceu (presentes)
-            const list = confirmed ? getConfirmedParticipantsList(s) : players.map(p => ({id:p.id, name:p.name, billingType:p.billingType, position:p.position}));
+            const list = confirmed ? getConfirmedParticipantsList(s) : players.filter(p => p.present !== false).map(p => ({id:p.id, name:p.name, billingType:p.billingType, position:p.position}));
 
             list.forEach(p => {
                 const wrap=document.createElement('div');
@@ -3524,7 +3524,7 @@ row.appendChild(left);
     const ps = document.getElementById('pendingSplits');
     if (ps) {
         ps.innerHTML='';
-        const eligible = (e) => e.kind==='expense' && e.amount>0 && !['goleiro_alugado','quadra'].includes(e.category);
+        const eligible = (e) => e.kind==='expense' && e.amount>0 && !['goleiro_alugado','quadra','ajuste_caixa'].includes(e.category);
         const alreadySplit = (expId) => ledger.some(x => x.kind==='charge' && x.category==='rateio' && x.refId===expId);
         const pending = ledger.filter(eligible).filter(e => !alreadySplit(e.id)).slice().reverse();
 
@@ -3564,7 +3564,7 @@ row.appendChild(left);
     const ds = document.getElementById('doneSplits');
     if (ds) {
         ds.innerHTML='';
-        const eligible = (e) => e.kind==='expense' && e.amount>0 && !['goleiro_alugado','quadra'].includes(e.category);
+        const eligible = (e) => e.kind==='expense' && e.amount>0 && !['goleiro_alugado','quadra','ajuste_caixa'].includes(e.category);
         const alreadySplit = (expId) => ledger.some(x => x.kind==='charge' && x.category==='rateio' && x.refId===expId);
         const done = ledger.filter(eligible).filter(e => alreadySplit(e.id)).slice().reverse();
 
