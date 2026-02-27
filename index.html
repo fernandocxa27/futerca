@@ -3033,12 +3033,16 @@ function addExpense() {
     const cat = document.getElementById('expCategory').value;
     const amount = parseFloat(document.getElementById('expAmount').value) || 0;
     const note = (document.getElementById('expNote').value||'').trim();
-    if (amount <= 0) return alert('Digite um valor vÃ¡lido.');
-    addLedger({ kind:'expense', category: cat, amount, note, date: todayISO() });
+    if (amount <= 0) return alert('Digite um valor válido.');
+
+    const splitSel = document.getElementById('splitMode');
+    const splitMode = splitSel ? splitSel.value : 'none';
+    const noRateio = (splitMode === 'none');
+
+    addLedger({ kind:'expense', category: cat, amount, note, date: todayISO(), noRateio: noRateio });
     document.getElementById('expAmount').value = 0;
     document.getElementById('expNote').value = '';
 }
-
 
 function onExpenseCategoryChange() {
     const catEl = document.getElementById('expCategory');
@@ -3524,7 +3528,7 @@ row.appendChild(left);
     const ps = document.getElementById('pendingSplits');
     if (ps) {
         ps.innerHTML='';
-        const eligible = (e) => e.kind==='expense' && e.amount>0 && !['goleiro_alugado','quadra','ajuste_caixa'].includes(e.category);
+        const eligible = (e) => e.kind==='expense' && e.amount>0 && !e.noRateio && !['goleiro_alugado','quadra','ajuste_caixa'].includes(e.category);
         const alreadySplit = (expId) => ledger.some(x => x.kind==='charge' && x.category==='rateio' && x.refId===expId);
         const pending = ledger.filter(eligible).filter(e => !alreadySplit(e.id)).slice().reverse();
 
@@ -3564,7 +3568,7 @@ row.appendChild(left);
     const ds = document.getElementById('doneSplits');
     if (ds) {
         ds.innerHTML='';
-        const eligible = (e) => e.kind==='expense' && e.amount>0 && !['goleiro_alugado','quadra','ajuste_caixa'].includes(e.category);
+        const eligible = (e) => e.kind==='expense' && e.amount>0 && !e.noRateio && !['goleiro_alugado','quadra','ajuste_caixa'].includes(e.category);
         const alreadySplit = (expId) => ledger.some(x => x.kind==='charge' && x.category==='rateio' && x.refId===expId);
         const done = ledger.filter(eligible).filter(e => alreadySplit(e.id)).slice().reverse();
 
