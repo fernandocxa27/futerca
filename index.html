@@ -3839,6 +3839,8 @@ function renderFinance() {
                     badge.style.display = 'none';
                 }
 
+                // Botão remover cobrança do mês (X vermelho) � aparece se houver cobrança gerada
+                const chargeEntry = ledger.find(e => e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month && e.playerId==p.id);
                 // Texto fixo 'Pago' ao lado do valor (quando já quitou)
                 const paidLabel = document.createElement('span');
                 paidLabel.className = 'small';
@@ -3855,7 +3857,6 @@ function renderFinance() {
                 btn.onclick = () => markMonthlyPaid(p.id);
 
                 // Botão remover cobrança do mês (X vermelho) — aparece se houver cobrança gerada
-                const chargeEntry = ledger.find(e => e.kind==='charge' && e.category==='mensalidade' && e.refMonth===month && e.playerId==p.id);
                 const btnDel = document.createElement('button');
                 btnDel.className = 'btn btn-danger btn-sm';
                 btnDel.title = 'Remover cobrança deste mês';
