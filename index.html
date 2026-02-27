@@ -3478,34 +3478,52 @@ function openManualSplitPicker(exp, opts) {
     inCu.onchange = renderList;
 
     apply.onclick = () => {
-        const ids = Array.from(state.selected);
-        if (!ids.length) return alert('Selecione pelo menos 1 jogador para ratear.');
+        try {
+            // Selected ids (checkboxes)
+            let ids = Array.from(state.selected || []);
 
-        const mode = currentMode();
-        let amountMap = {};
+            const mode = currentMode();
+            let amountMap = {};
 
-        if (mode === 'custom') {
-            let sum = 0;
-            ids.forEach(pid => {
-                const v = sanitizeAmount(state.amounts[String(pid)]);
-                amountMap[String(pid)] = v;
-                sum += v;
-            });
-            sum = Math.round(sum*100)/100;
-            const target = Math.round((Number(exp.amount||0))*100)/100;
-            if (Math.abs(sum - target) > 0.01) {
-                return alert('A soma dos valores por jogador precisa ser igual ao valor da despesa.\n\nSoma: ' + money(sum) + '\nDespesa: ' + money(target));
+            // In custom mode: if user filled values but forgot to tick checkboxes,
+            // auto-select any player with amount > 0.
+            if (mode === 'custom' && (!ids || !ids.length)) {
+                ids = [];
+                items.forEach(p => {
+                    const pid = String(p.id);
+                    const v = sanitizeAmount(state.amounts[pid]);
+                    if (v > 0.00001) ids.push(pid);
+                });
             }
+
+            if (!ids || !ids.length) return alert('Selecione pelo menos 1 jogador para ratear.');
+
+            if (mode === 'custom') {
+                let sum = 0;
+                ids.forEach(pid => {
+                    const v = sanitizeAmount(state.amounts[String(pid)]);
+                    amountMap[String(pid)] = v;
+                    sum += v;
+                });
+                sum = Math.round(sum*100)/100;
+                const target = Math.round((Number(exp.amount||0))*100)/100;
+                if (Math.abs(sum - target) > 0.01) {
+                    return alert('A soma dos valores por jogador precisa ser igual ao valor da despesa.\n\nSoma: ' + money(sum) + '\nDespesa: ' + money(target));
+                }
+            }
+
+            exp.manualSplitPids = ids;
+            exp.manualSplitMode = mode;
+            exp.manualSplitAmounts = (mode === 'custom' ? amountMap : {});
+            saveFinance();
+
+            applyManualSplit(exp, ids, mode, amountMap);
+
+            try { document.body.removeChild(back); } catch(e) {}
+        } catch(err) {
+            console.error(err);
+            alert('Erro ao aplicar rateio: ' + (err && err.message ? err.message : String(err)));
         }
-
-        exp.manualSplitPids = ids;
-        exp.manualSplitMode = mode;
-        exp.manualSplitAmounts = (mode === 'custom' ? amountMap : {});
-        saveFinance();
-
-        applyManualSplit(exp, ids, mode, amountMap);
-
-        try { document.body.removeChild(back); } catch(e) {}
     };
 
     back.addEventListener('click', (e) => {
