@@ -1336,6 +1336,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <tr>
 <th>Jogador</th>
 <th class="mono">Presenças</th>
+<th class="mono">%Vit</th>
 <th class="mono">Gols</th>
 <th class="mono">Assist.</th>
 <th class="mono">Nota média</th>
@@ -1352,6 +1353,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <tr>
 <th>Jogador</th>
 <th class="mono">Presenças</th>
+<th class="mono">%Vit</th>
 <th class="mono">Gols</th>
 <th class="mono">Assist.</th>
 <th class="mono">Nota média</th>
@@ -2248,45 +2250,6 @@ function unconfirmSessionStats() {
     try { renderSessionToolsFinance(); } catch(e) {}
 }
 
-function resetCurrentSessionStats() {
-    const s = getCurrentSession();
-    if (!s) return alert('Carregue uma pelada primeiro.');
-
-    if (isSessionStatsConfirmed(s)) {
-        return alert('Os lancamentos estao confirmados. Clique em "Reabrir edicao" antes de limpar.');
-    }
-
-    const ok = confirm('Zerar gols, assistencias, nota e comentarios desta pelada (somente presentes)?\n\nIsso nao apaga a pelada nem o financeiro.');
-    if (!ok) return;
-
-    ensureSessionExtras(s);
-    if (!s.stats) s.stats = {};
-
-    players.forEach(p => {
-        if (!s.attendance || !s.attendance[p.id]) return;
-        const pid = String(p.id);
-        s.stats[pid] = { goals:0, assists:0, rating:0, comment:'' };
-    });
-
-    try {
-        const auto = computeAutoScoreFromGoals(s);
-        s.scoreAuto = { A:auto.A||0, B:auto.B||0, C:auto.C||0 };
-        if (s.scoreSource === 'auto_from_goals') {
-            s.score = { A: auto.A||0, B: auto.B||0, C: auto.C||0 };
-        }
-    } catch(e) {}
-
-    saveFinance();
-    renderFinance();
-    try { renderSessionToolsField(); } catch(e) {}
-    try { renderSessionToolsFinance(); } catch(e) {}
-    try { renderScoreBanner('field'); } catch(e) {}
-    try { renderScoreBanner('fin'); } catch(e) {}
-
-    alert('Lancamentos zerados.');
-}
-
-
 function renderScoreBanner(which) {
     const s = getCurrentSession();
     const el = document.getElementById(which === 'fin' ? 'scoreBannerFin' : 'scoreBannerField');
@@ -2324,15 +2287,6 @@ function renderScoreBanner(which) {
         b1.textContent='Confirmar lançamentos';
         b1.onclick = () => confirmSessionStats();
         actions.appendChild(b1);
-
-        const b0 = document.createElement('button');
-        b0.type='button';
-        b0.className='btn btn-danger btn-sm';
-        b0.style.marginLeft='8px';
-        b0.textContent='Limpar lancamentos';
-        b0.onclick = () => resetCurrentSessionStats();
-        actions.appendChild(b0);
-
     } else {
         const b2 = document.createElement('button');
         b2.type='button';
@@ -5041,6 +4995,41 @@ function triggerImportBackup(){
 
 
 /* ===== RANKINGS / ARTILHARIA ===== */
+
+function getSessionPlayerTeamSnapshot(s, pid) {
+    if (!s) return 'bench';
+    const key1 = String(pid);
+    const key2 = pid;
+    if (s.teamSnapshot) {
+        const t = s.teamSnapshot[key1] || s.teamSnapshot[key2];
+        return t || 'bench';
+    }
+    // fallback (nao-ideal): usa time atual do jogador (pode mudar historico)
+    const p = (players||[]).find(x => String(x.id) === String(pid));
+    return (p && p.team) ? p.team : 'bench';
+}
+
+function getSessionWinningTeam(s) {
+    if (!s || !s.score) return null;
+    const a = Number((s.score||{}).A); const b = Number((s.score||{}).B); const c = Number((s.score||{}).C);
+    const A = isFinite(a) ? a : 0;
+    const B = isFinite(b) ? b : 0;
+    const C = isFinite(c) ? c : 0;
+
+    // decide se usa 2 ou 3 times: se houver score.C ou se config estiver em 3
+    const useC = (typeof (s.score||{}).C !== 'undefined') || (config && config.teamsCount === 3);
+
+    let max = Math.max(A, B, useC ? C : -999999);
+    const winners = [];
+    if (A === max) winners.push('A');
+    if (B === max) winners.push('B');
+    if (useC && C === max) winners.push('C');
+
+    if (winners.length !== 1) return null; // empate ou dados invalidos
+    return winners[0];
+}
+
+
 function periodFromRankInputs() {
     const yEl = document.getElementById('rankYear');
     const mEl = document.getElementById('rankMonth');
@@ -5059,7 +5048,7 @@ function computeTotalsForPeriod(filterFn) {
     const totals = {}; // pid -> {goals, assists, pres, ratingSum, ratingCount}
 
     players.forEach(p => {
-        totals[p.id] = { pid: p.id, name: p.name, goals: 0, assists: 0, pres: 0, ratingSum: 0, ratingCount: 0 };
+        totals[p.id] = { pid: p.id, name: p.name, goals: 0, assists: 0, wins: 0, pres: 0, ratingSum: 0, ratingCount: 0 };
     });
 
     (sessions||[]).forEach(s => {
@@ -5067,9 +5056,17 @@ function computeTotalsForPeriod(filterFn) {
         ensureSessionExtras(s);
         if (!filterFn(s)) return;
 
+        const winTeam = getSessionWinningTeam(s);
+
         players.forEach(p => {
             if (!s.attendance || !s.attendance[p.id]) return;
             totals[p.id].pres += 1;
+
+            // vitorias: conta 1 se o jogador estava no time vencedor (A/B/C). Empates nao contam.
+            if (winTeam) {
+                const t = getSessionPlayerTeamSnapshot(s, p.id);
+                if (t === winTeam) totals[p.id].wins += 1;
+            }
 
             const st = (s.stats && s.stats[p.id]) ? getSessionPlayerStats(s, p.id) : null;
             if (st) {
@@ -5095,6 +5092,17 @@ function formatAvg(sum, count) {
     return String(v.toFixed(1));
 }
 
+function formatWinPct(wins, pres) {
+    const p = Number(pres)||0;
+    const w = Number(wins)||0;
+    if (!p) return '-';
+    const v = (w / p) * 100;
+    const r = Math.round(v * 10) / 10;
+    if (Math.abs(r - Math.round(r)) < 0.00001) return String(Math.round(r)) + '%';
+    return String(r.toFixed(1)).replace('.', ',') + '%';
+}
+
+
 function renderRankTable(tbodyId, infoId, rows, label) {
     const tb = document.getElementById(tbodyId);
     const info = document.getElementById(infoId);
@@ -5108,7 +5116,7 @@ function renderRankTable(tbodyId, infoId, rows, label) {
     tb.innerHTML = '';
     if (!rows.length) {
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="5" class="small">Sem dados no período.</td>';
+        tr.innerHTML = '<td colspan="6" class="small">Sem dados no período.</td>';
         tb.appendChild(tr);
         return;
     }
@@ -5118,6 +5126,7 @@ function renderRankTable(tbodyId, infoId, rows, label) {
         tr.innerHTML = `
           <td>${escapeHtml(r.name||'')}</td>
           <td class="mono">${escapeHtml(String(r.pres||0))}</td>
+          <td class="mono">${escapeHtml(formatWinPct(r.wins||0, r.pres||0))}</td>
           <td class="mono">${escapeHtml(String(r.goals||0))}</td>
           <td class="mono">${escapeHtml(String(r.assists||0))}</td>
           <td class="mono">${escapeHtml(formatAvg(r.ratingSum||0, r.ratingCount||0))}</td>
@@ -5154,10 +5163,11 @@ function exportRankingsCSV() {
 
     const toCsv = (rows) => {
         const sorted = rows.slice().sort((a,b) => (b.goals-a.goals) || (b.assists-a.assists) || (b.pres-a.pres) || (a.name||'').localeCompare(b.name||''));
-        let csv = 'jogador_id,jogador_nome,presencas,gols,assistencias,nota_media\n';
+        let csv = 'jogador_id,jogador_nome,presencas,pct_vit,gols,assistencias,nota_media\n';
         sorted.forEach(r => {
             const avg = r.ratingCount ? (r.ratingSum / r.ratingCount) : '';
-            csv += `${r.pid},${(r.name||'').split(',').join(';')},${r.pres},${r.goals},${r.assists},${String(avg).replace('.', ',')}\n`;
+            const pct = r.pres ? (Math.round(((r.wins||0) / r.pres) * 1000) / 10) : '';
+            csv += `${r.pid},${(r.name||'').split(',').join(';')},${r.pres},${String(pct).replace('.', ',')},${r.goals},${r.assists},${String(avg).replace('.', ',')}\n`;
         });
         return csv;
     };
