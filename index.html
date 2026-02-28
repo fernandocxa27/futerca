@@ -2248,6 +2248,45 @@ function unconfirmSessionStats() {
     try { renderSessionToolsFinance(); } catch(e) {}
 }
 
+function resetCurrentSessionStats() {
+    const s = getCurrentSession();
+    if (!s) return alert('Carregue uma pelada primeiro.');
+
+    if (isSessionStatsConfirmed(s)) {
+        return alert('Os lancamentos estao confirmados. Clique em "Reabrir edicao" antes de limpar.');
+    }
+
+    const ok = confirm('Zerar gols, assistencias, nota e comentarios desta pelada (somente presentes)?\n\nIsso nao apaga a pelada nem o financeiro.');
+    if (!ok) return;
+
+    ensureSessionExtras(s);
+    if (!s.stats) s.stats = {};
+
+    players.forEach(p => {
+        if (!s.attendance || !s.attendance[p.id]) return;
+        const pid = String(p.id);
+        s.stats[pid] = { goals:0, assists:0, rating:0, comment:'' };
+    });
+
+    try {
+        const auto = computeAutoScoreFromGoals(s);
+        s.scoreAuto = { A:auto.A||0, B:auto.B||0, C:auto.C||0 };
+        if (s.scoreSource === 'auto_from_goals') {
+            s.score = { A: auto.A||0, B: auto.B||0, C: auto.C||0 };
+        }
+    } catch(e) {}
+
+    saveFinance();
+    renderFinance();
+    try { renderSessionToolsField(); } catch(e) {}
+    try { renderSessionToolsFinance(); } catch(e) {}
+    try { renderScoreBanner('field'); } catch(e) {}
+    try { renderScoreBanner('fin'); } catch(e) {}
+
+    alert('Lancamentos zerados.');
+}
+
+
 function renderScoreBanner(which) {
     const s = getCurrentSession();
     const el = document.getElementById(which === 'fin' ? 'scoreBannerFin' : 'scoreBannerField');
@@ -2285,6 +2324,15 @@ function renderScoreBanner(which) {
         b1.textContent='Confirmar lançamentos';
         b1.onclick = () => confirmSessionStats();
         actions.appendChild(b1);
+
+        const b0 = document.createElement('button');
+        b0.type='button';
+        b0.className='btn btn-danger btn-sm';
+        b0.style.marginLeft='8px';
+        b0.textContent='Limpar lancamentos';
+        b0.onclick = () => resetCurrentSessionStats();
+        actions.appendChild(b0);
+
     } else {
         const b2 = document.createElement('button');
         b2.type='button';
