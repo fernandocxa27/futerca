@@ -3921,27 +3921,26 @@ row.appendChild(left);
                 const pid = r.p.id;
                 const isGuest = (r.p.billingType === 'avulso');
 
-                // Quebra de pendência por categoria (heurística): pagamentos cobrem 1) mensalidade 2) avulso 3) rateio
-                let chMensal = 0, chAv = 0, chRate = 0, chOther = 0, payTot = 0;
+                // Quebra de pendência por categoria: separa cobranças e pagamentos por tipo
+                let chMensal = 0, chAv = 0, chRate = 0, chOther = 0;
+                let payMensal = 0, payAv = 0, payRate = 0, payOther = 0;
                 ledger.forEach(e => {
                     if (e.playerId != pid) return;
+                    const a = Number(e.amount)||0;
+                    if (!a) return;
                     if (e.kind === 'charge') {
-                        const a = Number(e.amount)||0;
                         if ((e.category||'') === 'mensalidade') chMensal += a;
                         else if ((e.category||'') === 'avulso') chAv += a;
                         else if ((e.category||'') === 'rateio') chRate += a;
                         else chOther += a;
-                    }
-                    if (e.kind === 'payment') {
-                        payTot += Number(e.amount)||0;
+                    } else if (e.kind === 'payment') {
+                        // Pagamentos separados por categoria para não misturar mensalidade, avulso e rateio
+                        if ((e.category||'') === 'mensalidade_pag') payMensal += a;
+                        else if ((e.category||'') === 'avulso_pag') payAv += a;
+                        else if ((e.category||'') === 'rateio_pag') payRate += a;
+                        else payOther += a;
                     }
                 });
-
-                let remPay = payTot;
-                const payMensal = Math.min(remPay, chMensal); remPay -= payMensal;
-                const payAv     = Math.min(remPay, chAv);     remPay -= payAv;
-                const payRate   = Math.min(remPay, chRate);   remPay -= payRate;
-                // (chOther fica por último, não precisamos calcular aqui para os botões)
 
                 const dueMensal = Math.max(0, chMensal - payMensal);
                 const dueAv     = Math.max(0, chAv - payAv);
