@@ -2643,7 +2643,7 @@ function renderSessionToolsField() {
         gMinus.type = 'button';
         gMinus.className = 'btn btn-sm btn-step btn-minus';
         gMinus.textContent = '-';
-        bindHoldRepeat(gMinus, () => { const v = incSessionStat(p.id, 'goals', -1); gVal.value = String(v); });
+        gMinus.onclick = () => { const v = incSessionStat(p.id, 'goals', -1); gVal.value = String(v); };
 
         const gVal = document.createElement('input');
         gVal.className = 'stat-val mono';
@@ -2655,7 +2655,7 @@ function renderSessionToolsField() {
         gPlus.type = 'button';
         gPlus.className = 'btn btn-sm btn-step btn-plus';
         gPlus.textContent = '+';
-        bindHoldRepeat(gPlus,  () => { const v = incSessionStat(p.id, 'goals',  1); gVal.value = String(v); });
+        gPlus.onclick = () => { const v = incSessionStat(p.id, 'goals',  1); gVal.value = String(v); };
 
         gMinus.disabled = locked;
         gPlus.disabled = locked;
@@ -2670,7 +2670,7 @@ function renderSessionToolsField() {
         aMinus.type = 'button';
         aMinus.className = 'btn btn-sm btn-step btn-minus';
         aMinus.textContent = '-';
-        bindHoldRepeat(aMinus, () => { const v = incSessionStat(p.id, 'assists', -1); aVal.value = String(v); });
+        aMinus.onclick = () => { const v = incSessionStat(p.id, 'assists', -1); aVal.value = String(v); };
 
         const aVal = document.createElement('input');
         aVal.className = 'stat-val mono';
@@ -2682,7 +2682,7 @@ function renderSessionToolsField() {
         aPlus.type = 'button';
         aPlus.className = 'btn btn-sm btn-step btn-plus';
         aPlus.textContent = '+';
-        bindHoldRepeat(aPlus,  () => { const v = incSessionStat(p.id, 'assists',  1); aVal.value = String(v); });
+        aPlus.onclick = () => { const v = incSessionStat(p.id, 'assists',  1); aVal.value = String(v); };
 
         aMinus.disabled = locked;
         aPlus.disabled = locked;
@@ -2800,7 +2800,7 @@ function renderSessionToolsFinance() {
         gMinus.type = 'button';
         gMinus.className = 'btn btn-sm btn-step btn-minus';
         gMinus.textContent = '-';
-        bindHoldRepeat(gMinus, () => { const v = incSessionStat(p.id, 'goals', -1); gVal.value = String(v); });
+        gMinus.onclick = () => { const v = incSessionStat(p.id, 'goals', -1); gVal.value = String(v); };
 
         const gVal = document.createElement('input');
         gVal.className = 'stat-val mono';
@@ -2812,7 +2812,7 @@ function renderSessionToolsFinance() {
         gPlus.type = 'button';
         gPlus.className = 'btn btn-sm btn-step btn-plus';
         gPlus.textContent = '+';
-        bindHoldRepeat(gPlus,  () => { const v = incSessionStat(p.id, 'goals',  1); gVal.value = String(v); });
+        gPlus.onclick = () => { const v = incSessionStat(p.id, 'goals',  1); gVal.value = String(v); };
 
         gMinus.disabled = locked;
         gPlus.disabled = locked;
@@ -2827,7 +2827,7 @@ function renderSessionToolsFinance() {
         aMinus.type = 'button';
         aMinus.className = 'btn btn-sm btn-step btn-minus';
         aMinus.textContent = '-';
-        bindHoldRepeat(aMinus, () => { const v = incSessionStat(p.id, 'assists', -1); aVal.value = String(v); });
+        aMinus.onclick = () => { const v = incSessionStat(p.id, 'assists', -1); aVal.value = String(v); };
 
         const aVal = document.createElement('input');
         aVal.className = 'stat-val mono';
@@ -2839,7 +2839,7 @@ function renderSessionToolsFinance() {
         aPlus.type = 'button';
         aPlus.className = 'btn btn-sm btn-step btn-plus';
         aPlus.textContent = '+';
-        bindHoldRepeat(aPlus,  () => { const v = incSessionStat(p.id, 'assists',  1); aVal.value = String(v); });
+        aPlus.onclick = () => { const v = incSessionStat(p.id, 'assists',  1); aVal.value = String(v); };
 
         aMinus.disabled = locked;
         aPlus.disabled = locked;
@@ -3829,10 +3829,12 @@ function renderFinance() {
 
                 // Badge: valor pago (verde) ou devendo (vermelho)
                 const badge = document.createElement('span');
-                if (remain > 0) {
+                const hasCharge = (total > 0.00001);
+                if (hasCharge && remain > 0.00001) {
                     badge.className = 'badge badge-red';
                     badge.textContent = 'Devendo ' + money(remain);
-                } else if (paid > 0) {
+                } else if (hasCharge && paid > 0.00001) {
+                    // quitado (ou pagou mais): mostra valor pago
                     badge.className = 'badge badge-green';
                     badge.textContent = money(paid);
                 } else {
@@ -3846,7 +3848,7 @@ function renderFinance() {
                 paidLabel.className = 'small';
                 paidLabel.style.color = 'var(--green)';
                 paidLabel.style.fontWeight = '900';
-                paidLabel.textContent = (chargeEntry && paid > 0 ? 'Pago' : '');
+                paidLabel.textContent = (hasCharge && (remain <= 0.00001) && paid > 0.00001 ? 'Pago' : '');
 
                 // Botão 'Marcar pago' — só aparece se ainda deve
                 const btn = document.createElement('button');
