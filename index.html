@@ -3947,25 +3947,29 @@ row.appendChild(left);
                 const dueAv     = Math.max(0, chAv - payAv);
                 const dueRate   = Math.max(0, chRate - payRate);
 
-                // Botão 1: só aparece para Convidado (avulso) OU quando existe rateio pendente
-                // - Se houver rateio pendente: mostra o valor do rateio
-                // - Senão (e se for convidado): mostra Receber 15 (até o que faltar do avulso)
+                // Botão 1: Receber rateio (ou avulso convidado)
+                // - Só mostra para avulso com avulso pendente, ou quando existe rateio pendente.
                 let firstAmt = 0;
                 let firstLabel = '';
+                let firstCat = '';
 
                 if (dueRate > 0.001) {
+                    // existe rateio pendente: mostrar apenas 1x o valor exato do rateio
                     firstAmt = Math.round(dueRate * 100) / 100;
                     firstLabel = 'Receber ' + money(firstAmt);
+                    firstCat = 'rateio_pag';
                 } else if (isGuest && dueAv > 0.001) {
+                    // convidado com avulso pendente: atalho padrão de 15 (ou o que faltar até 15)
                     firstAmt = Math.min(15, Math.round(dueAv * 100) / 100);
                     firstLabel = 'Receber 15';
+                    firstCat = 'avulso_pag';
                 }
 
                 if (firstAmt > 0) {
                     const b1=document.createElement('button');
                     b1.className='btn btn-outline btn-sm';
                     b1.textContent = firstLabel;
-                    b1.onclick = () => quickPay(pid, firstAmt, (dueRate > 0.001 ? 'rateio_pag' : 'avulso_pag'), 'Pagamento');
+                    b1.onclick = () => quickPay(pid, firstAmt, firstCat, 'Pagamento');
                     actTd.appendChild(b1);
                 }
 
