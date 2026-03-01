@@ -4869,11 +4869,20 @@ function openPrintReport() {
 
         const ledgerHtml = topLedger.map(e => {
             const who = e.playerId ? getPlayerName(e.playerId) : '';
+            const k = String(e.kind||'');
+            const cat = String(e.category||'');
+            let catCls = 'outros';
+            if (cat==='mensalidade' || cat==='mensalidade_pag') catCls='mensalidade';
+            else if (cat==='avulso' || cat==='avulso_pag') catCls='avulso';
+            else if (cat==='rateio' || cat==='rateio_pag') catCls='rateio';
+
+            const kindLabel = (k==='payment' ? 'Entrada' : (k==='expense' ? 'Despesa' : (k==='charge' ? 'Cobranca' : k)));
+
             return `
-              <tr>
-                <td>${escapeHtml(e.date||'')}</td>
-                <td>${escapeHtml(e.kind||'')}</td>
-                <td>${escapeHtml(e.category||'')}</td>
+              <tr class="kind-${escapeHtml(k)}">
+                <td class="mono">${escapeHtml(e.date||'')}</td>
+                <td>${escapeHtml(kindLabel)}</td>
+                <td><span class="cat ${escapeHtml(catCls)}">${escapeHtml(cat||'')}</span></td>
                 <td>${escapeHtml(who)}</td>
                 <td class="mono">${escapeHtml(money(e.amount||0))}</td>
                 <td>${escapeHtml(e.note||'')}</td>
@@ -4903,6 +4912,73 @@ function openPrintReport() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Relatório Financeiro</title>
+
+<style>
+  :root{
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#475569;
+    --border:#e2e8f0;
+    --blue:#1a73e8;
+    --green:#1b8f3a;
+    --red:#c62828;
+    --amber:#b45309;
+    --violet:#7c3aed;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:var(--sans); color:var(--text); background:var(--bg)}
+  header{padding:18px 16px 10px; background:linear-gradient(180deg, #ffffff, #f3f6fb); border-bottom:1px solid var(--border)}
+  h1{margin:0 0 6px; font-size:20px; line-height:1.15}
+  .sub{color:var(--muted); font-size:12px; line-height:1.35}
+  .wrap{padding:14px 12px 18px; max-width: 980px; margin: 0 auto;}
+
+  .kpis{display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; margin:10px 0 14px}
+  .kpi{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 10px 9px; box-shadow: 0 6px 18px rgba(15,23,42,.06)}
+  .kpi .lbl{font-size:11px; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:.4px}
+  .kpi .val{margin-top:6px; font-size:16px; font-weight:950; font-family:var(--mono)}
+  .kpi.pos .val{color:var(--green)}
+  .kpi.neg .val{color:var(--red)}
+  .kpi.blue .val{color:var(--blue)}
+  .kpi.gray .val{color:#334155}
+
+  .sec{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px; margin: 0 0 12px; box-shadow: 0 6px 18px rgba(15,23,42,.05)}
+  .sec h2{margin:0 0 10px; font-size:14px; color:#0f172a}
+  .grid2{display:grid; grid-template-columns: 1fr; gap:12px}
+
+  table{width:100%; border-collapse:collapse; font-size:12px}
+  th,td{padding:8px 7px; border-bottom:1px solid #eef2f7; vertical-align:top}
+  th{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.35px; text-align:left}
+  td.mono, .mono{font-family:var(--mono)}
+
+  .pill{display:inline-flex; align-items:center; gap:6px; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:900; border:1px solid rgba(2,6,23,.08)}
+  .pill.pos{background:#ecfdf5; color:var(--green)}
+  .pill.neg{background:#fef2f2; color:var(--red)}
+  .pill.info{background:#eff6ff; color:var(--blue)}
+  .pill.warn{background:#fff7ed; color:var(--amber)}
+  .pill.violet{background:#f5f3ff; color:var(--violet)}
+
+  tr.kind-payment td:nth-child(2){color:var(--green); font-weight:900}
+  tr.kind-expense td:nth-child(2){color:var(--red); font-weight:900}
+  tr.kind-charge  td:nth-child(2){color:var(--amber); font-weight:900}
+
+  .cat{font-weight:900}
+  .cat.mensalidade{color:#4338ca}
+  .cat.avulso{color:#0ea5e9}
+  .cat.rateio{color:#7c3aed}
+  .cat.outros{color:#64748b}
+
+  .pagebreak{page-break-before: always}
+
+  @media print{
+    body{background:#fff}
+    header{box-shadow:none}
+    .kpi,.sec{box-shadow:none}
+    .wrap{padding:0}
+  }
+</style>
 
 </head><body>
 <header>
