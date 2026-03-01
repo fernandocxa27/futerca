@@ -4978,8 +4978,13 @@ function openPrintReport() {
         w.document.write(htmlOut);
         w.document.close();
 
-        // abre a prévia; você pode imprimir/salvar em PDF pelo navegador
-        setTimeout(() => { try { w.focus(); } catch(e) {} }, 200);
+        // tenta abrir direto o dialogo de impressao (no celular isso vira salvar como PDF ou imprimir)
+        setTimeout(() => {
+            try {
+                w.focus();
+                if (typeof w.print === 'function') w.print();
+            } catch(e) {}
+        }, 400);
 
     } catch(err) {
         console.error(err);
