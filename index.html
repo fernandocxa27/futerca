@@ -4845,7 +4845,33 @@ function openPrintReport() {
         const topLedger = ledgerFiltered.slice().reverse().slice(0, limit);
         const topAudit  = auditFiltered.slice().reverse().slice(0, limit);
 
-        const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
+        
+
+        // ----- RATEIO SUMMARY (periodo e geral) -----
+        const sumBy = (arr, pred) => arr.reduce((acc,e) => acc + (pred(e) ? (Number(e.amount)||0) : 0), 0);
+
+        const rateioChargesP = sumBy(ledgerFiltered, e => e.kind==='charge' && (e.category||'')==='rateio');
+        const rateioPaymentsP = sumBy(ledgerFiltered, e => e.kind==='payment' && (e.category||'')==='rateio_pag');
+
+        const rateioChargesAll = sumBy(ledger, e => e.kind==='charge' && (e.category||'')==='rateio');
+        const rateioPaymentsAll = sumBy(ledger, e => e.kind==='payment' && (e.category||'')==='rateio_pag');
+
+        const rateioOpenAllRaw = Math.round((rateioChargesAll - rateioPaymentsAll) * 100) / 100;
+        const rateioOpenAll = Math.max(0, rateioOpenAllRaw);
+        const rateioCreditAll = Math.max(0, -rateioOpenAllRaw);
+
+        const rateioOpenP = Math.max(0, Math.round((rateioChargesP - rateioPaymentsP) * 100) / 100);
+
+        const rateioInfo = {
+            chargesP: rateioChargesP,
+            paymentsP: rateioPaymentsP,
+            openP: rateioOpenP,
+            chargesAll: rateioChargesAll,
+            paymentsAll: rateioPaymentsAll,
+            openAll: rateioOpenAll,
+            creditAll: rateioCreditAll
+        };
+const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
             const status = r.due>0 ? ('DEVENDO ' + money(r.due)) : ('CR√âDITO ' + money(-r.due));
             const cls = r.due>0 ? 'neg' : 'pos';
             return `
@@ -4867,27 +4893,87 @@ function openPrintReport() {
               </tr>`;
         }).join('') : `<tr><td colspan="3" class="muted">Sem pend√™ncias no per√≠odo.</td></tr>`;
 
-        const ledgerHtml = topLedger.map(e => {
-            const who = e.playerId ? getPlayerName(e.playerId) : '';
-            const k = String(e.kind||'');
-            const cat = String(e.category||'');
-            let catCls = 'outros';
-            if (cat==='mensalidade' || cat==='mensalidade_pag') catCls='mensalidade';
-            else if (cat==='avulso' || cat==='avulso_pag') catCls='avulso';
-            else if (cat==='rateio' || cat==='rateio_pag') catCls='rateio';
+        const ledgerHtml = (() => {
+            const getCatCls = (cat) => {
+                cat = String(cat||'');
+                if (cat==='mensalidade' || cat==='mensalidade_pag') return 'mensalidade';
+                if (cat==='avulso' || cat==='avulso_pag') return 'avulso';
+                if (cat==='rateio' || cat==='rateio_pag') return 'rateio';
+                return 'outros';
+            };
 
-            const kindLabel = (k==='payment' ? 'Entrada' : (k==='expense' ? 'Despesa' : (k==='charge' ? 'Cobranca' : k)));
+            const kindLabel = (k) => (k==='payment' ? 'Entrada' : (k==='expense' ? 'Despesa' : (k==='charge' ? 'CobranÁa' : String(k||''))));
+            const amtTxt = (e) => {
+                const k = String(e.kind||'');
+                const a = Number(e.amount||0)||0;
+                if (k==='payment') return '+ ' + money(a);
+                if (k==='expense') return '- ' + money(a);
+                return money(a);
+            };
+            const amtCls = (e) => {
+                const k = String(e.kind||'');
+                if (k==='payment') return 'amt pos';
+                if (k==='expense') return 'amt neg';
+                if (k==='charge')  return 'amt charge';
+                return 'amt zero';
+            };
 
-            return `
-              <tr class="kind-${escapeHtml(k)}">
-                <td class="mono">${escapeHtml(e.date||'')}</td>
-                <td>${escapeHtml(kindLabel)}</td>
-                <td><span class="cat ${escapeHtml(catCls)}">${escapeHtml(cat||'')}</span></td>
-                <td>${escapeHtml(who)}</td>
-                <td class="mono">${escapeHtml(money(e.amount||0))}</td>
-                <td>${escapeHtml(e.note||'')}</td>
-              </tr>`;
-        }).join('') || `<tr><td colspan="6" class="muted">Sem lan√ßamentos no per√≠odo/limite.</td></tr>`;
+            if (!topLedger || !topLedger.length) {
+                return `<tr><td colspan="6" class="muted">Sem lanÁamentos no perÌodo/limite.</td></tr>`;
+            }
+
+            const groups = [];
+            const map = {};
+            topLedger.forEach(e => {
+                const d = String(e.date||'');
+                if (!map[d]) { map[d] = { date:d, items:[] }; groups.push(map[d]); }
+                map[d].items.push(e);
+            });
+
+            const out = [];
+            groups.forEach(g => {
+                let pay=0, exp=0, ch=0;
+                g.items.forEach(e => {
+                    const a = Number(e.amount||0)||0;
+                    if (e.kind==='payment') pay += a;
+                    else if (e.kind==='expense') exp += a;
+                    else if (e.kind==='charge') ch += a;
+                });
+                const net = pay - exp;
+                const netCls = net >= 0 ? 'pos' : 'neg';
+
+                out.push(`
+                  <tr class="dayhdr">
+                    <td colspan="6">
+                      <div class="daytitle">
+                        <span class="d">${escapeHtml(g.date||'')}</span>
+                        <span class="pill info"><span class="mini">Entradas</span>&nbsp;${escapeHtml(money(pay))}</span>
+                        <span class="pill neg"><span class="mini">Despesas</span>&nbsp;${escapeHtml(money(exp))}</span>
+                        <span class="pill ${netCls}"><span class="mini">Saldo dia</span>&nbsp;${escapeHtml(moneySigned(net))}</span>
+                        ${ch>0.001 ? `<span class="pill warn"><span class="mini">CobranÁas</span>&nbsp;${escapeHtml(money(ch))}</span>` : ''}
+                      </div>
+                    </td>
+                  </tr>`);
+
+                g.items.forEach(e => {
+                    const who = e.playerId ? getPlayerName(e.playerId) : '';
+                    const k = String(e.kind||'');
+                    const cat = String(e.category||'');
+                    const catCls = getCatCls(cat);
+                    out.push(`
+                      <tr class="kind-${escapeHtml(k)}">
+                        <td class="mono">${escapeHtml(e.date||'')}</td>
+                        <td>${escapeHtml(kindLabel(k))}</td>
+                        <td><span class="cat ${escapeHtml(catCls)}">${escapeHtml(cat||'')}</span></td>
+                        <td>${escapeHtml(who)}</td>
+                        <td class="${escapeHtml(amtCls(e))}">${escapeHtml(amtTxt(e))}</td>
+                        <td>${escapeHtml(e.note||'')}</td>
+                      </tr>`);
+                });
+            });
+
+            return out.join('');
+        })();
 
         const auditHtml = topAudit.map(it => {
             const d = it.details || {};
@@ -4978,6 +5064,18 @@ function openPrintReport() {
     .kpi,.sec{box-shadow:none}
     .wrap{padding:0}
   }
+
+  .amt{font-family:var(--mono); font-weight:950; white-space:nowrap}
+  .amt.pos{color:var(--green)}
+  .amt.neg{color:var(--red)}
+  .amt.charge{color:var(--amber)}
+  .amt.zero{color:#334155}
+
+  .dayhdr td{background:#f8fafc; border-bottom:1px solid var(--border); padding:10px 8px}
+  .daytitle{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  .daytitle .d{font-weight:950; font-family:var(--mono)}
+  .daytitle .mini{font-size:11px; color:var(--muted); font-weight:800}
+
 </style>
 
 </head><body>
@@ -5001,16 +5099,33 @@ function openPrintReport() {
     <table>
       <thead><tr><th>Item</th><th>Valor</th></tr></thead>
       <tbody>
-        <tr><td>Cobran√ßas</td><td class="mono">${escapeHtml(money(chP))}</td></tr>
-        <tr><td>Pagamentos recebidos</td><td class="mono">${escapeHtml(money(payP))}</td></tr>
-        <tr><td>Despesas do caixa</td><td class="mono">${escapeHtml(money(expP))}</td></tr>
-        <tr><td><strong>Movimento de caixa (pagamentos - despesas)</strong></td><td class="mono"><strong>${escapeHtml(moneySigned(netCashP))}</strong></td></tr>
+        <tr><td>CobranÁas</td><td class="mono"><span class="pill warn">${escapeHtml(money(chP))}</span></td></tr>
+        <tr><td>Pagamentos recebidos</td><td class="mono"><span class="pill pos">+ ${escapeHtml(money(payP))}</span></td></tr>
+        <tr><td>Despesas do caixa</td><td class="mono"><span class="pill neg">- ${escapeHtml(money(expP))}</span></td></tr>
+        <tr><td><strong>Movimento de caixa (pagamentos - despesas)</strong></td><td class="mono"><strong><span class="pill ${netClass}">${escapeHtml(moneySigned(netCashP))}</span></strong></td></tr>
         <tr><td>Total a receber (somat√≥rio dos que devem no per√≠odo)</td><td class="mono">${escapeHtml(money(totalToReceiveP))}</td></tr>
         <tr><td>Cr√©dito a favor (somat√≥rio do cr√©dito no per√≠odo)</td><td class="mono">${escapeHtml(money(totalCreditP))}</td></tr>
       </tbody>
     </table>
     <div class="sub">Obs: ‚ÄúCobran√ßas‚Äù n√£o entram diretamente no caixa; elas viram caixa quando o pagamento √© registrado.</div>
   </div>
+
+
+  <div class="sec">
+    <h2>Rateios</h2>
+    <div class="sub">Resumo de rateios (no perÌodo e geral).</div>
+    <table>
+      <thead><tr><th>Item</th><th>Valor</th></tr></thead>
+      <tbody>
+        <tr><td>Rateio cobrado (no perÌodo)</td><td class="mono"><span class="pill warn">${escapeHtml(money(rateioInfo.chargesP))}</span></td></tr>
+        <tr><td>Rateio recebido (no perÌodo)</td><td class="mono"><span class="pill pos">+ ${escapeHtml(money(rateioInfo.paymentsP))}</span></td></tr>
+        <tr><td>Rateio em aberto (no perÌodo)</td><td class="mono"><span class="pill neg">${escapeHtml(money(rateioInfo.openP))}</span></td></tr>
+        <tr><td>Rateio em aberto (geral)</td><td class="mono"><span class="pill neg">${escapeHtml(money(rateioInfo.openAll))}</span></td></tr>
+        <tr><td>CrÈdito de rateio (geral)</td><td class="mono"><span class="pill pos">${escapeHtml(money(rateioInfo.creditAll))}</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
 
   <div class="sec grid2">
     <div>
