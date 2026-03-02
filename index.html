@@ -5088,10 +5088,10 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
   <div class="kpis">
     <div class="kpi ${cashClass}"><div class="lbl">Caixa (geral)</div><div class="val mono">${escapeHtml(moneySigned(cash))}</div></div>
     <div class="kpi blue"><div class="lbl">Total a receber (geral)</div><div class="val mono">${escapeHtml(money(totalToReceiveAll))}</div></div>
-    <div class="kpi gray"><div class="lbl">Lançamentos (no período)</div><div class="val mono">${escapeHtml(String(ledgerFiltered.length))}</div></div>
+
     <div class="kpi ${netClass}"><div class="lbl">Movimento do período (pagamentos - despesas)</div><div class="val mono">${escapeHtml(moneySigned(netCashP))}</div></div>
     <div class="kpi blue"><div class="lbl">A receber (período)</div><div class="val mono">${escapeHtml(money(totalToReceiveP))}</div></div>
-    <div class="kpi gray"><div class="lbl">Crédito (período)</div><div class="val mono">${escapeHtml(money(totalCreditP))}</div></div>
+
   </div>
 
   <div class="sec">
@@ -5104,7 +5104,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
         <tr><td>Despesas do caixa</td><td class="mono"><span class="pill neg">- ${escapeHtml(money(expP))}</span></td></tr>
         <tr><td><strong>Movimento de caixa (pagamentos - despesas)</strong></td><td class="mono"><strong><span class="pill ${netClass}">${escapeHtml(moneySigned(netCashP))}</span></strong></td></tr>
         <tr><td>Total a receber (somatório dos que devem no período)</td><td class="mono">${escapeHtml(money(totalToReceiveP))}</td></tr>
-        <tr><td>Crédito a favor (somatório do crédito no período)</td><td class="mono">${escapeHtml(money(totalCreditP))}</td></tr>
+
       </tbody>
     </table>
     <div class="sub">Obs: “Cobranças” não entram diretamente no caixa; elas viram caixa quando o pagamento é registrado.</div>
@@ -5154,13 +5154,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
     </table>
   </div>
 
-  <div class="sec pagebreak">
-    <h2>Auditoria (${escapeHtml(limTxt)}${periodTxt ? ' • ' + escapeHtml(periodTxt) : ''})</h2>
-    <table>
-      <thead><tr><th>Quando</th><th>Tipo</th><th>Detalhes (JSON)</th></tr></thead>
-      <tbody>${auditHtml}</tbody>
-    </table>
-  </div>
+
 
 </div>
 </body></html>`;
