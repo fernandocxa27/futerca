@@ -1043,6 +1043,8 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <p style="font-size:0.82rem;color:#666;margin-bottom:8px">Baixa jogadores.csv com todos os jogadores.</p>
 <button class="btn btn-green" onclick="exportCSV()" style="width:100%">Exportar CSV</button>
 </div>
+
+<input id="backupFile" type="file" accept="application/json" style="display:none" onchange="importBackup(event)"/>
 </div>
 <!-- FINANCEIRO -->
 <div class="panel" id="panelFinance">
