@@ -1025,6 +1025,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <p class="small">Baixe um arquivo .json com tudo que est√° salvo neste aparelho (jogadores, times, posi√ß√µes e configura√ß√µes). Para compartilhar, envie o arquivo e restaure no outro aparelho.</p>
 <div class="btn-row">
 <button class="btn btn-primary" onclick="exportBackup()" type="button">Baixar backup (.json)</button>
+<button class="btn btn-green" onclick="shareBackup()" type="button">&#128228; Compartilhar backup</button>
 <button class="btn btn-outline" onclick="triggerImportBackup()" type="button">Restaurar backup</button>
 </div>
 <div class="small" style="margin-top:8px">Aten√ß√£o: restaurar substitui os dados deste navegador (apenas dados do app).</div>
@@ -5420,6 +5421,40 @@ function exportBackup(){
     setTimeout(()=>{try{URL.revokeObjectURL(a.href);}catch(e){}},3000);
   }catch(err){console.error(err);alert('Erro ao gerar backup.');}
 }
+
+function shareBackup(){
+  try{
+    const payload={_meta:{app:'Futebol de TerÁa',version:1,exportedAt:new Date().toISOString()},storage:{}};
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.startsWith('ft_')) payload.storage[k]=localStorage.getItem(k);
+    }
+    const stamp=new Date().toISOString().slice(0,19).replaceAll(':','-');
+    const fname='ft_backup_'+stamp+'.json';
+    const json=JSON.stringify(payload,null,2);
+    const blob=new Blob([json],{type:'application/json;charset=utf-8'});
+    const file=new File([blob],fname,{type:'application/json'});
+
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      navigator.share({
+        title:'Futebol de TerÁa - Backup',
+        text:'Backup do app Futebol de TerÁa',
+        files:[file]
+      }).catch(err=>{ if(err.name!=='AbortError') exportBackup(); });
+    } else if(navigator.share){
+      navigator.share({title:'Futebol de TerÁa - Backup',text:'Use o bot„o Baixar backup para transferir o arquivo.'})
+        .catch(()=>exportBackup());
+    } else {
+      exportBackup();
+      alert('Seu navegador n„o suporta compartilhamento direto.\nO arquivo foi baixado normalmente.');
+    }
+  }catch(err){
+    console.error(err);
+    exportBackup();
+    alert('Erro ao compartilhar. O arquivo foi baixado normalmente.');
+  }
+}
+
 
 async function importBackup(ev){
   try{
