@@ -4997,174 +4997,314 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
         if (!w) return alert('O navegador bloqueou o pop-up. Permita pop-ups para gerar PDF.');
 
         const htmlOut = `<!doctype html>
-<html lang="pt-br"><head>
+<html lang="pt-br">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Relatório Financeiro</title>
+<title>Futebol de Terça — Relatório Financeiro</title>
 <style>
   :root{
-    --bg:#eef2f6;--card:#fff;--text:#0f172a;--muted:#475569;--border:#dde5ef;
-    --blue:#0b4f99;--blue2:#0a3f82;--green:#1b8f3a;--red:#c62828;--amber:#b45309;--gold:#c79a2b;
+    --blue:#0b4f99;
+    --blue2:#083a75;
+    --bg:#e9edf3;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --text:#111827;
+    --shadow:0 12px 26px rgba(15,23,42,.12);
+    --shadow2:0 10px 18px rgba(15,23,42,.10);
+    --radius:16px;
+    --radius2:14px;
+    --border:#d6dde8;
     --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
     --sans:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    --red:#c62828;
+    --blueAccent:#0b4f99;
+    --gold:#c79a2b;
+    --green:#1b8f3a;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:var(--sans);color:var(--text);background:var(--bg)}
-  header{background:linear-gradient(180deg,var(--blue),var(--blue2));color:#fff;padding:16px 18px 14px;border-bottom:1px solid rgba(255,255,255,.12)}
-  .headrow{display:flex;align-items:center;gap:14px}
-  h1{margin:0;font-size:26px;line-height:1.08;font-weight:950;letter-spacing:.2px}
-  .sub{margin-top:6px;color:rgba(255,255,255,.85);font-size:12px;line-height:1.35}
-  .wrap{padding:14px 14px 18px;max-width:1040px;margin:0 auto}
-  .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:12px 0 14px}
-  .kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;box-shadow:0 10px 22px rgba(15,23,42,.08);display:flex;gap:10px;align-items:center;min-height:74px}
-  .kpi .ico{width:34px;height:34px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;flex:0 0 auto;font-weight:950;font-size:14px}
-  .kpi .txt{flex:1;min-width:0}
-  .kpi .lbl{font-size:11px;color:#111827;font-weight:950;text-transform:uppercase;letter-spacing:.35px}
-  .kpi .val{margin-top:4px;font-size:22px;font-weight:980;font-family:var(--mono);line-height:1.05}
-  .kpi .val.pos{color:var(--green)}.kpi .val.neg{color:var(--red)}.kpi .val.blue{color:#0b4f99}
-  .ico.red{background:#b91c1c}.ico.blue{background:#0b4f99}.ico.amb{background:#b45309}
-  .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
-  .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 22px rgba(15,23,42,.08);overflow:hidden}
-  .ptitle{background:linear-gradient(180deg,#0b4f99,#0a3f82);color:#fff;padding:10px 12px;font-weight:950;font-size:16px}
-  .pbody{padding:12px}
-  .totals{width:100%;border-collapse:collapse}
-  .totals tr{border-bottom:1px solid #e9eef6}.totals tr:last-child{border-bottom:none}
-  .totals td{padding:10px 8px;vertical-align:middle}
-  .rowlbl{display:flex;align-items:center;gap:10px;font-weight:850;color:#111827}
-  .badge{width:28px;height:28px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:950;font-family:var(--mono)}
-  .b-warn{background:#c79a2b}.b-pos{background:#15803d}.b-neg{background:#b91c1c}.b-blue{background:#0b4f99}
-  .valR{font-family:var(--mono);font-weight:980;text-align:right;white-space:nowrap}
-  .valR.warn{color:#c79a2b}.valR.pos{color:var(--green)}.valR.neg{color:var(--red)}.valR.blue{color:#0b4f99}
-  .note{margin-top:10px;font-size:11px;color:var(--muted)}
-  .donuts{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
-  .donutCard{border:1px solid #e9eef6;border-radius:12px;padding:10px 10px 8px;background:#fff}
-  .donutTitle{font-weight:950;text-align:center;margin:2px 0 8px;font-size:13px}
-  .donutWrap{display:flex;align-items:center;justify-content:center}
-  .legend{display:grid;grid-template-columns:1fr;gap:6px;margin-top:6px}
-  .legrow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}
-  .dot{width:10px;height:10px;border-radius:999px;display:inline-block;margin-right:8px}
-  .leglbl{display:flex;align-items:center;color:#0f172a;font-weight:850}
-  .legval{font-family:var(--mono);font-weight:950;white-space:nowrap}
-  .sec{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:14px;box-shadow:0 10px 22px rgba(15,23,42,.08)}
-  .sec h2{margin:0 0 10px;font-size:14px;color:#0f172a}
+  body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text)}
+
+  header{background:linear-gradient(180deg,var(--blue),var(--blue2));color:#fff;padding:18px 18px 16px}
+  .head{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:16px}
+  .crest{width:60px;height:60px;flex:0 0 auto}
+  .htxt{min-width:0}
+  .title{margin:0;font-weight:950;font-size:34px;letter-spacing:.2px;line-height:1.05}
+  .sub{margin-top:6px;font-size:12px;opacity:.9}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 20px}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:12px}
+  .kcard{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:12px 10px 14px;border:1px solid #e1e7f3;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:110px}
+  .kico{width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:#fff;box-shadow:0 4px 10px rgba(15,23,42,.18)}
+  .klabel{font-size:11px;font-weight:950;letter-spacing:.35px;text-transform:uppercase;color:#1f2933}
+  .kval{font-size:26px;font-weight:950;font-family:var(--mono);line-height:1}
+  .kval.neg{color:var(--red)}
+  .kval.pos{color:var(--green)}
+  .kval.blue{color:var(--blueAccent)}
+
+  .grid{display:grid;grid-template-columns:1.08fr .92fr;gap:14px;margin-top:16px}
+  .panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow2);border:1px solid #d6dde8;overflow:visible}
+  .phead{background:linear-gradient(180deg,var(--blue),var(--blue2));color:#fff;padding:10px 14px;font-weight:950;font-size:18px}
+  .pbody{padding:10px 12px 12px}
+
+  .tot{width:100%;border-collapse:collapse}
+  .tot tr{border-bottom:1px solid #e5eaf2}
+  .tot tr:last-child{border-bottom:none}
+  .tot td{padding:11px 6px;vertical-align:middle}
+  .tleft{display:flex;align-items:center;gap:10px;font-weight:900}
+  .ticon{width:28px;height:28px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:#fff;box-shadow:0 2px 6px rgba(15,23,42,.18)}
+  .tright{font-family:var(--mono);font-weight:950;text-align:right;white-space:nowrap}
+  .tright.gold{color:var(--gold)}
+  .tright.green{color:var(--green)}
+  .tright.red{color:var(--red)}
+  .tright.blue{color:var(--blueAccent)}
+
+  .foot{margin-top:8px;font-size:11px;color:var(--muted)}
+
+  .rateGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .rsub{border:1px solid #e5eaf2;border-radius:14px;padding:10px 10px 8px;background:#fff}
+  .rtitle{text-align:center;font-weight:950;margin:0 0 8px;font-size:14px}
+  .rrow{display:flex;align-items:center;justify-content:center;gap:14px}
+  .donutWrap{flex:0 0 auto}
+  .legend{display:flex;flex-direction:column;gap:4px;font-size:12px}
+  .leg{display:flex;align-items:center;gap:6px;font-weight:850;color:#111827}
+  .dot{width:10px;height:10px;border-radius:999px;display:inline-block}
+  .legval{font-family:var(--mono);font-weight:950;color:#111827}
+
+  .sec{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow2);border:1px solid #d6dde8;margin-top:14px;overflow:hidden}
+  .sec .phead{font-size:16px}
+  .sec .pbody{padding:10px 12px 12px}
+
   table.big{width:100%;border-collapse:collapse;font-size:12px}
-  table.big th,table.big td{padding:8px 7px;border-bottom:1px solid #eef2f7;vertical-align:top}
+  table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertical-align:top}
   table.big th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px;text-align:left}
+
   .mono{font-family:var(--mono)}
   .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid rgba(2,6,23,.08)}
-  .pill.pos{background:#ecfdf5;color:var(--green)}.pill.neg{background:#fef2f2;color:var(--red)}
-  .pill.info{background:#eff6ff;color:#1a73e8}.pill.warn{background:#fff7ed;color:var(--amber)}.pill.violet{background:#f5f3ff;color:#7c3aed}
-  tr.alt{background:#f8fafc}
+  .pill.pos{background:#ecfdf5;color:var(--green)}
+  .pill.neg{background:#fef2f2;color:var(--red)}
+  .pill.info{background:#eff6ff;color:#1a73e8}
+  .pill.warn{background:#fff7ed;color:#b45309}
+  .pill.violet{background:#f5f3ff;color:#7c3aed}
+
   .pagebreak{page-break-before:always}
-  @media (max-width:980px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}}
-  @media print{body{background:#fff}.wrap{padding:0}.kpi,.panel,.sec{box-shadow:none}}
+
+  @media(max-width:980px){
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid{grid-template-columns:1fr}
+    .title{font-size:28px}
+  }
+
+  @media print{body{background:#fff}.wrap{padding:0}.panel,.kcard,.sec{box-shadow:none}}
 </style>
 </head>
 <body>
 <header>
-  <div class="headrow">
-    <svg width="54" height="54" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c948"/><stop offset="1" stop-color="#b7791f"/></linearGradient></defs>
-      <path d="M50 6 C62 6 76 10 84 16 L84 50 C84 74 70 88 50 94 C30 88 16 74 16 50 L16 16 C24 10 38 6 50 6Z" fill="url(#cg)" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
-      <circle cx="50" cy="44" r="18" fill="rgba(255,255,255,.15)" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
-      <path d="M39 44h22M50 33v22" stroke="rgba(255,255,255,.75)" stroke-width="3" stroke-linecap="round"/>
+  <div class="head">
+    <svg class="crest" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Brasão">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f7c948"/>
+          <stop offset="1" stop-color="#b7791f"/>
+        </linearGradient>
+      </defs>
+      <path d="M50 6 C62 6 76 10 84 16 L84 50 C84 74 70 88 50 94 C30 88 16 74 16 50 L16 16 C24 10 38 6 50 6Z" fill="url(#g)" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
+      <circle cx="50" cy="44" r="18" fill="rgba(255,255,255,.16)" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
+      <path d="M39 44h22M50 33v22" stroke="rgba(255,255,255,.78)" stroke-width="3" stroke-linecap="round"/>
     </svg>
-    <div>
-      <h1>Futebol de Ter&#xE7;a &#x2014; Relat&#xF3;rio Financeiro</h1>
-      <div class="sub">Gerado em: ${escapeHtml(dt)} &bull; Sess&#xE3;o atual: ${escapeHtml(sessionTxt)} &bull; Itens: ${escapeHtml(limTxt)}${periodTxt ? ' &bull; ' + escapeHtml(periodTxt) : ''}</div>
+    <div class="htxt">
+      <h1 class="title">Futebol de Terça — Relatório Financeiro</h1>
+      <div class="sub">Gerado em: ${escapeHtml(dt)} • Sessão atual: ${escapeHtml(sessionTxt)} • Itens: ${escapeHtml(limTxt)}${periodTxt ? ' • ' + escapeHtml(periodTxt) : ''}</div>
     </div>
   </div>
 </header>
 
 <div class="wrap">
   <div class="kpis">
-    <div class="kpi">
-      <div class="ico red">&#x25A3;</div>
-      <div class="txt">
-        <div class="lbl">Caixa (geral)</div>
-        <div class="val ${cashClass}">${escapeHtml(moneySigned(cash))}</div>
+    <div class="kcard">
+      <div class="kico">
+        <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="6" width="18" height="12" rx="2" fill="#e11d48"/>
+          <path d="M7 12h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
       </div>
+      <div class="klabel">CAIXA (GERAL)</div>
+      <div class="kval ${cashClass}">${escapeHtml(moneySigned(cash))}</div>
     </div>
-    <div class="kpi">
-      <div class="ico blue">$</div>
-      <div class="txt">
-        <div class="lbl">Total a receber (geral)</div>
-        <div class="val blue">${escapeHtml(money(totalToReceiveAll))}</div>
+    <div class="kcard">
+      <div class="kico">
+        <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="7" width="18" height="10" rx="2" fill="#0369a1"/>
+          <circle cx="9" cy="12" r="2" fill="#fff"/>
+          <path d="M13 12h5" stroke="#bfdbfe" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
       </div>
+      <div class="klabel">TOTAL A RECEBER (GERAL)</div>
+      <div class="kval blue">${escapeHtml(money(totalToReceiveAll))}</div>
     </div>
-    <div class="kpi">
-      <div class="ico amb">&#x21BB;</div>
-      <div class="txt">
-        <div class="lbl">Movimento do per&#xED;odo</div>
-        <div class="val ${netClass}">${escapeHtml(moneySigned(netCashP))}</div>
+    <div class="kcard">
+      <div class="kico">
+        <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="8" fill="#c2410c"/>
+          <path d="M12 8v4l2.5 2.5" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
+      <div class="klabel">MOVIMENTO DO PERÍODO</div>
+      <div class="kval ${netClass}">${escapeHtml(moneySigned(netCashP))}</div>
     </div>
-    <div class="kpi">
-      <div class="ico blue">$</div>
-      <div class="txt">
-        <div class="lbl">A receber (per&#xED;odo)</div>
-        <div class="val blue">${escapeHtml(money(totalToReceiveP))}</div>
+    <div class="kcard">
+      <div class="kico">
+        <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="8" fill="#0b4f99"/>
+          <text x="12" y="15" text-anchor="middle" font-size="10" fill="#fff" font-family="system-ui, -apple-system, sans-serif">R$</text>
+        </svg>
       </div>
+      <div class="klabel">A RECEBER (PERÍODO)</div>
+      <div class="kval blue">${escapeHtml(money(totalToReceiveP))}</div>
     </div>
   </div>
 
   <div class="grid">
     <div class="panel">
-      <div class="ptitle">Totais do Per&#xED;odo</div>
+      <div class="phead">Totais do Período</div>
       <div class="pbody">
-        <table class="totals">
-          <tr><td><div class="rowlbl"><span class="badge b-warn">C</span> Cobran&#xE7;as</div></td><td class="valR warn">${escapeHtml(money(chP))}</td></tr>
-          <tr><td><div class="rowlbl"><span class="badge b-pos">P</span> Pagamentos recebidos</div></td><td class="valR pos">+ ${escapeHtml(money(payP))}</td></tr>
-          <tr><td><div class="rowlbl"><span class="badge b-neg">D</span> Despesas do caixa</div></td><td class="valR neg">- ${escapeHtml(money(expP))}</td></tr>
-          <tr><td><div class="rowlbl"><span class="badge b-neg">M</span> Movimento de caixa</div></td><td class="valR ${netClass}">${escapeHtml(moneySigned(netCashP))}</td></tr>
-          <tr><td><div class="rowlbl"><span class="badge b-blue">$</span> Total a receber</div></td><td class="valR blue">${escapeHtml(money(totalToReceiveP))}</td></tr>
+        <table class="tot">
+          <tr>
+            <td>
+              <div class="tleft">
+                <span class="ticon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9" fill="#fbbf24"/>
+                    <path d="M9 12h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Cobranças</span>
+              </div>
+            </td>
+            <td class="tright gold">${escapeHtml(money(chP))}</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="tleft">
+                <span class="ticon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9" fill="#16a34a"/>
+                    <path d="M8.5 12.5 11 15l4.5-5" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span>Pagamentos recebidos</span>
+              </div>
+            </td>
+            <td class="tright green">+ ${escapeHtml(money(payP))}</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="tleft">
+                <span class="ticon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9" fill="#ef4444"/>
+                    <path d="M8.5 9.5 15.5 14.5" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+                    <path d="M15.5 9.5 8.5 14.5" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span>Despesas do caixa</span>
+              </div>
+            </td>
+            <td class="tright red">- ${escapeHtml(money(expP))}</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="tleft">
+                <span class="ticon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9" fill="#dc2626"/>
+                    <path d="M12 8v4l2.5 2.5" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                <span>Movimento de caixa</span>
+              </div>
+            </td>
+            <td class="tright ${netClass}">${escapeHtml(moneySigned(netCashP))}</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="tleft">
+                <span class="ticon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9" fill="#0b4f99"/>
+                    <text x="12" y="15" text-anchor="middle" font-size="9" fill="#fff" font-family="system-ui,-apple-system,sans-serif">R$</text>
+                  </svg>
+                </span>
+                <span>Total a receber</span>
+              </div>
+            </td>
+            <td class="tright blue">${escapeHtml(money(totalToReceiveP))}</td>
+          </tr>
         </table>
-        <div class="note">&#x2022; &quot;Cobran&#xE7;as&quot; n&#xE3;o entram diretamente no caixa; elas viram caixa quando o pagamento &#xE9; registrado.</div>
+        <div class="foot">* “Cobranças” não entram diretamente no caixa; elas viram caixa quando o pagamento é registrado.</div>
       </div>
     </div>
 
     <div class="panel">
-      <div class="ptitle">Rateios</div>
+      <div class="phead">Rateios</div>
       <div class="pbody">
-        <div class="donuts">
-          <div class="donutCard">
-            <div class="donutTitle">Rateio no Per&#xED;odo</div>
-            <div class="donutWrap" id="donutPeriod"></div>
-            <div class="legend">
-              <div class="legrow"><span class="leglbl"><span class="dot" style="background:#1f5fae"></span>Cobrado</span><span class="legval">${escapeHtml(money(rateioInfo.chargesP))}</span></div>
-              <div class="legrow"><span class="leglbl"><span class="dot" style="background:#c79a2b"></span>Recebido</span><span class="legval">${escapeHtml(money(rateioInfo.paymentsP))}</span></div>
-              <div class="legrow"><span class="leglbl"><span class="dot" style="background:#c62828"></span>Em aberto</span><span class="legval">${escapeHtml(money(rateioInfo.openP))}</span></div>
+        <div class="rateGrid">
+          <div class="rsub">
+            <div class="rtitle">Rateio no Período</div>
+            <div class="rrow">
+              <div class="donutWrap" id="donutPeriod"></div>
+              <div class="legend">
+                <div class="leg"><span class="dot" style="background:#1f5fae"></span>Cobrado <span class="legval">${escapeHtml(money(rateioInfo.chargesP))}</span></div>
+                <div class="leg"><span class="dot" style="background:#c79a2b"></span>Recebido <span class="legval">${escapeHtml(money(rateioInfo.paymentsP))}</span></div>
+                <div class="leg"><span class="dot" style="background:#c62828"></span>Em aberto <span class="legval">${escapeHtml(money(rateioInfo.openP))}</span></div>
+              </div>
             </div>
           </div>
-          <div class="donutCard">
-            <div class="donutTitle">Rateio Geral</div>
-            <div class="donutWrap" id="donutAll"></div>
-            <div class="legend">
-              <div class="legrow"><span class="leglbl"><span class="dot" style="background:#1f5fae"></span>Em aberto</span><span class="legval">${escapeHtml(money(rateioInfo.openAll))}</span></div>
-              <div class="legrow"><span class="leglbl"><span class="dot" style="background:#15803d"></span>Cr&#xE9;dito</span><span class="legval">${escapeHtml(money(rateioInfo.creditAll))}</span></div>
+          <div class="rsub">
+            <div class="rtitle">Rateio Geral</div>
+            <div class="rrow">
+              <div class="donutWrap" id="donutAll"></div>
+              <div class="legend">
+                <div class="leg"><span class="dot" style="background:#1f5fae"></span>Em aberto <span class="legval">${escapeHtml(money(rateioInfo.openAll))}</span></div>
+                <div class="leg"><span class="dot" style="background:#16a34a"></span>Crédito <span class="legval">${escapeHtml(money(rateioInfo.creditAll))}</span></div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="note">&#x2022; &quot;Cr&#xE9;dito&quot; aparece quando pagamentos superam cobran&#xE7;as de rateio.</div>
+        <div class="foot">* “Crédito” aparece quando pagamentos de rateio superam as cobranças de rateio.</div>
       </div>
     </div>
   </div>
 
   <div class="sec">
-    <h2>Pend&#xEA;ncias por jogador (geral)</h2>
-    <table class="big"><thead><tr><th>Jogador</th><th>Situa&#xE7;&#xE3;o</th><th>Cobran&#xE7;a</th></tr></thead><tbody>${debtsHtmlAll}</tbody></table>
+    <div class="phead">Pendências por jogador (geral)</div>
+    <div class="pbody">
+      <table class="big">
+        <thead><tr><th>Jogador</th><th>Situação</th><th>Cobrança</th></tr></thead>
+        <tbody>${debtsHtmlAll}</tbody>
+      </table>
+    </div>
   </div>
+
   <div class="sec">
-    <h2>Pend&#xEA;ncias por jogador (no per&#xED;odo)</h2>
-    <table class="big"><thead><tr><th>Jogador</th><th>Situa&#xE7;&#xE3;o</th><th>Cobran&#xE7;a</th></tr></thead><tbody>${debtsHtmlP}</tbody></table>
+    <div class="phead">Pendências por jogador (no período)</div>
+    <div class="pbody">
+      <table class="big">
+        <thead><tr><th>Jogador</th><th>Situação</th><th>Cobrança</th></tr></thead>
+        <tbody>${debtsHtmlP}</tbody>
+      </table>
+    </div>
   </div>
 
   <div class="sec pagebreak">
-    <h2>Lan&#xE7;amentos do financeiro (${escapeHtml(limTxt)}${periodTxt ? ' &bull; ' + escapeHtml(periodTxt) : ''})</h2>
-    <table class="big">
-      <thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Jogador</th><th>Valor</th><th>Obs</th></tr></thead>
-      <tbody>${ledgerHtml}</tbody>
-    </table>
+    <div class="phead">Lançamentos do financeiro (${escapeHtml(limTxt)}${periodTxt ? ' • ' + escapeHtml(periodTxt) : ''})</div>
+    <div class="pbody">
+      <table class="big">
+        <thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Jogador</th><th>Valor</th><th>Obs</th></tr></thead>
+        <tbody>${ledgerHtml}</tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -5175,35 +5315,43 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
   var OP = Number(${rateioInfo.openP||0});
   var OA = Number(${rateioInfo.openAll||0});
   var CA = Number(${rateioInfo.creditAll||0});
-  function makeSvg(vals, cols){
-    vals = vals.map(function(v){return v < 0 ? 0 : v;});
+
+  function donutSvg(vals, cols){
+    vals = (vals||[]).map(function(v){v=Number(v||0);return v<0?0:v;});
     var total = vals.reduce(function(a,b){return a+b;},0);
-    var sz=190, sw=26, r=(sz/2)-(sw/2), circ=2*Math.PI*r, cx=sz/2, cy=sz/2, bg='#e8eef7';
-    var svg = '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 '+sz+' '+sz+'" xmlns="http://www.w3.org/2000/svg" style="display:block">'
-            + '<g transform="rotate(-90 '+cx+' '+cy+')">'
-            + '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+bg+'" stroke-width="'+sw+'"/>';
-    if(total > 0.001){
+    var size = 170; var stroke = 26; var r = (size/2)-(stroke/2);
+    var circ = 2*Math.PI*r; var cx=size/2; var cy=size/2; var bg='#e5edf7';
+    var svg = '';
+    svg += '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" xmlns="http://www.w3.org/2000/svg" style="display:block">';
+    svg += '<g transform="rotate(-90 '+cx+' '+cy+')">';
+    svg += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+bg+'" stroke-width="'+stroke+'"/>';
+    if(total>0.0001){
       var off=0;
       for(var i=0;i<vals.length;i++){
         var v=vals[i]; if(v<=0.0001) continue;
         var dash=(v/total)*circ;
-        svg += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+cols[i]+'" stroke-width="'+sw
-             + '" stroke-dasharray="'+dash+' '+(circ-dash)+'" stroke-dashoffset="'+ (-off) +'"/>';
-        off+=dash;
+        svg += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+(cols[i]||'#1f5fae')+'" stroke-width="'+stroke+'" stroke-dasharray="'+dash+' '+(circ-dash)+'" stroke-dashoffset="'+(-off)+'"/>';
+        off += dash;
       }
     } else {
-      svg += '<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#888">sem dados</text>';
+      svg += '<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="#6b7280">sem dados</text>';
     }
-    svg += '</g><circle cx="'+cx+'" cy="'+cy+'" r="'+(r-sw/2)+'" fill="#fff"/></svg>';
+    svg += '</g>';
+    svg += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(r-stroke/2)+'" fill="#fff"/>';
+    svg += '</svg>';
     return svg;
   }
-  var dp=document.getElementById('donutPeriod');
-  if(dp) dp.innerHTML=makeSvg([CP,PP,OP],['#1f5fae','#c79a2b','#c62828']);
-  var da=document.getElementById('donutAll');
-  if(da) da.innerHTML=makeSvg([OA,CA],['#1f5fae','#15803d']);
+
+  try{
+    var dp=document.getElementById('donutPeriod');
+    if(dp) dp.innerHTML=donutSvg([CP,PP,OP],['#1f5fae','#c79a2b','#c62828']);
+    var da=document.getElementById('donutAll');
+    if(da) da.innerHTML=donutSvg([OA,CA],['#1f5fae','#16a34a']);
+  }catch(e){}
 })();
 <\/script>
-</body></html>`;
+</body>
+</html>`;
 
         w.document.open();
         w.document.write(htmlOut);
