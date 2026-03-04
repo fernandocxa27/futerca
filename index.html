@@ -5116,6 +5116,21 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
     /* Make sure donuts never get clipped */
     .donutWrap{overflow:visible}
     .donutWrap svg{max-width:160px;max-height:160px;width:160px;height:160px}
+
+    /* --- Mobile table readability (Lançamentos / Pendências): allow wrapping and avoid header cut --- */
+    table.big{font-size:11px; table-layout:fixed;}
+    table.big th, table.big td{padding:8px 6px;}
+    table.big th{font-size:10px; white-space:normal; line-height:1.15;}
+    table.big td{white-space:normal; overflow-wrap:anywhere; word-break:break-word;}
+
+    /* Keep numeric/monospace items in one line */
+    table.big td .mono, table.big td.mono, table.big th.mono, .pill, .legval{white-space:nowrap;}
+
+    /* Give important columns a bit more room */
+    table.big th:nth-child(1), table.big td:nth-child(1){width:64px;}   /* Data */
+    table.big th:nth-child(2), table.big td:nth-child(2){width:64px;}   /* Tipo */
+    table.big th:nth-child(5), table.big td:nth-child(5){width:72px;}   /* Valor */
+
   }
 @media print{
   body{background:#ffffff;}
