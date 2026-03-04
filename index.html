@@ -4964,9 +4964,6 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
                     const cat = String(e.category||'');
                     const catCls = getCatCls(cat);
                     out.push(`
-                      <tr class="dateLabel">
-                        <td colspan="5">${escapeHtml(e.date||'')}</td>
-                      </tr>
                       <tr class="kind-${escapeHtml(k)}">
                         <td class="mono">${escapeHtml(e.date||'')}</td>
                         <td>${escapeHtml(kindLabel(k))}</td>
@@ -5041,7 +5038,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
   .kcard{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:12px 10px 14px;border:1px solid #e1e7f3;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:110px}
   .kico{width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:#fff;box-shadow:0 4px 10px rgba(15,23,42,.18)}
   .klabel{font-size:11px;font-weight:950;letter-spacing:.35px;text-transform:uppercase;color:#1f2933}
-  .kval{font-size:26px;font-weight:950;font-family:var(--mono);line-height:1;white-space:nowrap} 
+  .kval{font-size:26px;font-weight:950;font-family:var(--mono);line-height:1}
   .kval.neg{color:var(--red)}
   .kval.pos{color:var(--green)}
   .kval.blue{color:var(--blueAccent)}
@@ -5080,7 +5077,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
   .sec .pbody{padding:10px 12px 12px}
 
   table.big{width:100%;border-collapse:collapse;font-size:12px}
-table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertical-align:top}
+  table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertical-align:top}
   table.big th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px;text-align:left}
 
   .mono{font-family:var(--mono)}
@@ -5100,162 +5097,35 @@ table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertic
   }
 
   
-
-  @media(max-width:640px){
-    header{padding:14px 12px 12px}
-    .head{gap:12px}
-    .crest{width:54px;height:54px}
-    .wrap{padding:12px 10px 16px}
-
-    .kcard{min-height:104px;padding:11px 10px 12px}
-    .kval{font-size:24px}
-
-    .rateGrid{grid-template-columns:1fr}
-    .rrow{flex-direction:column;align-items:center;gap:8px}
-    .legend{width:100%;max-width:280px}
-    .leg{justify-content:space-between}
-    .legval{margin-left:auto}
-
-    /* Make sure donuts never get clipped */
-    .donutWrap{overflow:visible}
-    .donutWrap svg{max-width:160px;max-height:160px;width:160px;height:160px}
-
-    table.big th, table.big td{padding:8px 6px;}
-    table.big th{font-size:10px; white-space:normal; line-height:1.15;}
-    table.big td{white-space:normal; overflow-wrap:anywhere; word-break:break-word;}
-
-    /* Keep numeric/monospace items in one line */
-    table.big td .mono, table.big td.mono, table.big th.mono{white-space:nowrap;}
-
-    /* Give important columns a bit more room */
-    table.big th:nth-child(1), table.big td:nth-child(1){width:64px;}   /* Data */
-    table.big th:nth-child(2), table.big td:nth-child(2){width:64px;}   /* Tipo */
-    table.big th:nth-child(5), table.big td:nth-child(5){width:72px;}   /* Valor */
-    /* Lançamentos table: wrap ALL cells, col widths auto, height adapts */
-    .sec.pagebreak table.big{
-      font-size:11px;
-      table-layout:auto;
-      width:100%;
-    }
-    .sec.pagebreak table.big th,
-    .sec.pagebreak table.big td{
-      white-space:normal;
-      overflow-wrap:anywhere;
-      word-break:break-word;
-      padding:7px 4px;
-      vertical-align:top;
-      line-height:1.3;
-    }
-    .sec.pagebreak table.big th{
-      font-size:10px;
-      line-height:1.2;
-    }
-    /* Keep amounts on one line */
-    .sec.pagebreak table.big .amt,
-    .sec.pagebreak table.big .mono{
-      white-space:nowrap;
-    }
-
-    /* Lançamentos (sec.pagebreak): esconder coluna DATA e deixar células se ajustarem em altura */
-    .sec.pagebreak table.big{
-      table-layout:auto;
-      width:100%;
-      font-size:11px;
-    }
-    .sec.pagebreak table.big th,
-    .sec.pagebreak table.big td{
-      padding:7px 4px;
-      white-space:normal;
-      overflow-wrap:anywhere;
-      word-break:break-word;
-      vertical-align:top;
-      line-height:1.3;
-    }
-    .sec.pagebreak table.big th{
-      font-size:10px;
-      line-height:1.2;
-    }
-    /* Oculta a coluna Data no mobile */
-    .sec.pagebreak table.big th:nth-child(1),
-    .sec.pagebreak table.big td:nth-child(1){
-      display:none;
-    }
-    /* Mantém valores e números em uma linha só */
-    .sec.pagebreak table.big .amt,
-    .sec.pagebreak table.big .mono{
-      white-space:nowrap;
-    }
-    /* Em telas pequenas, deixa os totais do dia em coluna para leitura melhor */
-    .sec.pagebreak .daytitle{
-      flex-direction:column;
-      align-items:flex-start;
-    }
-    .sec.pagebreak .daytitle .pill{
-      margin-top:2px;
-    }
-
-
-
-
+@media(max-width:640px){
+  /* Mobile: melhorar leitura só na tabela de Lançamentos (sec.pagebreak) */
+  .sec.pagebreak table.big{
+    table-layout:auto;
+    width:100%;
+    font-size:11px;
   }
-
-  /* Date label row: hidden by default (desktop and print) */
-  tr.dateLabel td {
-    padding: 6px 8px 2px;
-    font-size: 10px;
-    font-weight: 900;
-    color: #475569;
-    letter-spacing: .3px;
-    border-bottom: none;
-    background: #f1f5f9;
-    font-family: var(--mono);
-
-    /* Lançamentos mobile: show dateLabel, hide DATA column, wrap all cells */
-    .sec.pagebreak tr.dateLabel { display: table-row; }
-    .sec.pagebreak table.big th:nth-child(1),
-    .sec.pagebreak table.big td:nth-child(1) { display: none; }
-    .sec.pagebreak table.big {
-      table-layout: auto;
-      width: 100%;
-      font-size: 11px;
-    }
-    .sec.pagebreak table.big th,
-    .sec.pagebreak table.big td {
-      padding: 6px 4px;
-      white-space: normal;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      vertical-align: top;
-      line-height: 1.3;
-    }
-    .sec.pagebreak table.big th { font-size: 10px; line-height: 1.2; }
-    .sec.pagebreak table.big .amt,
-    .sec.pagebreak table.big .mono { white-space: nowrap; }
-    .sec.pagebreak .daytitle {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-    }
-
-    /* Show dateLabel rows only on small screens */
-    .sec.pagebreak tr.dateLabel { display: table-row; }
-    /* Hide DATA column, we show date above each item */
-    .sec.pagebreak table.big th:nth-child(1),
-    .sec.pagebreak table.big td:nth-child(1) { display: none; }
-
-    /* Mobile: show dateLabel row above each item and hide DATA col */
-    .sec.pagebreak tr.dateLabel{display:table-row !important;}
-    .sec.pagebreak table.big th:nth-child(1),
-    .sec.pagebreak table.big td:nth-child(1){display:none;}
-
-
-
+  .sec.pagebreak table.big th,
+  .sec.pagebreak table.big td{
+    padding:6px 4px;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    vertical-align:top;
+    line-height:1.3;
   }
+  .sec.pagebreak table.big th{
+    font-size:10px;
+    line-height:1.2;
+  }
+  /* Manter valores (R$) em uma linha só */
+  .sec.pagebreak table.big .amt,
+  .sec.pagebreak table.big .mono{
+    white-space:nowrap;
+  }
+}
 
   @media print{
-  body{background:#ffffff;
-  tr.dateLabel { display:none; }
-}
+  body{background:#ffffff;}
   .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 20px;}
   .panel,.kcard,.sec{box-shadow:none;border-color:#d6dde8;}
 }.wrap{padding:0}.panel,.kcard,.sec{box-shadow:none}}
