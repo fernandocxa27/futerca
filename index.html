@@ -5081,12 +5081,6 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
   .sec .pbody{padding:10px 12px 12px}
 
   table.big{width:100%;border-collapse:collapse;font-size:12px}
-  
-
-  /* Note row below each launch (mobile-friendly) */
-  tr.noteRow td{padding:6px 8px 10px;border-bottom:1px solid #eef2f7;background:#fbfdff}
-  td.noteCell{font-size:11px;color:#334155;line-height:1.25;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
-  tr.noteRow{display:none}
 table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertical-align:top}
   table.big th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px;text-align:left}
 
@@ -5127,20 +5121,6 @@ table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertic
     .donutWrap{overflow:visible}
     .donutWrap svg{max-width:160px;max-height:160px;width:160px;height:160px}
 
-    /* --- Mobile table readability (Lançamentos / Pendências): allow wrapping and avoid header cut --- */
-    .sec.pagebreak table.big{font-size:11px; table-layout:fixed;}
-    .sec.pagebreak table.big th, .sec.pagebreak table.big td{padding:8px 6px;}
-    .sec.pagebreak table.big th{font-size:10px; white-space:normal; line-height:1.15;}
-    .sec.pagebreak table.big td{white-space:normal; overflow-wrap:anywhere; word-break:break-word;}
-
-    /* Keep numeric/monospace items in one line only for the last table (lançamentos) */
-    .sec.pagebreak table.big td .mono, .sec.pagebreak table.big td.mono, .sec.pagebreak table.big th.mono{white-space:nowrap;}
-
-    /* Give important columns a bit more room */
-    .sec.pagebreak table.big th:nth-child(1), .sec.pagebreak table.big td:nth-child(1){width:64px;}   /* Data */
-    .sec.pagebreak table.big th:nth-child(2), .sec.pagebreak table.big td:nth-child(2){width:64px;}   /* Tipo */
-    .sec.pagebreak table.big th:nth-child(5), .sec.pagebreak table.big td:nth-child(5){width:72px;}   /* Valor */
-
     table.big th, table.big td{padding:8px 6px;}
     table.big th{font-size:10px; white-space:normal; line-height:1.15;}
     table.big td{white-space:normal; overflow-wrap:anywhere; word-break:break-word;}
@@ -5152,10 +5132,31 @@ table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertic
     table.big th:nth-child(1), table.big td:nth-child(1){width:64px;}   /* Data */
     table.big th:nth-child(2), table.big td:nth-child(2){width:64px;}   /* Tipo */
     table.big th:nth-child(5), table.big td:nth-child(5){width:72px;}   /* Valor */
+    /* Lançamentos table: wrap ALL cells, col widths auto, height adapts */
+    .sec.pagebreak table.big{
+      font-size:11px;
+      table-layout:auto;
+      width:100%;
+    }
+    .sec.pagebreak table.big th,
+    .sec.pagebreak table.big td{
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      padding:7px 4px;
+      vertical-align:top;
+      line-height:1.3;
+    }
+    .sec.pagebreak table.big th{
+      font-size:10px;
+      line-height:1.2;
+    }
+    /* Keep amounts on one line */
+    .sec.pagebreak table.big .amt,
+    .sec.pagebreak table.big .mono{
+      white-space:nowrap;
+    }
 
-    /* Mobile: move OBS to a full-width line under each launch */
-    .sec.pagebreak tr.noteRow{display:table-row}
-    .sec.pagebreak table.big th:nth-child(6), .sec.pagebreak table.big td:nth-child(6){display:none}
 
 
   }
