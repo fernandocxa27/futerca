@@ -4971,7 +4971,11 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
                         <td>${escapeHtml(who)}</td>
                         <td class="${escapeHtml(amtCls(e))}">${escapeHtml(amtTxt(e))}</td>
                         <td>${escapeHtml(e.note||'')}</td>
-                      </tr>`);
+                      </tr>
+                      ${e.note ? `
+                      <tr class="noteRow">
+                        <td colspan="6" class="noteCell">${escapeHtml(String(e.note))}</td>
+                      </tr>` : ''}`);
                 });
             });
 
@@ -5077,7 +5081,13 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
   .sec .pbody{padding:10px 12px 12px}
 
   table.big{width:100%;border-collapse:collapse;font-size:12px}
-  table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertical-align:top}
+  
+
+  /* Note row below each launch (mobile-friendly) */
+  tr.noteRow td{padding:6px 8px 10px;border-bottom:1px solid #eef2f7;background:#fbfdff}
+  td.noteCell{font-size:11px;color:#334155;line-height:1.25;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+  tr.noteRow{display:none}
+table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertical-align:top}
   table.big th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.35px;text-align:left}
 
   .mono{font-family:var(--mono)}
@@ -5142,6 +5152,11 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
     table.big th:nth-child(1), table.big td:nth-child(1){width:64px;}   /* Data */
     table.big th:nth-child(2), table.big td:nth-child(2){width:64px;}   /* Tipo */
     table.big th:nth-child(5), table.big td:nth-child(5){width:72px;}   /* Valor */
+
+    /* Mobile: move OBS to a full-width line under each launch */
+    .sec.pagebreak tr.noteRow{display:table-row}
+    .sec.pagebreak table.big th:nth-child(6), .sec.pagebreak table.big td:nth-child(6){display:none}
+
 
   }
 @media print{
