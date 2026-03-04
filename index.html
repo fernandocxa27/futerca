@@ -4964,6 +4964,9 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
                     const cat = String(e.category||'');
                     const catCls = getCatCls(cat);
                     out.push(`
+                      <tr class="dateLabel">
+                        <td colspan="5">${escapeHtml(e.date||'')}</td>
+                      </tr>
                       <tr class="kind-${escapeHtml(k)}">
                         <td class="mono">${escapeHtml(e.date||'')}</td>
                         <td>${escapeHtml(kindLabel(k))}</td>
@@ -4971,11 +4974,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
                         <td>${escapeHtml(who)}</td>
                         <td class="${escapeHtml(amtCls(e))}">${escapeHtml(amtTxt(e))}</td>
                         <td>${escapeHtml(e.note||'')}</td>
-                      </tr>
-                      ${e.note ? `
-                      <tr class="noteRow">
-                        <td colspan="6" class="noteCell">${escapeHtml(String(e.note))}</td>
-                      </tr>` : ''}`);
+                      </tr>`);
                 });
             });
 
@@ -5199,7 +5198,49 @@ table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertic
 
 
   }
-@media print{
+
+  /* Date label row: hidden by default (desktop and print) */
+  tr.dateLabel { display: none; }
+  tr.dateLabel td {
+    padding: 6px 8px 2px;
+    font-size: 10px;
+    font-weight: 900;
+    color: #475569;
+    letter-spacing: .3px;
+    border-bottom: none;
+    background: #f1f5f9;
+    font-family: var(--mono);
+
+    /* Lançamentos mobile: show dateLabel, hide DATA column, wrap all cells */
+    .sec.pagebreak tr.dateLabel { display: table-row; }
+    .sec.pagebreak table.big th:nth-child(1),
+    .sec.pagebreak table.big td:nth-child(1) { display: none; }
+    .sec.pagebreak table.big {
+      table-layout: auto;
+      width: 100%;
+      font-size: 11px;
+    }
+    .sec.pagebreak table.big th,
+    .sec.pagebreak table.big td {
+      padding: 6px 4px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      vertical-align: top;
+      line-height: 1.3;
+    }
+    .sec.pagebreak table.big th { font-size: 10px; line-height: 1.2; }
+    .sec.pagebreak table.big .amt,
+    .sec.pagebreak table.big .mono { white-space: nowrap; }
+    .sec.pagebreak .daytitle {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+  }
+
+  @media print{
   body{background:#ffffff;}
   .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 20px;}
   .panel,.kcard,.sec{box-shadow:none;border-color:#d6dde8;}
