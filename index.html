@@ -5157,6 +5157,45 @@ table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertic
       white-space:nowrap;
     }
 
+    /* Lançamentos (sec.pagebreak): esconder coluna DATA e deixar células se ajustarem em altura */
+    .sec.pagebreak table.big{
+      table-layout:auto;
+      width:100%;
+      font-size:11px;
+    }
+    .sec.pagebreak table.big th,
+    .sec.pagebreak table.big td{
+      padding:7px 4px;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      vertical-align:top;
+      line-height:1.3;
+    }
+    .sec.pagebreak table.big th{
+      font-size:10px;
+      line-height:1.2;
+    }
+    /* Oculta a coluna Data no mobile */
+    .sec.pagebreak table.big th:nth-child(1),
+    .sec.pagebreak table.big td:nth-child(1){
+      display:none;
+    }
+    /* Mantém valores e números em uma linha só */
+    .sec.pagebreak table.big .amt,
+    .sec.pagebreak table.big .mono{
+      white-space:nowrap;
+    }
+    /* Em telas pequenas, deixa os totais do dia em coluna para leitura melhor */
+    .sec.pagebreak .daytitle{
+      flex-direction:column;
+      align-items:flex-start;
+    }
+    .sec.pagebreak .daytitle .pill{
+      margin-top:2px;
+    }
+
+
 
 
   }
