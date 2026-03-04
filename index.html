@@ -5200,7 +5200,6 @@ table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertic
   }
 
   /* Date label row: hidden by default (desktop and print) */
-  tr.dateLabel { display: none; }
   tr.dateLabel td {
     padding: 6px 8px 2px;
     font-size: 10px;
@@ -5238,10 +5237,19 @@ table.big th,table.big td{padding:9px 8px;border-bottom:1px solid #eef2f7;vertic
       gap: 4px;
     }
 
+    /* Show dateLabel rows only on small screens */
+    .sec.pagebreak tr.dateLabel { display: table-row; }
+    /* Hide DATA column, we show date above each item */
+    .sec.pagebreak table.big th:nth-child(1),
+    .sec.pagebreak table.big td:nth-child(1) { display: none; }
+
+
   }
 
   @media print{
-  body{background:#ffffff;}
+  body{background:#ffffff;
+  tr.dateLabel { display:none; }
+}
   .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 20px;}
   .panel,.kcard,.sec{box-shadow:none;border-color:#d6dde8;}
 }.wrap{padding:0}.panel,.kcard,.sec{box-shadow:none}}
