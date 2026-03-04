@@ -5118,13 +5118,25 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
     .donutWrap svg{max-width:160px;max-height:160px;width:160px;height:160px}
 
     /* --- Mobile table readability (Lançamentos / Pendências): allow wrapping and avoid header cut --- */
-    table.big{font-size:11px; table-layout:fixed;}
+    .sec.pagebreak table.big{font-size:11px; table-layout:fixed;}
+    .sec.pagebreak table.big th, .sec.pagebreak table.big td{padding:8px 6px;}
+    .sec.pagebreak table.big th{font-size:10px; white-space:normal; line-height:1.15;}
+    .sec.pagebreak table.big td{white-space:normal; overflow-wrap:anywhere; word-break:break-word;}
+
+    /* Keep numeric/monospace items in one line only for the last table (lançamentos) */
+    .sec.pagebreak table.big td .mono, .sec.pagebreak table.big td.mono, .sec.pagebreak table.big th.mono{white-space:nowrap;}
+
+    /* Give important columns a bit more room */
+    .sec.pagebreak table.big th:nth-child(1), .sec.pagebreak table.big td:nth-child(1){width:64px;}   /* Data */
+    .sec.pagebreak table.big th:nth-child(2), .sec.pagebreak table.big td:nth-child(2){width:64px;}   /* Tipo */
+    .sec.pagebreak table.big th:nth-child(5), .sec.pagebreak table.big td:nth-child(5){width:72px;}   /* Valor */
+
     table.big th, table.big td{padding:8px 6px;}
     table.big th{font-size:10px; white-space:normal; line-height:1.15;}
     table.big td{white-space:normal; overflow-wrap:anywhere; word-break:break-word;}
 
     /* Keep numeric/monospace items in one line */
-    table.big td .mono, table.big td.mono, table.big th.mono, .pill, .legval{white-space:nowrap;}
+    table.big td .mono, table.big td.mono, table.big th.mono{white-space:nowrap;}
 
     /* Give important columns a bit more room */
     table.big th:nth-child(1), table.big td:nth-child(1){width:64px;}   /* Data */
