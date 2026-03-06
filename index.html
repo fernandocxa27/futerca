@@ -875,6 +875,19 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 .rateio-tools .btn{padding:6px 10px}
 .rateio-hint{font-size:0.82rem;color:#475569;margin-top:6px}
 
+
+/* ===== RANKING: AVATAR + NOME + CONTROLES =====*/
+.rank-player{display:flex;align-items:center;gap:8px;}
+.rank-player img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--primary,#1a73e8);background:#e5e7eb;flex:0 0 auto;}
+.rank-player .rp-name{font-weight:700;font-size:0.86rem;}
+.rank-top1 td{background:#fff9c4!important;}
+.rank-top2 td{background:#f1f5f9!important;}
+.rank-top3 td{background:#fff3e0!important;}
+.rank-medal{font-size:1rem;margin-right:2px;}
+.rank-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:flex-end;}
+.rank-controls .form-group{min-width:160px;margin-bottom:0;}
+@media (max-width:767px){.rank-controls{flex-direction:column;align-items:stretch;}}
+
 </style>
 </head>
 <body>
@@ -1344,7 +1357,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-outline" onclick="exportFinanceCSV()" style="width:100%">Baixar financeiro.csv</button>
 </div></div><div class="panel" id="panelRank">
 <div class="card">
-<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 📊 Ranking / Artilharia</h4>
+<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 📊 Ranking / Artilharia <button class="btn btn-outline btn-sm" type="button" style="margin-left:8px;vertical-align:middle" onclick="openRankDashboard()">&#x1F4C8; Dashboard</button></h4>
 <div class="small">Lance gols, assistências, nota (0–5) e comentário por data. Rankings consideram apenas jogadores marcados como <strong>Presentes</strong> na pelada.</div>
 <div class="hr"></div>
 <div class="finance-row" style="flex-wrap:wrap">
@@ -1418,6 +1431,19 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 
 <div class="card">
 <h4 style="margin:0 0 8px;color:var(--green)">Ranking do mês</h4>
+<div class="rank-controls">
+  <div class="form-group"><label>Ordenar por</label>
+    <select id="rankSort" onchange="renderRankings()">
+      <option value="goals">Gols (artilharia)</option>
+      <option value="assists">Assistências</option>
+      <option value="rating">Nota média</option>
+      <option value="pct">% Vitórias</option>
+      <option value="pres">Presenças</option>
+    </select></div>
+  <div class="form-group" style="flex:1;min-width:180px"><label>Buscar jogador</label>
+    <input type="text" id="rankSearch" placeholder="Ex: Alisson..." oninput="renderRankings()" /></div>
+</div>
+
 <div class="small" id="rankMonthInfo" style="margin-bottom:8px"></div>
 <table class="finance-table">
 <thead>
@@ -5656,33 +5682,50 @@ function formatWinPct(wins, pres) {
 
 
 function renderRankTable(tbodyId, infoId, rows, label) {
-    const tb = document.getElementById(tbodyId);
-    const info = document.getElementById(infoId);
+    var tb = document.getElementById(tbodyId);
+    var info = document.getElementById(infoId);
     if (!tb) return;
-
-    if (info) info.textContent = label + ' • jogadores com pelo menos 1 presença: ' + rows.length;
-
-    // sort: goals desc, assists desc, pres desc, name
-    rows.sort((a,b) => (b.goals-a.goals) || (b.assists-a.assists) || (b.pres-a.pres) || (a.name||'').localeCompare(b.name||''));
-
-    tb.innerHTML = '';
-    if (!rows.length) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="6" class="small">Sem dados no período.</td>';
-        tb.appendChild(tr);
+    var qEl = document.getElementById("rankSearch");
+    var q = qEl ? (qEl.value || "").trim().toLowerCase() : "";
+    var sortSel = document.getElementById("rankSort");
+    var sortMode = sortSel ? (sortSel.value || "goals") : "goals";
+    var list = rows.slice();
+    if (q) list = list.filter(function(r){ return String(r.name||"").toLowerCase().indexOf(q) !== -1; });
+    function cmpGoals(a,b)  { return (b.goals-a.goals)||(b.assists-a.assists)||(b.pres-a.pres)||(a.name||"").localeCompare(b.name||""); }
+    function cmpAssists(a,b){ return (b.assists-a.assists)||(b.goals-a.goals)||(b.pres-a.pres)||(a.name||"").localeCompare(b.name||""); }
+    function cmpRating(a,b) { var ar=a.ratingCount?a.ratingSum/a.ratingCount:0,br=b.ratingCount?b.ratingSum/b.ratingCount:0; return (br-ar)||(b.goals-a.goals)||(b.assists-a.assists); }
+    function cmpPct(a,b)    { var ap=a.pres?(a.wins||0)/a.pres:0,bp=b.pres?(b.wins||0)/b.pres:0; return (bp-ap)||(b.goals-a.goals)||(b.assists-a.assists); }
+    function cmpPres(a,b)   { return (b.pres-a.pres)||(b.goals-a.goals)||(b.assists-a.assists)||(a.name||"").localeCompare(b.name||""); }
+    var fn = sortMode==="assists"?cmpAssists:sortMode==="rating"?cmpRating:sortMode==="pct"?cmpPct:sortMode==="pres"?cmpPres:cmpGoals;
+    list.sort(fn);
+    if (info) info.textContent = label + " • " + list.length + " jogador(es)";
+    tb.innerHTML = "";
+    if (!list.length) {
+        var tr0 = document.createElement("tr");
+        tr0.innerHTML = "<td colspan=\"6\" class=\"small\">Sem dados no período.</td>";
+        tb.appendChild(tr0);
         return;
     }
-
-    rows.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${escapeHtml(r.name||'')}</td>
-          <td class="mono">${escapeHtml(String(r.pres||0))}</td>
-          <td class="mono">${escapeHtml(formatWinPct(r.wins||0, r.pres||0))}</td>
-          <td class="mono">${escapeHtml(String(r.goals||0))}</td>
-          <td class="mono">${escapeHtml(String(r.assists||0))}</td>
-          <td class="mono">${escapeHtml(formatAvg(r.ratingSum||0, r.ratingCount||0))}</td>
-        `;
+    var MEDALS = ["&#x1F947;","&#x1F948;","&#x1F949;"];
+    list.forEach(function(r, idx) {
+        var tr = document.createElement("tr");
+        if (idx===0) tr.className = "rank-top1";
+        else if (idx===1) tr.className = "rank-top2";
+        else if (idx===2) tr.className = "rank-top3";
+        var p = (players||[]).find(function(x){ return String(x.id)===String(r.pid); });
+        var photoUrl = (p && p.photoUrl) ? p.photoUrl : FALLBACK;
+        var safeName = escapeHtml(r.name||"");
+        var medal = idx < 3 ? "<span class=\"rank-medal\">" + MEDALS[idx] + "</span>" : "";
+        tr.innerHTML =
+            "<td><div class=\"rank-player\">" +
+                "<img src=\"" + escapeHtml(photoUrl) + "\" alt=\"" + safeName + "\" onerror=\"this.onerror=null;this.src=FALLBACK\"/>" +
+                "<span class=\"rp-name\">" + medal + safeName + "</span>" +
+            "</div></td>" +
+            "<td class=\"mono\">" + escapeHtml(String(r.pres||0)) + "</td>" +
+            "<td class=\"mono\">" + escapeHtml(formatWinPct(r.wins||0, r.pres||0)) + "</td>" +
+            "<td class=\"mono\">" + escapeHtml(String(r.goals||0)) + "</td>" +
+            "<td class=\"mono\">" + escapeHtml(String(r.assists||0)) + "</td>" +
+            "<td class=\"mono\">" + escapeHtml(formatAvg(r.ratingSum||0, r.ratingCount||0)) + "</td>";
         tb.appendChild(tr);
     });
 }
@@ -5862,6 +5905,80 @@ function applyCashAdjustment() {
     if (amtEl) amtEl.value = '';
     if (noteEl) noteEl.value = '';
 }
+
+function openRankDashboard() {
+  try {
+    var w = window.open("", "_blank");
+    if (!w) { alert("Permita pop-ups para abrir o Dashboard."); return; }
+    var allRows   = computeTotalsForPeriod(function(){ return true; });
+    var byGoals   = allRows.slice().sort(function(a,b){ return (b.goals-a.goals)||(b.assists-a.assists)||(b.pres-a.pres); });
+    var byAssists = allRows.slice().sort(function(a,b){ return (b.assists-a.assists)||(b.goals-a.goals)||(b.pres-a.pres); });
+    var byRating  = allRows.slice().sort(function(a,b){
+        var ar=a.ratingCount?a.ratingSum/a.ratingCount:0,br=b.ratingCount?b.ratingSum/b.ratingCount:0;
+        return (br-ar)||(b.goals-a.goals);
+    });
+    var FB = FALLBACK;
+    var MD = ["&#x1F947;","&#x1F948;","&#x1F949;"];
+    function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+    function photo(r){
+        var p=(players||[]).find(function(x){return String(x.id)===String(r.pid);});
+        return (p&&p.photoUrl)?p.photoUrl:FB;
+    }
+    function tRow(r,i,vFn){
+        var med=i<3?MD[i]:(i+1)+".";
+        return "<tr><td><img src='"+esc(photo(r))+"' width=22 height=22 style='border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px'>"+esc(r.name||"")+"</td><td class=mc>"+med+"</td><td class=mv>"+vFn(r)+"</td></tr>";
+    }
+    function card(title,color,rows,vFn,col3){
+        return "<div class=dc style='border-top:4px solid "+color+"'><div class=dct>"+title+"</div>"
+              +"<table class=dt><thead><tr><th>Jogador</th><th></th><th class=mv>"+col3+"</th></tr></thead><tbody>"
+              +rows.slice(0,5).map(function(r,i){return tRow(r,i,vFn);}).join("")
+              +"</tbody></table></div>";
+    }
+    var allTbl="<table class=dt><thead><tr><th>Jogador</th><th class=mv>Ps.</th><th class=mv>%Vit</th><th class=mv>GP</th><th class=mv>Ass.</th><th class=mv>Nota</th></tr></thead><tbody>"
+              +byGoals.map(function(r,i){
+                  var avg=r.ratingCount?(r.ratingSum/r.ratingCount).toFixed(1):"-";
+                  var pct=r.pres?Math.round((r.wins||0)/r.pres*100)+"%":"-";
+                  var med=i<3?MD[i]:(i+1)+".";
+                  return "<tr><td><img src='"+esc(photo(r))+"' width=22 height=22 style='border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px'>"+esc(r.name||"")+"</td>"
+                      +"<td class=mv>"+r.pres+"</td><td class=mv>"+pct+"</td><td class=mv>"+r.goals+"</td><td class=mv>"+r.assists+"</td><td class=mv>"+avg+"</td></tr>";
+              }).join("")+"</tbody></table>";
+    var css="*{box-sizing:border-box;margin:0;padding:0}"
+           +"body{font-family:system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0}"
+           +"header{background:linear-gradient(135deg,#0b4f99,#083a75);padding:16px 24px;display:flex;align-items:center;gap:16px}"
+           +"header img{height:54px}header h1{font-size:22px;font-weight:950;color:#fff;line-height:1.1}"
+           +"header p{font-size:12px;color:rgba(255,255,255,.75);margin-top:4px}"
+           +".wrap{max-width:1100px;margin:0 auto;padding:20px 16px 40px}"
+           +".grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:20px}"
+           +".dc{background:#1e293b;border-radius:14px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.4)}"
+           +".dct{font-weight:950;font-size:15px;margin-bottom:12px;color:#f1f5f9}"
+           +".dt{width:100%;border-collapse:collapse;font-size:13px}"
+           +".dt thead th{color:#94a3b8;font-size:11px;padding:4px 6px;border-bottom:1px solid #334155;text-align:left}"
+           +".dt tbody tr{border-bottom:1px solid #1a2744}.dt tbody tr:hover{background:#334155}"
+           +".dt td{padding:7px 6px;vertical-align:middle;color:#e2e8f0}"
+           +".mc{text-align:center;width:30px;font-size:15px}"
+           +".mv{text-align:right;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:900;color:#38bdf8}"
+           +".fc{background:#1e293b;border-radius:14px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.4)}"
+           +".fct{font-weight:950;font-size:15px;margin-bottom:12px;color:#f1f5f9}"
+           +"@media(max-width:600px){.grid{grid-template-columns:1fr}}";
+    var logoUrl="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png";
+
+    var now=new Date().toLocaleString();
+    var html="<!doctype html><html lang=pt-br><head><meta charset=UTF-8>"
+            +"<meta name=viewport content='width=device-width,initial-scale=1'>"
+            +"<title>Dashboard Ranking - Futebol de Ter&#xE7;a</title>"
+            +"<style>"+css+"</style></head><body>"
+            +"<header><img src='"+logoUrl+"' alt=logo>"
+            +"<div><h1>Dashboard &middot; Ranking</h1><p>Gerado em: "+now+"</p></div></header>"
+            +"<div class=wrap><div class=grid>"
+            +card("&#x26BD; Artilharia (Gols)","#22c55e",byGoals,function(r){return r.goals+" gol(s)";},"Gols")
+            +card("&#x1F3AF; Assist&#xEA;ncias","#3b82f6",byAssists,function(r){return r.assists+" ass.";},"Ass.")
+            +card("&#x2B50; Nota M&#xE9;dia","#f59e0b",byRating,function(r){return r.ratingCount?(r.ratingSum/r.ratingCount).toFixed(2):"-";},"Nota")
+            +"</div><div class=fc><div class=fct>&#x1F4CB; Ranking Geral Completo</div>"+allTbl+"</div>"
+            +"</div></body></html>";
+    w.document.open(); w.document.write(html); w.document.close();
+  } catch(e) { console.error(e); alert("Erro ao abrir Dashboard: "+e.message); }
+}
+
 </script>
 </body>
 </html>
