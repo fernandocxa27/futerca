@@ -18,6 +18,14 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; }
 
+
+/* ===== APP LOGO / ESCUDO ===== */
+.app-logo{width:30px;height:30px;object-fit:contain;display:inline-block}
+.panel-logo-mini{width:22px;height:22px;object-fit:contain;vertical-align:middle;margin-right:6px;transform:translateY(-1px)}
+@media (min-width:768px){.panel-logo-mini{width:26px;height:26px}}
+
+@media (min-width:768px){.app-logo{width:34px;height:34px}}
+
 /* ===== HEADER ===== */
 header {
     background: var(--white);
@@ -566,6 +574,29 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 #panelFinance .fin-adjust{ --accent:#0f172a; }
 
 
+
+
+/* ===== INSTAGRAM TOP LINK ===== */
+#instaTopLink{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:3px 10px 3px 8px;
+  margin-left:6px;
+  border-radius:999px;
+  background:#ffffff;
+  color:#111;
+  border:2px solid #a855f7; /* roxo */
+  font-weight:800;
+  font-size:0.82rem;
+  cursor:pointer;
+  vertical-align:middle;
+  white-space:nowrap;
+  text-decoration:none;
+}
+#instaTopLink:hover{ background:#faf5ff; }
+#instaTopLink:active{ transform:translateY(1px); }
+#instaTopLink svg{ width:18px; height:18px; display:block }
+#instaTopLink strong{ font-weight:950 }
+
 /* ===== HELP-PAGE v1 ===== */
 #panelHelp .help-note{font-size:0.90rem; color:#334155; line-height:1.35}
 #panelHelp .help-steps{display:flex; flex-direction:column; gap:8px}
@@ -814,12 +845,25 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </head>
 <body>
 <header>
-<div class="header-title">⚽ Futebol de Terça<a href="https://youtu.be/69QDr-dyq4g" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;margin-left:8px;text-decoration:none;" target="_blank" title="Assistir tutorial no YouTube">
+<div class="header-title"><img class="app-logo" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/>⚽ Futebol de Terça<a href="https://youtu.be/69QDr-dyq4g" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;margin-left:8px;text-decoration:none;" target="_blank" title="Assistir tutorial no YouTube">
 <svg height="22" viewbox="0 0 32 22" width="32" xmlns="http://www.w3.org/2000/svg">
 <rect fill="#FF0000" height="22" rx="5" width="32"></rect>
 <polygon fill="white" points="13,5 13,17 23,11"></polygon>
 </svg>
-</a><button aria-label="Ajuda" id="helpTopBtn" onclick="showTab('panelHelp', document.getElementById('tabHelp'))" title="Ajuda" type="button"><span style="color:#dc2626;font-weight:900;font-size:1rem">?</span> Ajuda</button></div>
+</a><button aria-label="Ajuda" id="helpTopBtn" onclick="showTab('panelHelp', document.getElementById('tabHelp'))" title="Ajuda" type="button"><span style="color:#dc2626;font-weight:900;font-size:1rem">?</span> Ajuda</button><a id="instaTopLink" href="https://www.instagram.com/futerca2024/" target="_blank" rel="noopener" title="Abrir Instagram do Futebol de Terça"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="igGrad" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#feda75"/>
+      <stop offset="35%" stop-color="#fa7e1e"/>
+      <stop offset="60%" stop-color="#d62976"/>
+      <stop offset="80%" stop-color="#962fbf"/>
+      <stop offset="100%" stop-color="#4f5bd5"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="url(#igGrad)" stroke-width="2"/>
+  <circle cx="12" cy="12" r="4" fill="none" stroke="url(#igGrad)" stroke-width="2"/>
+  <circle cx="17" cy="7" r="1.2" fill="url(#igGrad)"/>
+</svg><strong>@FUTERCA2024</strong></a></div>
 
 </header>
 <div class="tabs">
@@ -831,7 +875,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <!-- CADASTRO -->
 <div class="panel" id="panelCadastro">
 <div class="card">
-<h4 id="formTitle">➕ Cadastrar Jogador</h4>
+<h4 id="formTitle"><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> ➕ Cadastrar Jogador</h4>
 <input id="editId" type="hidden"/>
 <div class="form-group" style="margin-bottom:6px">
 <label>Nome</label>
@@ -1021,7 +1065,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <!-- CSV MOBILE -->
 <div class="panel" id="panelCSV">
 <div class="card" id="backupCard">
-<h4>💾 Backup / Restaurar</h4>
+<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 💾 Backup / Restaurar</h4>
 <p class="small">Baixe um arquivo .json com tudo que está salvo neste aparelho (jogadores, times, posições e configurações). Para compartilhar, envie o arquivo e restaure no outro aparelho.</p>
 <div class="btn-row">
 <button class="btn btn-primary" onclick="exportBackup()" type="button">Baixar backup (.json)</button>
@@ -1049,7 +1093,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <!-- FINANCEIRO -->
 <div class="panel" id="panelFinance">
 <div class="fin-sep fin-step-1"><div class="fin-sep-title">1) Configurar valores</div><div class="fin-sep-sub">Defina os valores de mensalista/avulso. Isso fica salvo neste aparelho.</div></div><div class="card fin-card fin-config">
-<h4>💰 Financeiro</h4>
+<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 💰 Financeiro</h4>
 <div class="finance-row">
 <div class="form-group">
 <label>Mensalista (R$ / mês)</label>
@@ -1259,7 +1303,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-outline" onclick="exportFinanceCSV()" style="width:100%">Baixar financeiro.csv</button>
 </div></div><div class="panel" id="panelRank">
 <div class="card">
-<h4>📊 Ranking / Artilharia</h4>
+<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 📊 Ranking / Artilharia</h4>
 <div class="small">Lance gols, assistências, nota (0–5) e comentário por data. Rankings consideram apenas jogadores marcados como <strong>Presentes</strong> na pelada.</div>
 <div class="hr"></div>
 <div class="finance-row" style="flex-wrap:wrap">
@@ -1367,7 +1411,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 </div><div class="panel" id="panelHelp">
 <div class="card">
-<h4>❓ Ajuda rápida (como usar do começo ao fim)</h4>
+<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> ❓ Ajuda rápida (como usar do começo ao fim)</h4>
 <div class="help-note">Tudo fica salvo no seu navegador (celular/PC). Para usar em outro aparelho, use <strong>Backup</strong> e <strong>Restaurar</strong>.</div>
 </div>
 <div class="card">
@@ -5025,9 +5069,9 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
   *{box-sizing:border-box}
   body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text)}
 
-  header{background:linear-gradient(180deg,var(--blue),var(--blue2));color:#fff;padding:18px 18px 16px}
+  header{background:linear-gradient(180deg,var(--blue),var(--blue2));color:#fff;padding:8px 18px}
   .head{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:16px}
-  .crest{width:60px;height:60px;flex:0 0 auto}
+  .crest{height:56px;width:auto;flex:0 0 auto;object-fit:contain}
   .htxt{min-width:0}
   .title{margin:0;font-weight:950;font-size:34px;letter-spacing:.2px;line-height:1.05}
   .sub{margin-top:6px;font-size:12px;opacity:.9}
@@ -5145,17 +5189,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
 <body>
 <header>
   <div class="head">
-    <svg class="crest" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Brasão">
-      <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#f7c948"/>
-          <stop offset="1" stop-color="#b7791f"/>
-        </linearGradient>
-      </defs>
-      <path d="M50 6 C62 6 76 10 84 16 L84 50 C84 74 70 88 50 94 C30 88 16 74 16 50 L16 16 C24 10 38 6 50 6Z" fill="url(#g)" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
-      <circle cx="50" cy="44" r="18" fill="rgba(255,255,255,.16)" stroke="rgba(255,255,255,.55)" stroke-width="2"/>
-      <path d="M39 44h22M50 33v22" stroke="rgba(255,255,255,.78)" stroke-width="3" stroke-linecap="round"/>
-    </svg>
+    <img class="crest" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" />
     <div class="htxt">
       <h1 class="title">Futebol de Terça — Relatório Financeiro</h1>
       <div class="sub">Gerado em: ${escapeHtml(dt)} • Sessão atual: ${escapeHtml(sessionTxt)} • Itens: ${escapeHtml(limTxt)}${periodTxt ? ' • ' + escapeHtml(periodTxt) : ''}</div>
