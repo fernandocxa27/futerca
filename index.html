@@ -5091,6 +5091,28 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Futebol de Terça — Relatório Financeiro</title>
 <style>
+
+/* ===== RATEIOS: legenda abaixo do donut (desktop) ===== */
+.rsub { display:flex; flex-direction:column; align-items:center; }
+.rtitle { text-align:center; font-weight:950; margin:0 0 12px; font-size:15px; }
+.rrow { display:flex; justify-content:center; margin-bottom:12px; }
+.legend { display:flex; flex-direction:column; gap:6px; width:100%; max-width:280px; }
+.leg {
+  display:grid;
+  grid-template-columns:14px 1fr auto;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:850;
+  color:#111827;
+  padding:3px 0;
+  border-bottom:1px solid #f0f4f8;
+}
+.leg:last-child { border-bottom:none; }
+.leg .dot { width:10px; height:10px; border-radius:99px; display:inline-block; flex:0 0 auto; }
+.leglbl { font-weight:800; color:#374151; }
+.legval { font-family:var(--mono); font-weight:950; color:#111827; text-align:right; white-space:nowrap; }
+
   :root{
     --blue:#0b4f99;
     --blue2:#083a75;
@@ -5228,6 +5250,28 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
   .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 20px;}
   .panel,.kcard,.sec{box-shadow:none;border-color:#d6dde8;}
 }.wrap{padding:0}.panel,.kcard,.sec{box-shadow:none}}
+
+
+/* ===== RATEIOS (SOMENTE WEB/DESKTOP): LEGENDA EMBAIXO DO GRÁFICO ===== */
+@media screen and (min-width: 960px){
+  /* deixa os 2 cards bem preenchidos */
+  .rateGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch;}
+  .rateGrid .rsub{min-height:340px;}
+
+  /* Empilha donut + legenda */
+  .rateGrid .rrow{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:12px;}
+
+  /* donut maior para ocupar espaço */
+  .rateGrid .donutWrap{width:240px;height:240px;}
+
+  /* legenda abaixo, alinhada e ocupando mais area */
+  .rateGrid .legend{width:100%;max-width:320px;margin-top:0;}
+
+  /* linhas alinhadas: valor sempre na direita */
+  .rateGrid .leg{display:flex;align-items:center;gap:10px;padding:2px 0;}
+  .rateGrid .leg .dot{width:8px;height:8px;border-radius:99px;flex:0 0 auto;}
+  .rateGrid .legval{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:950;}
+}
 </style>
 </head>
 <body>
@@ -5375,21 +5419,21 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
             <div class="rtitle">Rateio no Período</div>
             <div class="rrow">
               <div class="donutWrap" id="donutPeriod"></div>
-              <div class="legend">
-                <div class="leg"><span class="dot" style="background:#1f5fae"></span>Cobrado <span class="legval">${escapeHtml(money(rateioInfo.chargesP))}</span></div>
-                <div class="leg"><span class="dot" style="background:#c79a2b"></span>Recebido <span class="legval">${escapeHtml(money(rateioInfo.paymentsP))}</span></div>
-                <div class="leg"><span class="dot" style="background:#c62828"></span>Em aberto <span class="legval">${escapeHtml(money(rateioInfo.openP))}</span></div>
-              </div>
+            </div>
+            <div class="legend">
+              <div class="leg"><span class="dot" style="background:#1f5fae"></span><span class="leglbl">Cobrado</span><span class="legval">${escapeHtml(money(rateioInfo.chargesP))}</span></div>
+              <div class="leg"><span class="dot" style="background:#c79a2b"></span><span class="leglbl">Recebido</span><span class="legval">${escapeHtml(money(rateioInfo.paymentsP))}</span></div>
+              <div class="leg"><span class="dot" style="background:#c62828"></span><span class="leglbl">Em aberto</span><span class="legval">${escapeHtml(money(rateioInfo.openP))}</span></div>
             </div>
           </div>
           <div class="rsub">
             <div class="rtitle">Rateio Geral</div>
             <div class="rrow">
               <div class="donutWrap" id="donutAll"></div>
-              <div class="legend">
-                <div class="leg"><span class="dot" style="background:#1f5fae"></span>Em aberto <span class="legval">${escapeHtml(money(rateioInfo.openAll))}</span></div>
-                <div class="leg"><span class="dot" style="background:#16a34a"></span>Crédito <span class="legval">${escapeHtml(money(rateioInfo.creditAll))}</span></div>
-              </div>
+            </div>
+            <div class="legend">
+              <div class="leg"><span class="dot" style="background:#1f5fae"></span><span class="leglbl">Em aberto</span><span class="legval">${escapeHtml(money(rateioInfo.openAll))}</span></div>
+              <div class="leg"><span class="dot" style="background:#16a34a"></span><span class="leglbl">Crédito</span><span class="legval">${escapeHtml(money(rateioInfo.creditAll))}</span></div>
             </div>
           </div>
         </div>
