@@ -908,6 +908,11 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
   .rank-controls{flex-direction:column;align-items:stretch;}
 }
 
+
+/* ===== DASHBOARD BUTTON (MOBILE) ===== */
+@media (max-width: 767px){
+  .btn.btn-sm{ padding:8px 12px; font-size:0.85rem; border-radius:999px; }
+}
 </style>
 </head>
 <body>
@@ -5986,7 +5991,7 @@ function openRankDashboard() {
            +".mv{text-align:right;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:900;color:#38bdf8}"
            +".fc{background:#1e293b;border-radius:14px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.4)}"
            +".fct{font-weight:950;font-size:15px;margin-bottom:12px;color:#f1f5f9}"
-           +"@media(max-width:600px){.grid{grid-template-columns:1fr}}";
+           +"@media(max-width:600px){.grid{grid-template-columns:1fr}header{flex-direction:column;align-items:flex-start;padding:14px 14px;gap:10px}header img{height:44px}header h1{font-size:18px}.wrap{padding:16px 12px 34px}.dc,.fc{padding:14px}.dt{font-size:12px}.dt td{padding:6px 5px}.dt thead th{white-space:nowrap}table.dt{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}table.dt thead,table.dt tbody,table.dt tr{display:table;width:100%;table-layout:fixed}}";
     var logoUrl="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png";
 
     var now=new Date().toLocaleString();
@@ -6059,7 +6064,7 @@ function openFinanceDashboard() {
     var h="";
     h+="<!doctype html><html lang=\"pt-br\"><head>";
     h+="<meta charset=\"UTF-8\">";
-    h+="<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">";
+    h+="<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,viewport-fit=cover\">";
     h+="<title>Dashboard Financeiro — Futebol de Terça</title>";
     h+="<style>";
     h+="body{margin:0;padding:0 0 40px;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#0f172a;color:#e5e7eb;}";
@@ -6070,6 +6075,7 @@ function openFinanceDashboard() {
     h+=".wrap{max-width:1100px;margin:0 auto;padding:20px 14px;display:flex;flex-direction:column;gap:18px;}";
     h+=".kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}";
     h+="@media(max-width:700px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr));}}";
+    h+="@media(max-width:480px){header{flex-direction:column;align-items:flex-start;padding:14px 14px 12px;gap:10px;}header img{height:44px;}header h1{font-size:16px;line-height:1.15;}.wrap{padding:14px 12px;max-width:none;}.kpis{gap:10px;}.kpi{padding:12px 12px;}.kpi-value{font-size:20px;}.grid2{grid-template-columns:1fr;}.card{padding:14px 14px;}table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}th,td{white-space:nowrap;}}";
     h+=".kpi{background:#020617;border:1px solid #1e293b;border-radius:14px;padding:14px 16px;}";
     h+=".kpi-label{font-size:10px;font-weight:800;color:#9ca3af;text-transform:uppercase;letter-spacing:.7px;}";
     h+=".kpi-value{margin-top:6px;font-size:24px;font-family:ui-monospace,monospace;font-weight:900;}";
