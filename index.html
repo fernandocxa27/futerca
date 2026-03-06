@@ -736,8 +736,25 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 @media (max-width: 767px){
   .header-title{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
   .header-line1{display:flex;align-items:center;gap:10px}
-  .header-line2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  /* line2 centered */
+  .header-line2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;width:100%}
   .app-title-text{font-weight:950;line-height:1.05}
+
+  /* Remove old inline margins in actions (YouTube/help/insta) so they align */
+  .header-line2 a, .header-line2 button{margin-left:0 !important}
+
+  /* Keep a stable order (YouTube -> Ajuda -> Instagram), even if wrap happens */
+  .header-line2 a[href*="youtu.be"],
+  .header-line2 a[href*="youtube.com"]{order:1}
+  .header-line2 #helpTopBtn{order:2}
+  .header-line2 #instaTopLink{order:3}
+}
+@media (min-width: 768px){
+  .header-title{display:flex;align-items:center;gap:8px}
+  .header-line1{display:flex;align-items:center;gap:8px}
+  .header-line2{display:inline-flex;align-items:center;gap:8px}
+}
+
   /* Remove old inline margins in actions (YouTube/help/insta) so they align */
   .header-line2 a, .header-line2 button{margin-left:0 !important}
 }
