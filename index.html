@@ -876,17 +876,37 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 .rateio-hint{font-size:0.82rem;color:#475569;margin-top:6px}
 
 
-/* ===== RANKING: AVATAR + NOME + CONTROLES =====*/
-.rank-player{display:flex;align-items:center;gap:8px;}
-.rank-player img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--primary,#1a73e8);background:#e5e7eb;flex:0 0 auto;}
-.rank-player .rp-name{font-weight:700;font-size:0.86rem;}
-.rank-top1 td{background:#fff9c4!important;}
-.rank-top2 td{background:#f1f5f9!important;}
-.rank-top3 td{background:#fff3e0!important;}
-.rank-medal{font-size:1rem;margin-right:2px;}
-.rank-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:flex-end;}
-.rank-controls .form-group{min-width:160px;margin-bottom:0;}
-@media (max-width:767px){.rank-controls{flex-direction:column;align-items:stretch;}}
+
+/* ===== RANKING: AVATAR + NOME ===== */
+.rank-player{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.rank-player img{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid var(--primary);
+  background:#e5e7eb;
+}
+.rank-player span{
+  font-weight:700;
+  font-size:0.86rem;
+}
+
+/* controls acima das tabelas de ranking */
+.rank-controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:8px;
+}
+.rank-controls .form-group{min-width:160px;}
+@media (max-width:767px){
+  .rank-controls{flex-direction:column;align-items:stretch;}
+}
 
 </style>
 </head>
@@ -1147,7 +1167,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <!-- FINANCEIRO -->
 <div class="panel" id="panelFinance">
 <div class="fin-sep fin-step-1"><div class="fin-sep-title">1) Configurar valores</div><div class="fin-sep-sub">Defina os valores de mensalista/avulso. Isso fica salvo neste aparelho.</div></div><div class="card fin-card fin-config">
-<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 💰 Financeiro</h4>
+<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 💰 Financeiro <button class="btn btn-outline btn-sm" type="button" style="margin-left:8px;font-weight:900" onclick="openFinanceDashboard()">📊 Dashboard</button></h4>
 <div class="finance-row">
 <div class="form-group">
 <label>Mensalista (R$ / mês)</label>
@@ -1357,7 +1377,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-outline" onclick="exportFinanceCSV()" style="width:100%">Baixar financeiro.csv</button>
 </div></div><div class="panel" id="panelRank">
 <div class="card">
-<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 📊 Ranking / Artilharia <button class="btn btn-outline btn-sm" type="button" style="margin-left:8px;vertical-align:middle" onclick="openRankDashboard()">&#x1F4C8; Dashboard</button></h4>
+<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 📊 Ranking / Artilharia <button class="btn btn-outline btn-sm" type="button" style="margin-left:8px;font-weight:900" onclick="openRankDashboard()">Dashboard</button></h4>
 <div class="small">Lance gols, assistências, nota (0–5) e comentário por data. Rankings consideram apenas jogadores marcados como <strong>Presentes</strong> na pelada.</div>
 <div class="hr"></div>
 <div class="finance-row" style="flex-wrap:wrap">
@@ -1431,19 +1451,6 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 
 <div class="card">
 <h4 style="margin:0 0 8px;color:var(--green)">Ranking do mês</h4>
-<div class="rank-controls">
-  <div class="form-group"><label>Ordenar por</label>
-    <select id="rankSort" onchange="renderRankings()">
-      <option value="goals">Gols (artilharia)</option>
-      <option value="assists">Assistências</option>
-      <option value="rating">Nota média</option>
-      <option value="pct">% Vitórias</option>
-      <option value="pres">Presenças</option>
-    </select></div>
-  <div class="form-group" style="flex:1;min-width:180px"><label>Buscar jogador</label>
-    <input type="text" id="rankSearch" placeholder="Ex: Alisson..." oninput="renderRankings()" /></div>
-</div>
-
 <div class="small" id="rankMonthInfo" style="margin-bottom:8px"></div>
 <table class="finance-table">
 <thead>
@@ -5682,55 +5689,75 @@ function formatWinPct(wins, pres) {
 
 
 function renderRankTable(tbodyId, infoId, rows, label) {
-    var tb = document.getElementById(tbodyId);
-    var info = document.getElementById(infoId);
+    const tb = document.getElementById(tbodyId);
+    const info = document.getElementById(infoId);
     if (!tb) return;
-    var qEl = document.getElementById("rankSearch");
-    var q = qEl ? (qEl.value || "").trim().toLowerCase() : "";
-    var sortSel = document.getElementById("rankSort");
-    var sortMode = sortSel ? (sortSel.value || "goals") : "goals";
-    var list = rows.slice();
-    if (q) list = list.filter(function(r){ return String(r.name||"").toLowerCase().indexOf(q) !== -1; });
-    function cmpGoals(a,b)  { return (b.goals-a.goals)||(b.assists-a.assists)||(b.pres-a.pres)||(a.name||"").localeCompare(b.name||""); }
-    function cmpAssists(a,b){ return (b.assists-a.assists)||(b.goals-a.goals)||(b.pres-a.pres)||(a.name||"").localeCompare(b.name||""); }
-    function cmpRating(a,b) { var ar=a.ratingCount?a.ratingSum/a.ratingCount:0,br=b.ratingCount?b.ratingSum/b.ratingCount:0; return (br-ar)||(b.goals-a.goals)||(b.assists-a.assists); }
-    function cmpPct(a,b)    { var ap=a.pres?(a.wins||0)/a.pres:0,bp=b.pres?(b.wins||0)/b.pres:0; return (bp-ap)||(b.goals-a.goals)||(b.assists-a.assists); }
-    function cmpPres(a,b)   { return (b.pres-a.pres)||(b.goals-a.goals)||(b.assists-a.assists)||(a.name||"").localeCompare(b.name||""); }
-    var fn = sortMode==="assists"?cmpAssists:sortMode==="rating"?cmpRating:sortMode==="pct"?cmpPct:sortMode==="pres"?cmpPres:cmpGoals;
-    list.sort(fn);
-    if (info) info.textContent = label + " • " + list.length + " jogador(es)";
-    tb.innerHTML = "";
+
+    // filtros globais
+    const sortSel = document.getElementById('rankSort');
+    const sortMode = sortSel ? (sortSel.value || 'goals') : 'goals';
+    const qEl = document.getElementById('rankSearch');
+    const q = qEl ? (qEl.value || '').trim().toLowerCase() : '';
+
+    let list = rows.slice();
+
+    // busca por nome
+    if (q) {
+        list = list.filter(r => String(r.name||'').toLowerCase().includes(q));
+    }
+
+    // sort dinÃ¢mico
+    const key = sortMode;
+    list.sort((a,b) => {
+        if (key === 'assists') return (b.assists-a.assists) || (b.goals-a.goals) || (b.pres-a.pres) || (a.name||'').localeCompare(b.name||'');
+        if (key === 'rating') {
+            const ar = (a.ratingCount ? a.ratingSum/a.ratingCount : 0);
+            const br = (b.ratingCount ? b.ratingSum/b.ratingCount : 0);
+            return (br-ar) || (b.goals-a.goals) || (b.assists-a.assists) || (a.name||'').localeCompare(b.name||'');
+        }
+        if (key === 'pct') {
+            const ap = (a.pres ? (a.wins||0)/a.pres : 0);
+            const bp = (b.pres ? (b.wins||0)/b.pres : 0);
+            return (bp-ap) || (b.goals-a.goals) || (b.assists-a.assists) || (a.name||'').localeCompare(b.name||'');
+        }
+        if (key === 'pres') return (b.pres-a.pres) || (b.goals-a.goals) || (b.assists-a.assists) || (a.name||'').localeCompare(b.name||'');
+        // default: gols
+        return (b.goals-a.goals) || (b.assists-a.assists) || (b.pres-a.pres) || (a.name||'').localeCompare(b.name||'');
+    });
+
+    if (info) info.textContent = label + ' \u2022 jogadores com pelo menos 1 presen\u00e7a: ' + list.length;
+
+    tb.innerHTML = '';
     if (!list.length) {
-        var tr0 = document.createElement("tr");
-        tr0.innerHTML = "<td colspan=\"6\" class=\"small\">Sem dados no período.</td>";
-        tb.appendChild(tr0);
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="6" class="small">Sem dados no per\u00edodo.</td>';
+        tb.appendChild(tr);
         return;
     }
-    var MEDALS = ["&#x1F947;","&#x1F948;","&#x1F949;"];
-    list.forEach(function(r, idx) {
-        var tr = document.createElement("tr");
-        if (idx===0) tr.className = "rank-top1";
-        else if (idx===1) tr.className = "rank-top2";
-        else if (idx===2) tr.className = "rank-top3";
-        var p = (players||[]).find(function(x){ return String(x.id)===String(r.pid); });
-        var photoUrl = (p && p.photoUrl) ? p.photoUrl : FALLBACK;
-        var safeName = escapeHtml(r.name||"");
-        var medal = idx < 3 ? "<span class=\"rank-medal\">" + MEDALS[idx] + "</span>" : "";
-        tr.innerHTML =
-            "<td><div class=\"rank-player\">" +
-                "<img src=\"" + escapeHtml(photoUrl) + "\" alt=\"" + safeName + "\" onerror=\"this.onerror=null;this.src=FALLBACK\"/>" +
-                "<span class=\"rp-name\">" + medal + safeName + "</span>" +
-            "</div></td>" +
-            "<td class=\"mono\">" + escapeHtml(String(r.pres||0)) + "</td>" +
-            "<td class=\"mono\">" + escapeHtml(formatWinPct(r.wins||0, r.pres||0)) + "</td>" +
-            "<td class=\"mono\">" + escapeHtml(String(r.goals||0)) + "</td>" +
-            "<td class=\"mono\">" + escapeHtml(String(r.assists||0)) + "</td>" +
-            "<td class=\"mono\">" + escapeHtml(formatAvg(r.ratingSum||0, r.ratingCount||0)) + "</td>";
+
+    list.forEach(r => {
+        const tr = document.createElement('tr');
+        const p = (players||[]).find(x => String(x.id) === String(r.pid));
+        const url = (p && p.photoUrl) ? p.photoUrl : FALLBACK;
+        const safeName = escapeHtml(r.name||'');
+        tr.innerHTML = `
+          <td>
+            <div class="rank-player">
+              <img src="${escapeHtml(url)}" alt="${safeName}" />
+              <span>${safeName}</span>
+            </div>
+          </td>
+          <td class="mono">${escapeHtml(String(r.pres||0))}</td>
+          <td class="mono">${escapeHtml(formatWinPct(r.wins||0, r.pres||0))}</td>
+          <td class="mono">${escapeHtml(String(r.goals||0))}</td>
+          <td class="mono">${escapeHtml(String(r.assists||0))}</td>
+          <td class="mono">${escapeHtml(formatAvg(r.ratingSum||0, r.ratingCount||0))}</td>
+        `;
         tb.appendChild(tr);
     });
 }
 
-function renderRankings() {
+    function renderRankings() {
     const { year, month } = periodFromRankInputs();
 
     // populate default values
@@ -5979,6 +6006,163 @@ function openRankDashboard() {
   } catch(e) { console.error(e); alert("Erro ao abrir Dashboard: "+e.message); }
 }
 
-</script>
-</body>
+function openFinanceDashboard() {
+  try {
+    var w = window.open("", "_blank");
+    if (!w) { alert("Permita pop-ups para abrir o Dashboard."); return; }
+
+    var ld = Array.isArray(ledger) ? ledger : [];
+    function num(v){ return Number(v||0)||0; }
+
+    var totalPay=0, totalExp=0, totalChrg=0;
+    var expCats={}, chrgCats={}, debtMap={};
+
+    for (var i=0; i<ld.length; i++) {
+      var e=ld[i], amt=num(e.amount);
+      if (e.kind==="payment") totalPay+=amt;
+      if (e.kind==="expense") totalExp+=amt;
+      if (e.kind==="charge")  totalChrg+=amt;
+      if (e.kind==="expense") { var c1=e.category||"outros"; expCats[c1]=(expCats[c1]||0)+amt; }
+      if (e.kind==="charge")  { var c2=e.category||"outros"; chrgCats[c2]=(chrgCats[c2]||0)+amt; }
+      if (e.playerId) {
+        var pid=String(e.playerId);
+        if (!debtMap[pid]) debtMap[pid]=0;
+        if (e.kind==="charge")  debtMap[pid]+=amt;
+        if (e.kind==="payment") debtMap[pid]-=amt;
+      }
+    }
+
+    var cash=totalPay-totalExp;
+    var toRec=Math.max(0,totalChrg-totalPay);
+
+    function fmtM(v){ return "R$ "+num(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+    function sortMap(map){
+      var arr=[];
+      for (var k in map) if (Object.prototype.hasOwnProperty.call(map,k)) arr.push({key:k,value:map[k]});
+      arr.sort(function(a,b){return b.value-a.value;});
+      return arr;
+    }
+
+    var expArr=sortMap(expCats), chrgArr=sortMap(chrgCats);
+
+    var debts=[];
+    for (var p in debtMap) if (Object.prototype.hasOwnProperty.call(debtMap,p)) {
+      var due=Math.round(debtMap[p]*100)/100;
+      if (due>0.01) debts.push({name:getPlayerName(p),due:due});
+    }
+    debts.sort(function(a,b){return b.due-a.due;});
+    if (debts.length>10) debts.length=10;
+
+    var nowStr=new Date().toLocaleString("pt-BR");
+
+    var h="";
+    h+="<!doctype html><html lang=\"pt-br\"><head>";
+    h+="<meta charset=\"UTF-8\">";
+    h+="<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">";
+    h+="<title>Dashboard Financeiro — Futebol de Terça</title>";
+    h+="<style>";
+    h+="body{margin:0;padding:0 0 40px;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#0f172a;color:#e5e7eb;}";
+    h+="header{display:flex;align-items:center;gap:14px;padding:16px 20px;background:linear-gradient(135deg,#0b4f99,#0f172a);box-shadow:0 4px 18px rgba(0,0,0,.5);}";
+    h+="header img{height:60px;width:auto;border-radius:6px;}";
+    h+="header h1{margin:0;font-size:20px;font-weight:950;color:#fff;}";
+    h+=".sub{font-size:11px;color:#bfdbfe;margin-top:3px;}";
+    h+=".wrap{max-width:1100px;margin:0 auto;padding:20px 14px;display:flex;flex-direction:column;gap:18px;}";
+    h+=".kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}";
+    h+="@media(max-width:700px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr));}}";
+    h+=".kpi{background:#020617;border:1px solid #1e293b;border-radius:14px;padding:14px 16px;}";
+    h+=".kpi-label{font-size:10px;font-weight:800;color:#9ca3af;text-transform:uppercase;letter-spacing:.7px;}";
+    h+=".kpi-value{margin-top:6px;font-size:24px;font-family:ui-monospace,monospace;font-weight:900;}";
+    h+=".pos{color:#22c55e}.neg{color:#ef4444}.neu{color:#38bdf8}";
+    h+=".card{background:#020617;border:1px solid #1f2937;border-radius:16px;padding:16px 18px;}";
+    h+=".card h2{margin:0 0 12px;font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:#93c5fd;border-bottom:1px solid #1e293b;padding-bottom:8px;}";
+    h+=".grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}";
+    h+="@media(max-width:800px){.grid2{grid-template-columns:1fr;}}";
+    h+="table{width:100%;border-collapse:collapse;font-size:13px;}";
+    h+="th{padding:6px 8px;text-align:left;font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #1e293b;}";
+    h+="td{padding:7px 8px;border-bottom:1px solid #111827;}";
+    h+="tr:hover td{background:#0b1120;}";
+    h+=".mono{font-family:ui-monospace,monospace;text-align:right;}";
+    h+=".pill-red{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:800;background:#450a0a;color:#fecaca;}";
+    h+=".cat-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid #111827;font-size:13px;}";
+    h+=".cat-row:last-child{border-bottom:none;}";
+    h+=".cat-name{color:#cbd5e1;flex:1;}";
+    h+=".cat-val{font-family:ui-monospace,monospace;font-weight:900;white-space:nowrap;}";
+    h+=".cat-pct{font-size:11px;color:#6b7280;white-space:nowrap;}";
+    h+="</style></head><body>";
+
+    h+="<header>";
+    h+="<img src=\"";
+    h+="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png";
+    h+="\" alt=\"Futebol de Terça\">";
+    h+="<div><h1>Dashboard Financeiro — Futebol de Terça</h1>";
+    h+="<div class=\"sub\">Gerado em "+nowStr+" · dados deste navegador</div></div>";
+    h+="</header>";
+
+    h+="<div class=\"wrap\">";
+
+    // KPIs
+    h+="<div class=\"kpis\">";
+    h+="<div class=\"kpi\"><div class=\"kpi-label\">Caixa (geral)</div><div class=\"kpi-value "+(cash>=0?"pos":"neg")+"\">"+fmtM(cash)+"</div></div>";
+    h+="<div class=\"kpi\"><div class=\"kpi-label\">Total recebido</div><div class=\"kpi-value pos\">"+fmtM(totalPay)+"</div></div>";
+    h+="<div class=\"kpi\"><div class=\"kpi-label\">Total despesas</div><div class=\"kpi-value neg\">"+fmtM(totalExp)+"</div></div>";
+    h+="<div class=\"kpi\"><div class=\"kpi-label\">A receber (estimado)</div><div class=\"kpi-value neu\">"+fmtM(toRec)+"</div></div>";
+    h+="</div>";
+
+    // categorias
+    h+="<div class=\"grid2\">";
+
+    h+="<div class=\"card\"><h2>Despesas por categoria</h2>";
+    if (!expArr.length) {
+      h+="<p style=\"color:#9ca3af;font-size:13px\">Nenhuma despesa registrada.</p>";
+    } else {
+      var totE=0; for(var i2=0;i2<expArr.length;i2++) totE+=expArr[i2].value;
+      for(var j=0;j<expArr.length;j++){
+        var it=expArr[j], pct=totE?Math.round(it.value/totE*100):0;
+        h+="<div class=\"cat-row\"><span class=\"cat-name\">"+escapeHtml(it.key)+"</span><span class=\"cat-val\">"+fmtM(it.value)+"</span><span class=\"cat-pct\">"+pct+"%</span></div>";
+      }
+    }
+    h+="</div>";
+
+    h+="<div class=\"card\"><h2>Cobranças por categoria</h2>";
+    if (!chrgArr.length) {
+      h+="<p style=\"color:#9ca3af;font-size:13px\">Nenhuma cobrança registrada.</p>";
+    } else {
+      var totC=0; for(var i3=0;i3<chrgArr.length;i3++) totC+=chrgArr[i3].value;
+      for(var k2=0;k2<chrgArr.length;k2++){
+        var it2=chrgArr[k2], pct2=totC?Math.round(it2.value/totC*100):0;
+        h+="<div class=\"cat-row\"><span class=\"cat-name\">"+escapeHtml(it2.key)+"</span><span class=\"cat-val\">"+fmtM(it2.value)+"</span><span class=\"cat-pct\">"+pct2+"%</span></div>";
+      }
+    }
+    h+="</div>";
+
+    h+="</div>";
+
+    // pendências
+    h+="<div class=\"card\"><h2>Top pendências por jogador</h2>";
+    if (!debts.length) {
+      h+="<p style=\"color:#9ca3af;font-size:13px\">🎉 Sem pendências em aberto.</p>";
+    } else {
+      h+="<table><thead><tr><th>#</th><th>Jogador</th><th>Valor em aberto</th></tr></thead><tbody>";
+      for(var d2=0;d2<debts.length;d2++){
+        var row=debts[d2];
+        h+="<tr><td>"+(d2+1)+"</td><td>"+escapeHtml(row.name||"")+"</td><td class=\"mono\"><span class=\"pill-red\">"+fmtM(row.due)+"</span></td></tr>";
+      }
+      h+="</tbody></table>";
+    }
+    h+="</div>";
+
+    h+="</div></body></html>";
+
+    w.document.open();
+    w.document.write(h);
+    w.document.close();
+
+  } catch(e) {
+    console.error(e);
+    alert("Erro ao abrir Dashboard Financeiro: "+(e&&e.message?e.message:e));
+  }
+}
+
+</script></body>
 </html>
