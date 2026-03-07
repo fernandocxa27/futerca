@@ -6103,6 +6103,7 @@ function openFinanceDashboard(){
     cssD+=".grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}";
     cssD+=".card{background:linear-gradient(160deg,#141e35,#0d1526);border:1px solid #1e2d4a;border-radius:18px;padding:22px 20px;box-shadow:0 8px 32px rgba(0,0,0,.4);}";
     cssD+=".card h2{margin:0 0 14px;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:#93c5fd;border-bottom:1px solid #1e2d4a;padding-bottom:10px;}";
+    cssD+=".mob-only-br{display:none;}";
     cssD+=".mob-br{display:none;}";
     cssD+="table{width:100%;border-collapse:collapse;font-size:13px;}";
     cssD+="th{padding:6px 8px;text-align:left;font-size:10px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #1e2d4a;}";
@@ -6140,8 +6141,8 @@ function openFinanceDashboard(){
     cssM+=".kpi-label{display:block;font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.5px;padding-right:30px;}";
     cssM+=".kpi-value{display:block;margin-top:6px;line-height:1.05;font-size:18px;font-family:ui-monospace,monospace;font-weight:900;padding-right:34px;}";
     cssM+=".pos{color:#22c55e}.neg{color:#ef4444}.neu{color:#38bdf8}";
-    cssM+=".grid2{display:flex;flex-direction:column;gap:10px;}";
-    cssM+=".card{background:#0f1929;border:1px solid #1e2d4a;border-radius:12px;padding:12px;}";
+    cssM+=".grid2{display:grid;grid-template-columns:1fr;gap:10px;}";
+    cssM+=".card{background:#0f1929;border:1px solid #1e2d4a;border-radius:12px;padding:12px;max-width:100%;overflow:hidden;}";
     cssM+=".card h2{margin:0 0 10px;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:#93c5fd;border-bottom:1px solid #1e2d4a;padding-bottom:7px;white-space:normal;line-height:1.2;}";
     cssM+=".grid2 .card:nth-child(2) h2{font-size:9px;max-width:132px;}";
     cssM+=".mob-br{display:inline;}";
@@ -6152,9 +6153,9 @@ function openFinanceDashboard(){
     cssM+=".pill{display:inline-block;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:800;background:#450a0a;color:#fecaca;}";
     cssM+=".cat-row{display:flex;align-items:flex-start;gap:6px;padding:6px 0;border-bottom:1px solid #0f1a2e;}";
     cssM+=".cat-row:last-child{border-bottom:none;}";
-    cssM+=".cat-name{color:#cbd5e1;flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px;font-size:12px;line-height:1.14;}";
-    cssM+=".cat-ico{display:block;font-size:12px;line-height:1;margin-top:1px;}";
-    cssM+=".cat-txt{display:block;line-height:1.15;}";
+    cssM+=".cat-name{color:#cbd5e1;flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:6px;font-size:12px;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}";
+    cssM+=".cat-ico{display:inline-block;font-size:12px;line-height:1;transform:translateY(-.5px);}";
+    cssM+=".cat-txt{display:inline;line-height:1.12;}";
     cssM+=".cat-val{font-family:ui-monospace,monospace;font-weight:900;white-space:nowrap;font-size:12px;min-width:88px;text-align:right;}";
     cssM+=".cat-pct{font-size:10px;color:#64748b;white-space:nowrap;min-width:28px;text-align:right;}";
     var css=cssD
@@ -6200,7 +6201,7 @@ function openFinanceDashboard(){
         var k=String(x.key||"");
         var ico=iconMap[k]||(mode==="expense"?"&#x1F9FE;":"&#x1F4B0;");
         var lbl=labelMap[k]||k.replace(/_/g," ");
-        return"<div class=\"cat-row\"><span class=\"cat-name\"><span class=\"cat-ico\">"+ico+"</span><span class=\"cat-txt\">"+escapeHtml(lbl)+"</span></span>"
+        return"<div class=\"cat-row\"><span class=\"cat-name\"><span class=\"cat-ico\">"+ico+"</span> <span class=\"cat-txt\">"+escapeHtml(lbl)+"</span></span>"
              + "<span class=\"cat-val\">"+fmtM(x.value)+"</span>"
              + "<span class=\"cat-pct\">"+pct+"%</span></div>";
       }).join("");
@@ -6222,7 +6223,7 @@ function openFinanceDashboard(){
     h+="</div>";
     h+="<div class=\"grid2\">";
     h+="<div class=\"card\"><h2>&#x1F9FE; Despesas por categoria</h2>"+catRows(expArr,"expense")+"</div>";
-    h+="<div class=\"card\"><h2>&#x1F4B0; Cobran&ccedil;as por<wbr> categoria</h2>"+catRows(chrgArr,"charge")+"</div>";
+    h+="<div class=\"card\"><h2>&#x1F4B0; Cobran&ccedil;as por<br class=\"mob-only-br\">categoria</h2>"+catRows(chrgArr,"charge")+"</div>";
     h+="</div>";
     h+="<div class=\"card\"><h2>&#x1F4CC; Top pend&ecirc;ncias por jogador</h2>";
     if(debts.length){
