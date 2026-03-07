@@ -5999,6 +5999,18 @@ function openRankDashboard(){
     css += '.btn{height:34px;padding:0 12px;border-radius:10px;border:1px solid rgba(255,255,255,.30);background:rgba(255,255,255,.12);color:#fff;font-weight:900;cursor:pointer}';
     css += '.btn.primary{background:#16a34a;border-color:#16a34a}';
     css += '.wrap{max-width:1200px;margin:0 auto;padding:18px 14px 36px;}';
+
+    // novos 4 cards KPI (web: 4 na mesma linha | mobile: 2 por linha)
+    css += '.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;}';
+    css += '.kpi{background:linear-gradient(160deg,#141e35,#0d1526);border:1px solid #1e2d4a;border-radius:16px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);}';
+    css += '.kpi .kpi-t{font-weight:900;font-size:14px;color:#e2e8f0;opacity:.98;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}';
+    css += '.kpi .kpi-v{font-size:30px;line-height:1.05;font-weight:950;color:#f8fafc;letter-spacing:-.5px;}';
+    css += '.kpi .kpi-s{font-size:11px;color:#93a3bc;margin-top:5px;}';
+    css += '.kpi.active{border-color:#2f5f45;box-shadow:0 8px 24px rgba(16,185,129,.18), inset 0 0 0 1px rgba(16,185,129,.14);}';
+    css += '.kpi.active .kpi-t{color:#bbf7d0;}';
+    css += '.kpi.active .kpi-v{color:#86efac;text-shadow:0 0 12px rgba(16,185,129,.22);}';
+
+    // cards originais de ranking
     css += '.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}';
     css += '.card{background:linear-gradient(160deg,#141e35,#0d1526);border:1px solid #1e2d4a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);}';
     css += '.ct{font-weight:950;font-size:18px;margin-bottom:8px;color:#f1f5f9;}';
@@ -6011,9 +6023,10 @@ function openRankDashboard(){
     css += '.mc{text-align:center;width:24px;}';
     css += '.full{background:linear-gradient(160deg,#141e35,#0d1526);border:1px solid #1e2d4a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);}';
     css += '.empty{padding:12px;border:1px dashed #334155;border-radius:10px;color:#94a3b8;background:#0f172a;}';
+
     css += '@media (max-width:920px){';
     css += 'header{padding:12px 12px;gap:9px}.headlogo{height:36px}.htitle{font-size:14px}.hsub{font-size:10px}.chip{font-size:9px;padding:4px 8px}.toolbar{gap:6px}.fg label{font-size:9px}.fg input{height:30px;min-width:96px;font-size:12px;padding:5px 8px}.btn{height:30px;font-size:11px;padding:0 10px}';
-    css += '.wrap{padding:10px 8px 22px}.grid{grid-template-columns:1fr;gap:10px}.card,.full{border-radius:12px;padding:10px}.ct{font-size:14px}.tbl{font-size:12px}.tbl thead th{font-size:10px;padding:3px 4px}.tbl td{padding:6px 4px}.av img{width:22px;height:22px}';
+    css += '.wrap{padding:10px 8px 22px}.kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px}.kpi{border-radius:12px;padding:10px}.kpi .kpi-t{font-size:12px}.kpi .kpi-v{font-size:22px}.kpi .kpi-s{font-size:10px}.grid{grid-template-columns:1fr;gap:10px}.card,.full{border-radius:12px;padding:10px}.ct{font-size:14px}.tbl{font-size:12px}.tbl thead th{font-size:10px;padding:3px 4px}.tbl td{padding:6px 4px}.av img{width:22px;height:22px}';
     css += '}';
 
     var h = '';
@@ -6032,7 +6045,18 @@ function openRankDashboard(){
     h += '<button id="btnApply" class="btn primary" type="button">Aplicar</button>';
     h += '<button id="btnClearMonth" class="btn" type="button">Limpar mês</button>';
     h += '</div></div></header>';
+
     h += '<div class="wrap">';
+
+    // NOVOS 4 KPIs
+    h += '<div class="kpi-grid">';
+    h += '  <div class="kpi"><div class="kpi-t">🗓️ Partidas</div><div id="kpiMatches" class="kpi-v">0</div><div class="kpi-s">Quantidade total no período</div></div>';
+    h += '  <div class="kpi"><div class="kpi-t">⚽ Gols</div><div id="kpiGoals" class="kpi-v">0</div><div class="kpi-s">Quantidade total no período</div></div>';
+    h += '  <div class="kpi"><div class="kpi-t">📈 Gols/Partida</div><div id="kpiGpm" class="kpi-v">0.00</div><div class="kpi-s">Total de gols ÷ total de partidas</div></div>';
+    h += '  <div class="kpi active"><div class="kpi-t">💳 Mensalistas</div><div id="kpiMonthlyMembers" class="kpi-v">0</div><div class="kpi-s">Total de mensalistas</div></div>';
+    h += '</div>';
+
+    // CARDS ORIGINAIS (mantidos)
     h += '<div class="grid" id="cardsGrid"></div>';
     h += '<div class="full"><div class="ct">📋 Ranking Geral Completo</div><div id="fullTable"></div></div>';
     h += '</div></body></html>';
@@ -6075,6 +6099,20 @@ function openRankDashboard(){
       return arr;
     }
 
+    function getPeriodMatchCount(year,month){
+      var y=String(year||'').trim();
+      var m=String(month||'').trim();
+      var uniq={};
+      (sessions||[]).forEach(function(s){
+        if(!s || !s.date) return;
+        var dt=String(s.date||'').slice(0,10);
+        var ok = m ? (dt.slice(0,7)===m) : (dt.slice(0,4)===y);
+        if(ok) uniq[dt]=1;
+      });
+      var n=0; for(var k in uniq){ n++; }
+      return n;
+    }
+
     function cardHtml(title,cls,arr,valFn,colLbl){
       var top=arr.slice(0,5);
       var tb='';
@@ -6087,7 +6125,51 @@ function openRankDashboard(){
       return '<div class="card"><div class="ct '+cls+'">'+title+'</div><table class="tbl"><thead><tr><th>Jogador</th><th></th><th class="mv">'+colLbl+'</th></tr></thead><tbody>'+tb+'</tbody></table></div>';
     }
 
-    function renderAll(){
+    
+    function isPlayerCadastroActive(p){
+      if(!p) return false;
+      if(p.active===false) return false;
+      if(p.inactive===true) return false;
+      if(p.archived===true) return false;
+      if(p.deleted===true) return false;
+      return true;
+    }
+
+    function getMonthlyMembersCount(month){
+      var m = String(month||'').trim();
+
+      // Com mês selecionado: prioriza histórico financeiro do mês (cobranças de mensalidade)
+      if(m){
+        var uniq = {};
+        try{
+          (ledger||[]).forEach(function(e){
+            if(!e) return;
+            if(e.kind==='charge' && e.category==='mensalidade' && String(e.refMonth||'')===m && e.playerId!=null){
+              uniq[String(e.playerId)] = 1;
+            }
+          });
+        }catch(_e){}
+        var countLedger = 0; for(var k in uniq){ countLedger++; }
+        if(countLedger>0) return { count: countLedger, mode: 'month_ledger' };
+
+        // fallback: cadastro atual com início da mensalidade <= mês
+        var cntFallback = (players||[]).filter(function(p){
+          if(!p || p.billingType!=='mensalista') return false;
+          var startM = String(p.monthlyStartMonth||'').trim();
+          if(startM && m < startM) return false;
+          return true;
+        }).length;
+        return { count: cntFallback, mode: 'month_cadastro' };
+      }
+
+      // Sem mês: mensalistas ativos no cadastro hoje
+      var cntNow = (players||[]).filter(function(p){
+        return !!p && p.billingType==='mensalista' && isPlayerCadastroActive(p);
+      }).length;
+      return { count: cntNow, mode: 'today_active' };
+    }
+
+function renderAll(){
       var yInput=d.getElementById('fYear');
       var mInput=d.getElementById('fMonth');
       var year=(yInput&&String(yInput.value||'').trim())?String(yInput.value).trim():String((new Date()).getFullYear());
@@ -6102,6 +6184,27 @@ function openRankDashboard(){
       var byA=arr.slice().sort(sortAss);
       var byR=arr.slice().sort(sortRat).filter(function(r){ return r.ratingCount>0; });
 
+      // atualiza cards novos
+      var matches = getPeriodMatchCount(year,month);
+      var goals = 0;
+      for(var gi=0; gi<arr.length; gi++) goals += toNum(arr[gi].goals);
+      var gpm = matches>0 ? (goals/matches) : 0;
+      var monthlyObj = getMonthlyMembersCount(month);
+      var monthlyMembers = Number(monthlyObj && monthlyObj.count) || 0;
+      var el1=d.getElementById('kpiMatches'); if(el1) el1.textContent=String(matches);
+      var el2=d.getElementById('kpiGoals'); if(el2) el2.textContent=String(Math.round(goals));
+      var el3=d.getElementById('kpiGpm'); if(el3) el3.textContent=gpm.toFixed(2);
+      var el4=d.getElementById('kpiMonthlyMembers'); if(el4) el4.textContent=String(monthlyMembers);
+      var el4s=d.querySelector('.kpi.active .kpi-s');
+      if(el4s){
+        if(month){
+          el4s.textContent='Mensalistas do mês '+month;
+        }else{
+          el4s.textContent='Mensalistas ativos no cadastro (hoje)';
+        }
+      }
+
+      // cards antigos
       var cg=d.getElementById('cardsGrid');
       if(cg){
         cg.innerHTML =
@@ -6110,6 +6213,7 @@ function openRankDashboard(){
           cardHtml('⭐ Nota Média','y',byR,function(r){return avg(r);},'Nota');
       }
 
+      // ranking geral
       var full=d.getElementById('fullTable');
       if(full){
         var rows=arr.slice().sort(sortGoals);
@@ -6134,6 +6238,7 @@ function openRankDashboard(){
     alert('Erro ao abrir Dashboard: '+(e && e.message ? e.message : e));
   }
 }
+
 
 
 
