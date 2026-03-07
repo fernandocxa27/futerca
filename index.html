@@ -6087,8 +6087,12 @@ function openFinanceDashboard(){
     cssD+=".wrap{max-width:1200px;margin:0 auto;padding:28px 22px 52px;display:flex;flex-direction:column;gap:20px;}";
     cssD+=".kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}";
     cssD+=".kpi{position:relative;background:linear-gradient(160deg,#141e35,#0d1526);border:1px solid #1e2d4a;border-radius:18px;padding:22px 20px;box-shadow:0 8px 32px rgba(0,0,0,.4);}";
-    cssD+=".kpi-ico{position:absolute;right:12px;top:9px;width:34px;height:34px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:rgba(10,28,56,.62);box-shadow:inset 0 0 0 1px rgba(148,163,184,.35),0 4px 12px rgba(0,0,0,.28);border:1px solid rgba(125,211,252,.35);pointer-events:none;}";
-    cssD+=".kpi-ico svg{width:19px;height:19px;display:block;stroke:#eaf4ff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}";
+    cssD+=".kpi-ico{position:absolute;right:10px;top:8px;width:40px;height:40px;border-radius:999px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 6px 14px rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.18);pointer-events:none;}";
+    cssD+=".kpi-ico svg{width:22px;height:22px;display:block;stroke:#ffffff;fill:none;stroke-width:1.95;stroke-linecap:round;stroke-linejoin:round;}";
+    cssD+=".kpi-ico-cash{background:linear-gradient(160deg,#1d4ed8,#0b3a9e);}";
+    cssD+=".kpi-ico-recv{background:linear-gradient(160deg,#16a34a,#0f7a35);}";
+    cssD+=".kpi-ico-exp{background:linear-gradient(160deg,#ef4444,#b91c1c);}";
+    cssD+=".kpi-ico-open{background:linear-gradient(160deg,#0ea5e9,#1d4ed8);}";
     
     
     
@@ -6120,8 +6124,12 @@ function openFinanceDashboard(){
     cssM+=".wrap{padding:12px 10px 32px;display:flex;flex-direction:column;gap:12px;}";
     cssM+=".kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;}";
     cssM+=".kpi{position:relative;background:#0f1929;border:1px solid #1e2d4a;border-radius:12px;padding:10px 12px;}";
-    cssM+=".kpi-ico{position:absolute;right:8px;top:7px;width:24px;height:24px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:rgba(10,28,56,.62);box-shadow:inset 0 0 0 1px rgba(148,163,184,.30),0 3px 8px rgba(0,0,0,.25);border:1px solid rgba(125,211,252,.32);pointer-events:none;}";
-    cssM+=".kpi-ico svg{width:14px;height:14px;display:block;stroke:#eaf4ff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}";
+    cssM+=".kpi-ico{position:absolute;right:7px;top:6px;width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 4px 10px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.18);pointer-events:none;}";
+    cssM+=".kpi-ico svg{width:17px;height:17px;display:block;stroke:#ffffff;fill:none;stroke-width:1.95;stroke-linecap:round;stroke-linejoin:round;}";
+    cssM+=".kpi-ico-cash{background:linear-gradient(160deg,#1d4ed8,#0b3a9e);}";
+    cssM+=".kpi-ico-recv{background:linear-gradient(160deg,#16a34a,#0f7a35);}";
+    cssM+=".kpi-ico-exp{background:linear-gradient(160deg,#ef4444,#b91c1c);}";
+    cssM+=".kpi-ico-open{background:linear-gradient(160deg,#0ea5e9,#1d4ed8);}";
     
     
     
@@ -6153,6 +6161,8 @@ function openFinanceDashboard(){
       +".kpi{padding:12px 14px !important;border-radius:13px !important;}"
       +".kpi-label{font-size:9px !important;}"
       +".kpi-value{font-size:21px !important;margin-top:7px !important;}"
+      +".kpi-ico{width:30px !important;height:30px !important;right:7px !important;top:6px !important;}"
+      +".kpi-ico svg{width:17px !important;height:17px !important;}"
       +".grid2{display:grid !important;grid-template-columns:1fr 1fr !important;gap:10px !important;max-width:740px !important;margin:0 auto !important;width:100% !important;align-items:stretch !important;}"
       +".grid2 .card{max-width:none !important;margin:0 !important;width:100% !important;height:100% !important;}"
       +".card{padding:15px !important;border-radius:14px !important;max-width:740px !important;margin-left:auto !important;margin-right:auto !important;width:100% !important;}"
