@@ -1234,7 +1234,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-green" onclick="addPayment()">Salvar pagamento</button>
 </div>
 </div><div class="card fin-card fin-expense">
-<h4>🧾 Despesas do caixa</h4>
+<h4>Despesas do caixa</h4>
 <div class="finance-row">
 <div class="form-group" style="flex:1">
 <label>Categoria</label>
@@ -5365,7 +5365,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
 
   <div class="grid">
     <div class="panel">
-      <div class="phead">&#x1F4BC; Totais do Período</div>
+      <div class="phead">Totais do Período</div>
       <div class="pbody">
         <table class="tot">
           <tr>
@@ -5377,7 +5377,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
                     <path d="M9 12h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
                   </svg>
                 </span>
-                <span>&#x1F4B3; Cobranças</span>
+                <span>Cobranças</span>
               </div>
             </td>
             <td class="tright gold">${escapeHtml(money(chP))}</td>
@@ -5391,7 +5391,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
                     <path d="M8.5 12.5 11 15l4.5-5" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </span>
-                <span>&#x2705; Pagamentos recebidos</span>
+                <span>Pagamentos recebidos</span>
               </div>
             </td>
             <td class="tright green">+ ${escapeHtml(money(payP))}</td>
@@ -5406,7 +5406,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
                     <path d="M15.5 9.5 8.5 14.5" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/>
                   </svg>
                 </span>
-                <span>&#x1F9FE; Despesas do caixa</span>
+                <span>Despesas do caixa</span>
               </div>
             </td>
             <td class="tright red">- ${escapeHtml(money(expP))}</td>
@@ -5420,7 +5420,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
                     <path d="M12 8v4l2.5 2.5" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </span>
-                <span>&#x1F4C9; Movimento de caixa</span>
+                <span>Movimento de caixa</span>
               </div>
             </td>
             <td class="tright ${netClass}">${escapeHtml(moneySigned(netCashP))}</td>
@@ -5434,7 +5434,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
                     <text x="12" y="15" text-anchor="middle" font-size="9" fill="#fff" font-family="system-ui,-apple-system,sans-serif">R$</text>
                   </svg>
                 </span>
-                <span>&#x1F4E5; Total a receber</span>
+                <span>Total a receber</span>
               </div>
             </td>
             <td class="tright blue">${escapeHtml(money(totalToReceiveP))}</td>
@@ -5445,28 +5445,28 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
     </div>
 
     <div class="panel">
-      <div class="phead">&#x1F4CA; Rateios</div>
+      <div class="phead">Rateios</div>
       <div class="pbody">
         <div class="rateGrid">
           <div class="rsub">
-            <div class="rtitle">&#x1F7E1;&#x1F535; Rateio no Período</div>
+            <div class="rtitle">Rateio no Período</div>
             <div class="rrow">
               <div class="donutWrap" id="donutPeriod"></div>
             </div>
             <div class="legend">
-              <div class="leg"><span class="dot" style="background:#1f5fae"></span><span class="leglbl">&#x1F4B3; Cobrado</span><span class="legval">${escapeHtml(money(rateioInfo.chargesP))}</span></div>
-              <div class="leg"><span class="dot" style="background:#c79a2b"></span><span class="leglbl">&#x2705; Recebido</span><span class="legval">${escapeHtml(money(rateioInfo.paymentsP))}</span></div>
-              <div class="leg"><span class="dot" style="background:#c62828"></span><span class="leglbl">&#x1F552; Em aberto</span><span class="legval">${escapeHtml(money(rateioInfo.openP))}</span></div>
+              <div class="leg"><span class="dot" style="background:#1f5fae"></span><span class="leglbl">Cobrado</span><span class="legval">${escapeHtml(money(rateioInfo.chargesP))}</span></div>
+              <div class="leg"><span class="dot" style="background:#c79a2b"></span><span class="leglbl">Recebido</span><span class="legval">${escapeHtml(money(rateioInfo.paymentsP))}</span></div>
+              <div class="leg"><span class="dot" style="background:#c62828"></span><span class="leglbl">Em aberto</span><span class="legval">${escapeHtml(money(rateioInfo.openP))}</span></div>
             </div>
           </div>
           <div class="rsub">
-            <div class="rtitle">&#x1F535;&#x1F7E2; Rateio Geral</div>
+            <div class="rtitle">Rateio Geral</div>
             <div class="rrow">
               <div class="donutWrap" id="donutAll"></div>
             </div>
             <div class="legend">
-              <div class="leg"><span class="dot" style="background:#1f5fae"></span><span class="leglbl">&#x1F552; Em aberto</span><span class="legval">${escapeHtml(money(rateioInfo.openAll))}</span></div>
-              <div class="leg"><span class="dot" style="background:#16a34a"></span><span class="leglbl">&#x1F539; Crédito</span><span class="legval">${escapeHtml(money(rateioInfo.creditAll))}</span></div>
+              <div class="leg"><span class="dot" style="background:#1f5fae"></span><span class="leglbl">Em aberto</span><span class="legval">${escapeHtml(money(rateioInfo.openAll))}</span></div>
+              <div class="leg"><span class="dot" style="background:#16a34a"></span><span class="leglbl">Crédito</span><span class="legval">${escapeHtml(money(rateioInfo.creditAll))}</span></div>
             </div>
           </div>
         </div>
@@ -5476,7 +5476,7 @@ const debtsHtmlAll = debtRowsAll.length ? debtRowsAll.map(r => {
   </div>
 
   <div class="sec">
-    <div class="phead">&#x1F4CC; Pendências por jogador (geral)</div>
+    <div class="phead">Pendências por jogador (geral)</div>
     <div class="pbody">
       <table class="big">
         <thead><tr><th>Jogador</th><th>Situação</th><th>Cobrança</th></tr></thead>
@@ -6103,6 +6103,7 @@ function openFinanceDashboard(){
     cssD+=".grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}";
     cssD+=".card{background:linear-gradient(160deg,#141e35,#0d1526);border:1px solid #1e2d4a;border-radius:18px;padding:22px 20px;box-shadow:0 8px 32px rgba(0,0,0,.4);}";
     cssD+=".card h2{margin:0 0 14px;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:#93c5fd;border-bottom:1px solid #1e2d4a;padding-bottom:10px;}";
+    cssD+=".mob-br{display:none;}";
     cssD+="table{width:100%;border-collapse:collapse;font-size:13px;}";
     cssD+="th{padding:6px 8px;text-align:left;font-size:10px;color:#64748b;text-transform:uppercase;border-bottom:1px solid #1e2d4a;}";
     cssD+="td{padding:9px 8px;border-bottom:1px solid #0f1a2e;}";
@@ -6142,6 +6143,7 @@ function openFinanceDashboard(){
     cssM+=".grid2{display:flex;flex-direction:column;gap:10px;}";
     cssM+=".card{background:#0f1929;border:1px solid #1e2d4a;border-radius:12px;padding:12px;}";
     cssM+=".card h2{margin:0 0 10px;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:#93c5fd;border-bottom:1px solid #1e2d4a;padding-bottom:7px;}";
+    cssM+=".mob-br{display:inline;}";
     cssM+="table{width:100%;border-collapse:collapse;font-size:12px;}";
     cssM+="th{padding:4px 5px;text-align:left;font-size:9px;color:#64748b;border-bottom:1px solid #1e2d4a;}";
     cssM+="td{padding:7px 5px;border-bottom:1px solid #0f1a2e;}";
