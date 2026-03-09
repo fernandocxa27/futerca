@@ -6309,7 +6309,11 @@ function openFinanceDashboard(){
     css += '.pill.orange{background:rgba(245,158,11,.18);color:#fcd34d;}';
     css += '.pill.yellow{background:rgba(234,179,8,.18);color:#fef08a;}';
     css += '.empty{padding:14px;border:1px dashed #334155;border-radius:10px;color:#94a3b8;background:#0f172a;text-align:center;}';
+    css += '#fDebtTable .tbl-wrap{display:block}';
+    css += '#fDebtTable .debt-cards{display:none}';
     css += '.badge-cat{padding:2px 7px;border-radius:6px;font-size:10px;font-weight:900;margin-right:3px;}';
+    css += '.sticky-col{position:sticky;left:0;z-index:2;background:linear-gradient(160deg,#141e35,#0d1526);}';
+    css += '.tbl thead .sticky-col{z-index:3;}';
     css += '.cat-mensal{background:rgba(99,102,241,.25);color:#a5b4fc;}';
     css += '.cat-avulso{background:rgba(245,158,11,.25);color:#fcd34d;}';
     css += '.cat-rateio{background:rgba(20,184,166,.25);color:#99f6e4;}';
@@ -6337,7 +6341,23 @@ function openFinanceDashboard(){
     css += '.filter-bar label{font-size:10px;font-weight:900}';
     css += '.filter-bar select{height:34px;padding:0 12px;border-radius:8px;border:1px solid #1e2d4a;background:#0d1526;color:#e2e8f0;font-size:12px;min-width:120px}';
     css += '#fDebtCount{font-size:10px;color:#94a3b8}';
-    css += '#fDebtTable{margin:-12px -12px 0 -12px;padding:12px 12px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:0 0 12px 12px}';
+    css += '#fDebtTable{margin:0;padding:0}';
+    css += '#fDebtTable .debt-card{background:rgba(8,18,40,.82);border:1px solid #20304f;border-radius:12px;padding:10px}';
+    css += '#fDebtTable .dc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}';
+    css += '#fDebtTable .dc-left{display:flex;align-items:center;gap:8px;min-width:0}';
+    css += '#fDebtTable .dc-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid #2a3b58;flex:0 0 auto}';
+    css += '#fDebtTable .dc-name{font-size:13px;font-weight:950;color:#f8fafc;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}';
+    css += '#fDebtTable .dc-cats{margin-top:4px}';
+    css += '#fDebtTable .dc-total{font-size:12px}';
+    css += '#fDebtTable .dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}';
+    css += '#fDebtTable .dc-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:8px}';
+    css += '#fDebtTable .dc-lbl{font-size:10px;color:#93a3bc;font-weight:900;margin-bottom:4px}';
+    css += '#fDebtTable .dc-val{font-size:12px;font-family:ui-monospace,monospace;font-weight:900;color:#f8fafc;white-space:nowrap}';
+    css += '#fDebtTable .dc-more{margin-top:8px}';
+    css += '#fDebtTable details{border-top:1px solid rgba(255,255,255,.06);padding-top:8px}';
+    css += '#fDebtTable summary{cursor:pointer;list-style:none;font-size:11px;font-weight:900;color:#93c5fd}';
+    css += '#fDebtTable summary::-webkit-details-marker{display:none}';
+    css += '#fDebtTable .dc-more-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}';
     css += '#fDebtTable .tbl{font-size:11px;min-width:800px}';
     css += '.tbl thead th{font-size:10px;padding:6px 6px 8px 6px;border-bottom:1px solid #2a3b58}';
     css += '.tbl thead th.r{padding-right:12px}';
@@ -6349,6 +6369,9 @@ function openFinanceDashboard(){
     css += '.pill{padding:3px 8px;font-size:10px}';
     css += '.badge-cat{padding:2px 6px;font-size:9px;margin:0 2px 2px 0;display:inline-block}';
     css += '.empty{padding:20px 12px;line-height:1.4}';
+    
+    css += '#fDebtTable .tbl-wrap{display:none}';
+    css += '#fDebtTable .debt-cards{display:flex;flex-direction:column;gap:10px}';
     css += '}';
 
     var h = '';
@@ -6483,7 +6506,11 @@ function openFinanceDashboard(){
         tbl.innerHTML = '<div class="empty">🎉 Sem pendências para este filtro.</div>';
         return;
       }
+
+      var fallbackImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='14' fill='%23aaa'/%3E%3C/svg%3E";
+
       var tb='';
+      var cards='';
       for(var i=0;i<rows.length;i++){
         var r=rows[i];
         var photo=getPlayerPhoto(r.pid);
@@ -6493,10 +6520,10 @@ function openFinanceDashboard(){
         if(r.avulso>0.001) cats+='<span class="badge-cat cat-avulso">Avulso</span>';
         if(r.rateio>0.001) cats+='<span class="badge-cat cat-rateio">Rateio</span>';
         if(r.outros>0.001) cats+='<span class="badge-cat cat-outros">Outros</span>';
-        var fallbackImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='14' fill='%23aaa'/%3E%3C/svg%3E";
         var imgSrc = photo ? esc2(photo) : fallbackImg;
+
         tb+='<tr>';
-        tb+='<td><div class="av"><img src="'+imgSrc+'" alt="" onerror="this.src=\''+fallbackImg+'\'"><span class="nm">'+esc2(name)+'</span></div></td>';
+        tb+='<td class="sticky-col"><div class="av"><img src="'+imgSrc+'" alt="" onerror="this.src=\''+fallbackImg+'\'"><span class="nm">'+esc2(name)+'</span></div></td>';
         tb+='<td>'+cats+'</td>';
         tb+='<td class="r">'+(r.mensal>0.001?fmt(r.mensal):'-')+'</td>';
         tb+='<td class="r">'+(r.avulso>0.001?fmt(r.avulso):'-')+'</td>';
@@ -6504,8 +6531,36 @@ function openFinanceDashboard(){
         tb+='<td class="r">'+(r.outros>0.001?fmt(r.outros):'-')+'</td>';
         tb+='<td class="r"><span class="pill '+debtTotalClass(r.total)+'">'+fmt(r.total)+'</span></td>';
         tb+='</tr>';
+
+        cards += '<div class="debt-card">';
+        cards +=   '<div class="dc-top">';
+        cards +=     '<div class="dc-left">';
+        cards +=       '<img class="dc-avatar" src="'+imgSrc+'" alt="" onerror="this.src=\''+fallbackImg+'\'">';
+        cards +=       '<div style="min-width:0">';
+        cards +=         '<div class="dc-name">'+esc2(name)+'</div>';
+        cards +=         '<div class="dc-cats">'+cats+'</div>';
+        cards +=       '</div>';
+        cards +=     '</div>';
+        cards +=     '<div class="dc-total"><span class="pill '+debtTotalClass(r.total)+'">'+fmt(r.total)+'</span></div>';
+        cards +=   '</div>';
+        cards +=   '<div class="dc-grid">';
+        cards +=     '<div class="dc-item"><div class="dc-lbl">Mensal</div><div class="dc-val">'+(r.mensal>0.001?fmt(r.mensal):'-')+'</div></div>';
+        cards +=     '<div class="dc-item"><div class="dc-lbl">Avulso</div><div class="dc-val">'+(r.avulso>0.001?fmt(r.avulso):'-')+'</div></div>';
+        cards +=   '</div>';
+        cards +=   '<div class="dc-more">';
+        cards +=     '<details>';
+        cards +=       '<summary>Ver mais</summary>';
+        cards +=       '<div class="dc-more-grid">';
+        cards +=         '<div class="dc-item"><div class="dc-lbl">Rateio</div><div class="dc-val">'+(r.rateio>0.001?fmt(r.rateio):'-')+'</div></div>';
+        cards +=         '<div class="dc-item"><div class="dc-lbl">Outros</div><div class="dc-val">'+(r.outros>0.001?fmt(r.outros):'-')+'</div></div>';
+        cards +=       '</div>';
+        cards +=     '</details>';
+        cards +=   '</div>';
+        cards += '</div>';
       }
-      tbl.innerHTML='<table class="tbl"><thead><tr><th>Jogador</th><th>Categorias</th><th class="r">Mensal</th><th class="r">Avulso</th><th class="r">Rateio</th><th class="r">Outros</th><th class="r">Total</th></tr></thead><tbody>'+tb+'</tbody></table>';
+      tbl.innerHTML=''
+        + '<div class="tbl-wrap"><table class="tbl"><thead><tr><th class="sticky-col">Jogador</th><th>Categorias</th><th class="r">Mensal</th><th class="r">Avulso</th><th class="r">Rateio</th><th class="r">Outros</th><th class="r">Total</th></tr></thead><tbody>'+tb+'</tbody></table></div>'
+        + '<div class="debt-cards">'+cards+'</div>';
     }
 
     function renderAll(){
