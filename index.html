@@ -6026,7 +6026,7 @@ function openRankDashboard(){
 
     css += '@media (max-width:920px){';
     css += 'header{padding:12px 12px;gap:9px}.headlogo{height:72px}.htitle{font-size:14px}.hsub{font-size:10px}.chip{font-size:9px;padding:4px 8px}.toolbar{gap:6px}.fg label{font-size:9px}.fg input{height:30px;min-width:96px;font-size:12px;padding:5px 8px}.btn{height:30px;font-size:11px;padding:0 10px}';
-    css += '.wrap{padding:10px 8px 22px}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi{border-radius:12px;padding:10px}.kpi .kpi-t{font-size:12px}.kpi .kpi-v{font-size:22px}.kpi .kpi-s{font-size:10px}.grid{grid-template-columns:1fr;gap:10px}.card,.full{border-radius:12px;padding:10px}.ct{font-size:14px}.tbl{font-size:12px}.tbl thead th{font-size:10px;padding:3px 4px}.tbl td{padding:6px 4px}.av img{width:22px;height:22px}';
+    css += '.wrap{padding:10px 8px 22px}.kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px}.kpi{border-radius:12px;padding:10px}.kpi .kpi-t{font-size:12px}.kpi .kpi-v{font-size:22px}.kpi .kpi-s{font-size:10px}.grid{grid-template-columns:1fr;gap:10px}.card,.full{border-radius:12px;padding:10px}.ct{font-size:14px}.tbl{font-size:12px}.tbl thead th{font-size:10px;padding:3px 4px}.tbl td{padding:6px 4px}.av img{width:22px;height:22px}';
     css += '}';
 
     var h = '';
@@ -6319,6 +6319,11 @@ function openFinanceDashboard(){
     css += '.cat-rateio{background:rgba(20,184,166,.25);color:#99f6e4;}';
     css += '.cat-outros{background:rgba(107,114,128,.25);color:#d1d5db;}';
     css += '@media(max-width:920px){';
+
+    css += '.wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}';
+    css += '.kpi-grid{display:contents}';
+    css += '.kpi{grid-column:auto}';
+    css += '.sec{grid-column:1/-1}';
     css += 'header{padding:10px 10px 12px;gap:12px}';
     css += '.headlogo{height:58px;flex-shrink:0}';
     css += '.htitle{font-size:17px;line-height:1.1}';
@@ -6330,7 +6335,7 @@ function openFinanceDashboard(){
     css += '.fg input{height:32px;font-size:12px;padding:4px 8px;border-radius:8px}';
     css += '.btn{height:32px;font-size:11px;padding:0 10px;border-radius:8px;flex:0 1 auto}';
     css += '.wrap{padding:10px 8px 20px}';
-    css += '.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}';
+    css += '.kpi-grid{grid-template-columns:1fr;gap:12px}';
     css += '.kpi{border-radius:12px;padding:12px}';
     css += '.kpi-t{font-size:12px;line-height:1.2}';
     css += '.kpi-v{font-size:20px;line-height:1.1}';
