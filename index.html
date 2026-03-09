@@ -1167,7 +1167,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <!-- FINANCEIRO -->
 <div class="panel" id="panelFinance">
 <div class="fin-sep fin-step-1"><div class="fin-sep-title">1) Configurar valores</div><div class="fin-sep-sub">Defina os valores de mensalista/avulso. Isso fica salvo neste aparelho.</div></div><div class="card fin-card fin-config">
-<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 💰 Financeiro <button class="btn btn-outline btn-sm" type="button" style="margin-left:8px;font-weight:900" onclick="openFinanceDashboard()">📊 Dashboard</button><button class="btn btn-outline btn-sm" type="button" style="margin-left:6px;font-weight:900" onclick="openPrintReport()">🖨️ Imprimir / PDF</button></h4>
+<h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> 💰 Financeiro <button class="btn btn-outline btn-sm" type="button" style="margin-left:8px;font-weight:900" onclick="openFinanceDashboard()">📊 Dashboard</button><button class="btn btn-outline btn-sm" type="button" style="margin-left:6px;font-weight:900" onclick="openPrintReport()">🖨️ PDF</button></h4>
 <div class="finance-row">
 <div class="form-group">
 <label>Mensalista (R$ / mês)</label>
@@ -6043,7 +6043,7 @@ function openRankDashboard(){
     h += '<div class="fg"><label>Ano</label><input id="fYear" type="number" min="2020" step="1" value="'+esc(String(defaultYear))+'"></div>';
     h += '<div class="fg"><label>Mês (opcional)</label><input id="fMonth" type="month" value="'+esc(defaultMonth)+'"></div>';
     h += '<button id="btnApply" class="btn primary" type="button">Aplicar</button>';
-    h += '<button id="btnClearMonth" class="btn" type="button">Limpar mês</button>';
+    h += '<button id="btnClearMonth" class="btn" type="button">Limpar mês</button><button class="btn" type="button" title="Imprimir / Salvar PDF" onclick="window.print()" style="padding:0 10px;font-size:16px">🖨️</button>';
     h += '</div></div></header>';
 
     h += '<div class="wrap">';
@@ -6319,11 +6319,6 @@ function openFinanceDashboard(){
     css += '.cat-rateio{background:rgba(20,184,166,.25);color:#99f6e4;}';
     css += '.cat-outros{background:rgba(107,114,128,.25);color:#d1d5db;}';
     css += '@media(max-width:920px){';
-
-    css += '.wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}';
-    css += '.kpi-grid{display:contents}';
-    css += '.kpi{grid-column:auto}';
-    css += '.sec{grid-column:1/-1}';
     css += 'header{padding:10px 10px 12px;gap:12px}';
     css += '.headlogo{height:58px;flex-shrink:0}';
     css += '.htitle{font-size:17px;line-height:1.1}';
@@ -6393,7 +6388,7 @@ function openFinanceDashboard(){
     h += '<div class="fg"><label>Ano</label><input id="fYear" type="number" min="2020" step="1" value="'+esc(String(defaultYear))+'"></div>';
     h += '<div class="fg"><label>Mês (opcional)</label><input id="fMonth" type="month" value="'+esc(defaultMonth)+'"></div>';
     h += '<button id="btnApply" class="btn primary" type="button">Aplicar</button>';
-    h += '<button id="btnClearMonth" class="btn" type="button">Limpar mês</button>';
+    h += '<button id="btnClearMonth" class="btn" type="button">Limpar mês</button><button class="btn" type="button" title="Imprimir / Salvar PDF" onclick="window.print()" style="padding:0 10px;font-size:16px">🖨️</button>';
     h += '</div></div></header>';
     h += '<div class="wrap">';
     // linha 1 de KPIs
