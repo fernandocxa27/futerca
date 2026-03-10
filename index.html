@@ -6001,7 +6001,7 @@ function openRankDashboard(){
     css += '.wrap{max-width:1200px;margin:0 auto;padding:18px 14px 36px;}';
 
     // novos 4 cards KPI (web: 4 na mesma linha | mobile: 2 por linha)
-    css += '.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;}';
+    css += '.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;}';
     css += '.kpi{background:linear-gradient(160deg,#141e35,#0d1526);border:1px solid #1e2d4a;border-radius:16px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);}';
     css += '.kpi .kpi-t{font-weight:900;font-size:14px;color:#e2e8f0;opacity:.98;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}';
     css += '.kpi .kpi-v{font-size:30px;line-height:1.05;font-weight:950;color:#f8fafc;letter-spacing:-.5px;}';
@@ -6011,7 +6011,7 @@ function openRankDashboard(){
     css += '.kpi.active .kpi-v{color:#86efac;text-shadow:0 0 12px rgba(16,185,129,.22);}';
 
     // cards originais de ranking
-    css += '.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;}';
+    css += '.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}';
     css += '.card{background:linear-gradient(160deg,#141e35,#0d1526);border:1px solid #1e2d4a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);}';
     css += '.ct{font-weight:950;font-size:18px;margin-bottom:8px;color:#f1f5f9;}';
     css += '.ct.g{border-top:3px solid #22c55e;padding-top:8px}.ct.b{border-top:3px solid #3b82f6;padding-top:8px}.ct.y{border-top:3px solid #f59e0b;padding-top:8px}';
@@ -6026,7 +6026,7 @@ function openRankDashboard(){
 
     css += '@media (max-width:920px){';
     css += 'header{padding:12px 12px;gap:9px}.headlogo{height:72px}.htitle{font-size:14px}.hsub{font-size:10px}.chip{font-size:9px;padding:4px 8px}.toolbar{gap:6px}.fg label{font-size:9px}.fg input{height:30px;min-width:96px;font-size:12px;padding:5px 8px}.btn{height:30px;font-size:11px;padding:0 10px}';
-    css += '.wrap{padding:10px 8px 22px}.kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px}.kpi{border-radius:12px;padding:10px}.kpi .kpi-t{font-size:12px}.kpi .kpi-v{font-size:22px}.kpi .kpi-s{font-size:10px}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.card,.full{border-radius:12px;padding:10px}.ct{font-size:14px}.tbl{font-size:12px}.tbl thead th{font-size:10px;padding:3px 4px}.tbl td{padding:6px 4px}.av img{width:22px;height:22px}';
+    css += '.wrap{padding:10px 8px 22px}.kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px}.kpi{border-radius:12px;padding:10px}.kpi .kpi-t{font-size:12px}.kpi .kpi-v{font-size:22px}.kpi .kpi-s{font-size:10px}.grid{grid-template-columns:1fr;gap:10px}.card,.full{border-radius:12px;padding:10px}.ct{font-size:14px}.tbl{font-size:12px}.tbl thead th{font-size:10px;padding:3px 4px}.tbl td{padding:6px 4px}.av img{width:22px;height:22px}';
     css += '}';
 
     var h = '';
@@ -6278,7 +6278,7 @@ function openFinanceDashboard(){
     css += '.btn.primary{background:#16a34a;border-color:#16a34a}';
     css += '.wrap{max-width:1200px;margin:0 auto;padding:18px 14px 36px;}';
     // 2 linhas 3 cards
-    css += '.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;}';
+    css += '.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}';
     css += '.kpi{background:linear-gradient(160deg,#141e35,#0d1526);border:1px solid #1e2d4a;border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.35);}';
     css += '.kpi.green{border-color:#1e3a2a;box-shadow:0 8px 24px rgba(16,185,129,.15),inset 0 0 0 1px rgba(16,185,129,.10);}';
     css += '.kpi.red{border-color:#3a1e1e;box-shadow:0 8px 24px rgba(220,38,38,.15),inset 0 0 0 1px rgba(220,38,38,.10);}';
@@ -6329,13 +6329,13 @@ function openFinanceDashboard(){
     css += '.fg label{font-size:9px}';
     css += '.fg input{height:32px;font-size:12px;padding:4px 8px;border-radius:8px}';
     css += '.btn{height:32px;font-size:11px;padding:0 10px;border-radius:8px;flex:0 1 auto}';
-    css += '.wrap{padding:10px 8px 20px}';
-    css += '.kpi-grid{grid-template-columns:repeat(2,1fr);gap:12px}';
+    css += '.wrap{padding:10px 8px 20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}';
+    css += '.kpi-grid{display:contents}';
     css += '.kpi{border-radius:12px;padding:12px}';
     css += '.kpi-t{font-size:12px;line-height:1.2}';
     css += '.kpi-v{font-size:20px;line-height:1.1}';
     css += '.kpi-s{font-size:10px;line-height:1.2}';
-    css += '.sec{border-radius:12px;padding:12px}';
+    css += '.sec{border-radius:12px;padding:12px;grid-column:1 / -1}';
     css += '.sec-t{font-size:15px;margin-bottom:10px}';
     css += '.filter-bar{gap:8px;align-items:center;margin-bottom:12px}';
     css += '.filter-bar label{font-size:10px;font-weight:900}';
