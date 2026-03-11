@@ -1105,6 +1105,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-lite-red" onclick="deleteCurrentSession()" type="button">Excluir pelada (teste)</button>
 <button class="btn btn-lite-green" onclick="confirmScheduledAttendance('confirmed', true)" type="button">Confirmados (Vem) → Presentes</button>
 <button class="btn btn-lite-green" onclick="sessionMarkAll(true)" type="button">Marcar todos presentes</button>
+<button class="btn btn-primary" onclick="openScoreStory()" type="button">📣 Placar</button>
 </div>
 <div class="small" id="sessionInfoField" style="margin:8px 0"></div>
 <div class="hr"></div>
@@ -6631,6 +6632,18 @@ function openFinanceDashboard(){
 }
 
 
+
+
+
+function openScoreStory() {
+    const s = getCurrentSession();
+    if (!s) {
+        alert('Carregue uma pelada primeiro.');
+        return;
+    }
+    const url = 'placar.html?session=' + encodeURIComponent(s.id || s.date || 'current');
+    window.open(url, '_blank');
+}
 
 </script></body>
 </html>
