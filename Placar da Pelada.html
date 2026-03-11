@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Futebol de Terça — Placar da Pelada</title>
+<style>
+:root{
+  --bg1:#022c38;
+  --bg2:#053e4f;
+  --panel:#0a3142;
+  --panel2:#0d4157;
+  --line:#84d7ff33;
+  --cyan:#3fd4ff;
+  --cyan2:#8be7ff;
+  --white:#f8fbff;
+  --muted:#b7d2df;
+  --gold:#ffd54a;
+  --green1:#0e5a1f;
+  --green2:#77b81e;
+  --green3:#2c7a1e;
+  --shadow:0 18px 40px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#02131b;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--white)}
+body{min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:18px}
+.story{
+  width:min(100vw - 20px, 720px);
+  aspect-ratio:9/16;
+  min-height:calc((min(100vw - 20px, 720px))*16/9);
+  max-height:calc(100vh - 36px);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(73,195,255,.18), transparent 28%),
+    linear-gradient(180deg, #05202b 0%, #062737 26%, #073246 58%, #041d27 100%);
+  border:1px solid #1d5267;
+  border-radius:28px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:relative;
+}
+.story::before{
+  content:'';
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 78px, rgba(255,255,255,.02) 78px 79px),
+    linear-gradient(180deg, transparent 0 62%, rgba(0,0,0,.08) 100%);
+  pointer-events:none;
+}
+.topbar{position:relative;padding:26px 26px 10px;z-index:2}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.brand img{width:54px;height:54px;border-radius:50%;object-fit:cover;background:#ffffff18;border:2px solid #ffffff24}
+.brand .t1{font-size:30px;font-weight:1000;letter-spacing:.4px;line-height:1}
+.brand .t2{font-size:13px;color:var(--cyan2);font-weight:800;letter-spacing:1.4px;text-transform:uppercase;margin-top:4px}
+.scorebox{display:grid;grid-template-columns:1fr 132px 1fr;align-items:center;gap:10px}
+.teamhead{
+  display:grid;grid-template-columns:54px 1fr 64px;align-items:center;gap:10px;
+  background:linear-gradient(180deg,#f2f5f8,#cfd7de);
+  color:#18222b;border-radius:18px;padding:10px 12px;border:2px solid #8ea7b6;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+}
+.teamhead.right{grid-template-columns:64px 1fr 54px}
+.teambadge{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0b4f99;color:#fff;font-weight:1000;border:3px solid #fff;overflow:hidden}
+.teambadge img{width:100%;height:100%;object-fit:cover}
+.teamname{font-size:28px;font-weight:1000;line-height:1;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.teamscore{font-size:44px;font-weight:1000;line-height:1;text-align:center;color:#26323c}
+.centerclock{
+  background:linear-gradient(180deg,#3d7be8,#265fbe); color:#fff; border-radius:0 0 18px 18px;
+  text-align:center; padding:16px 10px 14px; font-weight:1000; font-size:36px; box-shadow:0 10px 18px rgba(0,0,0,.22);
+  border:2px solid rgba(255,255,255,.14); align-self:start;
+}
+.centerclock .sub{font-size:12px;letter-spacing:1.3px;color:#cce1ff;text-transform:uppercase;margin-top:4px}
+.meta{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.chip{background:#0e4256;border:1px solid #2d738e;color:#d8eff8;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
+.main{position:relative;z-index:2;padding:10px 26px 16px;display:grid;grid-template-rows:auto 1fr auto;gap:14px;height:calc(100% - 180px)}
+.lists{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;
+}
+.listcard{
+  background:linear-gradient(180deg, rgba(9,60,81,.95), rgba(8,46,62,.92));
+  border:1px solid #2a6a83;border-radius:20px;overflow:hidden;box-shadow:var(--shadow)
+}
+.listhead{padding:12px 14px;background:linear-gradient(180deg, rgba(98,228,255,.18), rgba(98,228,255,.06));border-bottom:1px solid #2c718d}
+.listtitle{font-size:20px;font-weight:1000;text-transform:uppercase;letter-spacing:.7px}
+.listsub{font-size:12px;color:#9ad8ea;font-weight:800;margin-top:2px}
+.rows{padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px;min-height:290px}
+.row{
+  display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;
+  padding:8px 10px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border:1px solid rgba(140,215,255,.10)
+}
+.avatar{width:56px;height:56px;border-radius:50%;overflow:hidden;background:#173241;border:2px solid rgba(255,255,255,.18)}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.pname{font-size:20px;font-weight:900;line-height:1.05}
+.psub{font-size:12px;color:#9bc9da;margin-top:4px;font-weight:800}
+.nums{text-align:right}
+.goals{font-size:30px;font-weight:1000;line-height:1;color:#fff}
+.assists{font-size:12px;color:#9be7ff;font-weight:900;margin-top:4px}
+.empty{padding:18px 10px;text-align:center;color:#a4c5d2;font-weight:700}
+.pitchwrap{margin-top:auto;border-radius:20px;overflow:hidden;border:1px solid #2b6a3f;background:#0c3417;position:relative;height:280px}
+.pitch{
+  position:absolute; inset:0;
+  background:
+   repeating-linear-gradient(90deg, #2f7f1d 0 64px, #6fb21f 64px 128px),
+   linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.08));
+}
+.pitch svg{position:absolute; inset:0; width:100%; height:100%}
+.footer{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 24px 22px;position:relative;z-index:2}
+.footnote{font-size:12px;color:#b6d4df;font-weight:700}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{cursor:pointer;border:none;border-radius:999px;padding:10px 16px;font-weight:1000;letter-spacing:.3px}
+.btn.primary{background:linear-gradient(180deg,#27c0ff,#0d8fd3);color:#fff}
+.btn.light{background:#eef6ff;color:#12314a}
+.watermark{position:absolute;right:20px;bottom:12px;font-size:12px;color:#cfe9f6;opacity:.7;font-weight:800;z-index:2}
+@media (max-width:780px){
+  body{padding:0;background:#02131b}
+  .story{width:100vw;max-height:none;min-height:100vh;border-radius:0;border:none}
+  .topbar{padding:18px 14px 8px}
+  .brand img{width:40px;height:40px}
+  .brand .t1{font-size:22px}
+  .brand .t2{font-size:11px}
+  .scorebox{grid-template-columns:1fr 92px 1fr;gap:6px}
+  .teamhead{grid-template-columns:38px 1fr 44px;padding:7px 8px;border-radius:14px}
+  .teamhead.right{grid-template-columns:44px 1fr 38px}
+  .teambadge{width:38px;height:38px}
+  .teamname{font-size:14px}
+  .teamscore{font-size:28px}
+  .centerclock{font-size:23px;padding:10px 6px 9px}
+  .centerclock .sub{font-size:9px}
+  .meta{margin-top:8px;gap:6px}
+  .chip{font-size:10px;padding:6px 8px}
+  .main{padding:8px 14px 12px;height:auto;gap:10px}
+  .lists{gap:10px}
+  .listhead{padding:9px 10px}
+  .listtitle{font-size:14px}
+  .listsub{font-size:10px}
+  .rows{padding:6px;gap:6px;min-height:180px}
+  .row{grid-template-columns:34px 1fr auto;padding:6px 8px;border-radius:12px}
+  .avatar{width:34px;height:34px}
+  .pname{font-size:12px}
+  .psub{font-size:9px;margin-top:2px}
+  .goals{font-size:18px}
+  .assists{font-size:9px}
+  .pitchwrap{height:190px}
+  .footer{padding:10px 14px 16px;align-items:flex-start;flex-direction:column}
+  .footnote{font-size:10px}
+  .btn{width:100%;padding:12px 14px}
+  .actions{width:100%;display:grid;grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="story" id="storyRoot">
+  <div class="topbar">
+    <div class="brand">
+      <img id="brandLogo" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Futebol de Terça">
+      <div>
+        <div class="t1">Futebol de Terça</div>
+        <div class="t2">Placar da Pelada • Story 9:16</div>
+      </div>
+    </div>
+    <div class="scorebox">
+      <div class="teamhead" id="teamHeadA">
+        <div class="teambadge" id="badgeA">A</div>
+        <div class="teamname" id="teamNameA">Time A</div>
+        <div class="teamscore" id="scoreA">0</div>
+      </div>
+      <div class="centerclock">
+        FINAL
+        <div class="sub" id="gameDate">--/--/----</div>
+      </div>
+      <div class="teamhead right" id="teamHeadB">
+        <div class="teamscore" id="scoreB">0</div>
+        <div class="teamname" id="teamNameB">Time B</div>
+        <div class="teambadge" id="badgeB">B</div>
+      </div>
+    </div>
+    <div class="meta" id="metaChips"></div>
+  </div>
+  <div class="main">
+    <div class="lists">
+      <div class="listcard">
+        <div class="listhead">
+          <div class="listtitle" id="leftTitle">Gols do Time A</div>
+          <div class="listsub">Só aparece quem marcou gol</div>
+        </div>
+        <div class="rows" id="listA"></div>
+      </div>
+      <div class="listcard">
+        <div class="listhead">
+          <div class="listtitle" id="rightTitle">Gols do Time B</div>
+          <div class="listsub">Assistências aparecem se existirem</div>
+        </div>
+        <div class="rows" id="listB"></div>
+      </div>
+    </div>
+    <div class="pitchwrap">
+      <div class="pitch"></div>
+      <svg viewBox="0 0 700 280" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="none" stroke="white" stroke-width="3" opacity="0.95">
+          <rect x="24" y="18" width="652" height="244" rx="8"></rect>
+          <line x1="350" y1="18" x2="350" y2="262"></line>
+          <circle cx="350" cy="140" r="36"></circle>
+          <circle cx="350" cy="140" r="2" fill="white"></circle>
+          <rect x="24" y="74" width="94" height="132"></rect>
+          <rect x="582" y="74" width="94" height="132"></rect>
+          <rect x="24" y="102" width="34" height="76"></rect>
+          <rect x="642" y="102" width="34" height="76"></rect>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footnote" id="footerNote">Lance os gols no sistema para gerar esta arte automaticamente.</div>
+    <div class="actions">
+      <button class="btn primary" onclick="downloadStory()">Baixar imagem</button>
+      <button class="btn light" onclick="window.print()">Imprimir / Salvar em PDF</button>
+    </div>
+  </div>
+  <div class="watermark">Futebol de Terça</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23173441'/%3E%3Ccircle cx='50' cy='38' r='18' fill='%23d9e7f2'/%3E%3Crect x='24' y='62' width='52' height='24' rx='12' fill='%23d9e7f2'/%3E%3C/svg%3E";
+function safeParse(key, fb){ try{ return JSON.parse(localStorage.getItem(key)||'null') ?? fb; }catch(e){ return fb; } }
+function q(name){ return new URLSearchParams(location.search).get(name); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function formatBR(iso){ if(!iso) return '--/--/----'; const [y,m,d]=iso.split('-'); return d+'/'+m+'/'+y; }
+function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function getPlayers(){ return safeParse('ft_players', []); }
+function getConfig(){ return safeParse('ft_config', { teamsCount:2, limitPerTeam:7 }); }
+function getSessions(){ return safeParse('ft_sessions', []); }
+function getCurrentSession(sessions){
+  const id = q('session');
+  if (id) {
+    const found = sessions.find(s => String(s.id) === String(id) || String(s.date) === String(id));
+    if (found) return found;
+  }
+  const currentSessionId = localStorage.getItem('ft_currentSessionId');
+  if (currentSessionId) {
+    const byId = sessions.find(s => String(s.id) === String(currentSessionId));
+    if (byId) return byId;
+  }
+  return sessions.slice().sort((a,b)=> String(b.date||'').localeCompare(String(a.date||'')))[0] || null;
+}
+function ensureSessionExtras(s){
+  if (!s.stats || typeof s.stats !== 'object') s.stats = {};
+  if (!s.score || typeof s.score !== 'object') s.score = {A:0,B:0,C:0};
+  if (!s.attendance || typeof s.attendance !== 'object') s.attendance = {};
+}
+function getStat(s, pid){
+  ensureSessionExtras(s);
+  const st = s.stats[pid] || {};
+  return {
+    goals: Number(st.goals)||0,
+    assists: Number(st.assists)||0,
+    rating: (st.rating===''||st.rating==null)?null:Number(st.rating),
+    comment: String(st.comment||'')
+  };
+}
+function initials(name){ return String(name||'').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase() || '?'; }
+function teamLabel(team){ return 'Time ' + team; }
+function buildScorers(players, s, team){
+  return players
+    .filter(p => (p.team||'bench') === team)
+    .map(p => ({...p, stat:getStat(s,p.id)}))
+    .filter(p => p.stat.goals > 0)
+    .sort((a,b)=> (b.stat.goals-a.stat.goals) || (b.stat.assists-a.stat.assists) || String(a.name).localeCompare(String(b.name)));
+}
+function buildMeta(players, s){
+  const arr = players
+    .map(p => ({...p, stat:getStat(s,p.id)}))
+    .filter(p => !!(s.attendance && s.attendance[p.id]));
+  const totalGoals = arr.reduce((n,p)=>n+(p.stat.goals||0),0);
+  const totalAssists = arr.reduce((n,p)=>n+(p.stat.assists||0),0);
+  const artilheiro = arr.slice().sort((a,b)=> (b.stat.goals-a.stat.goals) || (b.stat.assists-a.stat.assists))[0];
+  const melhorNota = arr.filter(p => p.stat.rating!=null).sort((a,b)=> (b.stat.rating-a.stat.rating) || (b.stat.goals-a.stat.goals))[0];
+  return { totalGoals, totalAssists, artilheiro, melhorNota };
+}
+function renderList(el, items, title){
+  const wrap = document.getElementById(el);
+  if (!wrap) return;
+  if (!items.length){
+    wrap.innerHTML = '<div class="empty">Ninguém marcou por este time.</div>';
+    return;
+  }
+  wrap.innerHTML = items.map(p => {
+    const g = Number(p.stat.goals)||0;
+    const a = Number(p.stat.assists)||0;
+    const assistTxt = a > 0 ? ('🅰️ ' + a + (a > 1 ? ' assistências' : ' assistência')) : '';
+    const golsTxt = g + ' ' + (g > 1 ? 'gols' : 'gol');
+    return `
+      <div class="row">
+        <div class="avatar"><img src="${escapeHtml(p.foto || FALLBACK)}" alt="${escapeHtml(p.name)}" onerror="this.src=FALLBACK"></div>
+        <div>
+          <div class="pname">${escapeHtml(p.name || '')}</div>
+          <div class="psub">${golsTxt}${assistTxt ? ' • ' + assistTxt : ''}</div>
+        </div>
+        <div class="nums">
+          <div class="goals">${g}⚽</div>
+          <div class="assists">${assistTxt || '&nbsp;'}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+async function downloadStory(){
+  const node = document.getElementById('storyRoot');
+  const canvas = await html2canvas(node, {backgroundColor:null, scale:4, useCORS:true});
+  const a = document.createElement('a');
+  const dateTxt = (document.getElementById('gameDate').textContent || 'pelada').replaceAll('/','-');
+  a.href = canvas.toDataURL('image/png');
+  a.download = 'placar-story-' + dateTxt + '.png';
+  a.click();
+}
+function render(){
+  const players = getPlayers();
+  const sessions = getSessions();
+  const s = getCurrentSession(sessions);
+  if (!s){
+    document.getElementById('footerNote').textContent = 'Nenhuma pelada encontrada no navegador. Abra esta página pelo sistema após carregar a pelada do dia.';
+    return;
+  }
+  ensureSessionExtras(s);
+  const teamAName = localStorage.getItem('ft_teamName_A') || 'Time A';
+  const teamBName = localStorage.getItem('ft_teamName_B') || 'Time B';
+  document.getElementById('teamNameA').textContent = teamAName;
+  document.getElementById('teamNameB').textContent = teamBName;
+  document.getElementById('leftTitle').textContent = 'Gols do ' + teamAName;
+  document.getElementById('rightTitle').textContent = 'Gols do ' + teamBName;
+  document.getElementById('scoreA').textContent = Number(s.score && s.score.A)||0;
+  document.getElementById('scoreB').textContent = Number(s.score && s.score.B)||0;
+  document.getElementById('gameDate').textContent = formatBR(s.date || todayISO());
+  document.getElementById('badgeA').textContent = 'A';
+  document.getElementById('badgeB').textContent = 'B';
+  const scorersA = buildScorers(players, s, 'A');
+  const scorersB = buildScorers(players, s, 'B');
+  renderList('listA', scorersA, teamAName);
+  renderList('listB', scorersB, teamBName);
+
+  // DYNAMIC COLUMNS FOR 3 TEAMS
+  const statsA = buildScorers(players, s, 'A');
+  const statsB = buildScorers(players, s, 'B');
+  const statsC = buildScorers(players, s, 'C');
+
+  const hasTeamC = s.score && typeof s.score.C === 'number' && Number(s.score.C) >= 0 && (statsC.length > 0 || localStorage.getItem('ft_teamName_C'));
+
+  if (hasTeamC) {
+    document.querySelector('.lists').style.gridTemplateColumns = '1fr 1fr 1fr';
+    // Update Scorebox Layout
+    document.querySelector('.scorebox').style.gridTemplateColumns = '1fr 1fr 1fr';
+    document.querySelector('.centerclock').style.display = 'none'; // hide center clock to make room, or change layout
+
+    // Add Team C to scorebox
+    const teamCName = localStorage.getItem('ft_teamName_C') || 'Time C';
+    const headB = document.getElementById('teamHeadB');
+    headB.classList.remove('right');
+
+    const headC = document.createElement('div');
+    headC.className = 'teamhead right';
+    headC.innerHTML = `<div class="teamscore">${Number(s.score.C)||0}</div><div class="teamname">${teamCName}</div><div class="teambadge">C</div>`;
+    document.querySelector('.scorebox').appendChild(headC);
+
+    // Add Team C List
+    const listC = document.createElement('div');
+    listC.className = 'listcard';
+    listC.innerHTML = `<div class="listhead"><div class="listtitle">Gols do ${teamCName}</div><div class="listsub">...</div></div><div class="rows" id="listC"></div>`;
+    document.querySelector('.lists').appendChild(listC);
+
+    renderList('listC', statsC, teamCName);
+  } else {
+    // Keep standard 2-team layout
+    document.getElementById('teamHeadB').classList.add('right');
+  }
+
+  const meta = buildMeta(players, s);
+  const chips = [];
+  chips.push('<div class="chip">Data: ' + formatBR(s.date || todayISO()) + '</div>');
+  chips.push('<div class="chip">Total de gols: ' + meta.totalGoals + '</div>');
+  if (meta.totalAssists > 0) chips.push('<div class="chip">Total de assistências: ' + meta.totalAssists + '</div>');
+  if (meta.artilheiro && (meta.artilheiro.stat.goals||0) > 0) chips.push('<div class="chip">Artilheiro: ' + escapeHtml(meta.artilheiro.name) + ' (' + meta.artilheiro.stat.goals + ')</div>');
+  if (meta.melhorNota && meta.melhorNota.stat.rating != null) chips.push('<div class="chip">Craque: ' + escapeHtml(meta.melhorNota.name) + ' • Nota ' + meta.melhorNota.stat.rating + '</div>');
+  document.getElementById('metaChips').innerHTML = chips.join('');
+  const note = s.notes ? ('Observação: ' + s.notes) : 'Gerado automaticamente pelo Futebol de Terça.';
+  document.getElementById('footerNote').textContent = note;
+}
+render();
+</script>
+</body>
+</html>
