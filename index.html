@@ -908,6 +908,77 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
   .rank-controls{flex-direction:column;align-items:stretch;}
 }
 
+
+
+/* ===== SCORE STORY PANEL ===== */
+#panelScoreStory{background:#071a23}
+.score-story-wrap{display:flex;justify-content:center;padding:8px 0 4px}
+.score-story{
+  width:min(100%,720px);
+  aspect-ratio:9/16;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(73,195,255,.18), transparent 28%),
+    linear-gradient(180deg, #05202b 0%, #062737 26%, #073246 58%, #041d27 100%);
+  border:1px solid #1d5267;
+  border-radius:28px;
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+  overflow:hidden;
+  position:relative;
+  color:#f8fbff;
+}
+.score-story::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg, transparent 0 78px, rgba(255,255,255,.02) 78px 79px),linear-gradient(180deg, transparent 0 62%, rgba(0,0,0,.08) 100%);pointer-events:none}
+.story-top{position:relative;padding:20px 20px 8px;z-index:2}
+.story-brand{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.story-brand img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#ffffff18;border:2px solid #ffffff24}
+.story-brand .t1{font-size:30px;font-weight:1000;line-height:1}
+.story-brand .t2{font-size:13px;color:#8be7ff;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;margin-top:4px}
+.story-scorebox{display:grid;grid-template-columns:1fr 132px 1fr;align-items:center;gap:10px}
+.story-scorebox.three{grid-template-columns:1fr 1fr 1fr}
+.story-teamhead{display:grid;grid-template-columns:54px 1fr 64px;align-items:center;gap:10px;background:linear-gradient(180deg,#f2f5f8,#cfd7de);color:#18222b;border-radius:18px;padding:10px 12px;border:2px solid #8ea7b6;box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}
+.story-teamhead.right{grid-template-columns:64px 1fr 54px}
+.story-badge{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0b4f99;color:#fff;font-weight:1000;border:3px solid #fff;overflow:hidden;font-size:24px}
+.story-teamname{font-size:28px;font-weight:1000;line-height:1;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.story-teamscore{font-size:44px;font-weight:1000;line-height:1;text-align:center;color:#26323c}
+.story-centerclock{background:linear-gradient(180deg,#3d7be8,#265fbe);color:#fff;border-radius:0 0 18px 18px;text-align:center;padding:16px 10px 14px;font-weight:1000;font-size:36px;box-shadow:0 10px 18px rgba(0,0,0,.22);border:2px solid rgba(255,255,255,.14);align-self:start}
+.story-centerclock .sub{font-size:12px;letter-spacing:1.3px;color:#cce1ff;text-transform:uppercase;margin-top:4px}
+.story-meta{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.story-chip{background:#0e4256;border:1px solid #2d738e;color:#d8eff8;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
+.story-main{position:relative;z-index:2;padding:10px 20px 16px;display:grid;grid-template-rows:auto 1fr auto;gap:14px;height:calc(100% - 152px)}
+.story-lists{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.story-lists.three{grid-template-columns:1fr 1fr 1fr}
+.story-listcard{background:linear-gradient(180deg, rgba(9,60,81,.95), rgba(8,46,62,.92));border:1px solid #2a6a83;border-radius:20px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.story-listhead{padding:12px 14px;background:linear-gradient(180deg, rgba(98,228,255,.18), rgba(98,228,255,.06));border-bottom:1px solid #2c718d}
+.story-listtitle{font-size:20px;font-weight:1000;text-transform:uppercase;letter-spacing:.7px}
+.story-listsub{font-size:12px;color:#9ad8ea;font-weight:800;margin-top:2px}
+.story-rows{padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px;min-height:290px}
+.story-row{display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));border:1px solid rgba(140,215,255,.10)}
+.story-avatar{width:56px;height:56px;border-radius:50%;overflow:hidden;background:#173241;border:2px solid rgba(255,255,255,.18)}
+.story-avatar img{width:100%;height:100%;object-fit:cover}
+.story-pname{font-size:20px;font-weight:900;line-height:1.05}
+.story-psub{font-size:12px;color:#9bc9da;margin-top:4px;font-weight:800}
+.story-nums{text-align:right}.story-goals{font-size:30px;font-weight:1000;line-height:1;color:#fff}.story-assists{font-size:12px;color:#9be7ff;font-weight:900;margin-top:4px}
+.story-empty{padding:18px 10px;text-align:center;color:#a4c5d2;font-weight:700}
+.story-pitchwrap{margin-top:auto;border-radius:20px;overflow:hidden;border:1px solid #2b6a3f;background:#0c3417;position:relative;height:220px}
+.story-pitch{position:absolute; inset:0;background:repeating-linear-gradient(90deg, #2f7f1d 0 64px, #6fb21f 64px 128px),linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.08))}
+.story-pitch svg{position:absolute; inset:0; width:100%; height:100%}
+.story-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 20px 20px;position:relative;z-index:2}.story-footnote{font-size:12px;color:#b6d4df;font-weight:700}
+.story-actions{display:flex;gap:8px;flex-wrap:wrap}.story-btn{cursor:pointer;border:none;border-radius:999px;padding:10px 16px;font-weight:1000;letter-spacing:.3px}.story-btn.primary{background:linear-gradient(180deg,#27c0ff,#0d8fd3);color:#fff}.story-btn.light{background:#eef6ff;color:#12314a}.story-watermark{position:absolute;right:20px;bottom:12px;font-size:12px;color:#cfe9f6;opacity:.7;font-weight:800;z-index:2}
+@media (max-width:767px){
+  .score-story-wrap{padding:0}
+  .score-story{width:100%;border-radius:20px}
+  .story-top{padding:16px 14px 8px}
+  .story-brand img{width:40px;height:40px}.story-brand .t1{font-size:22px}.story-brand .t2{font-size:11px}
+  .story-scorebox{grid-template-columns:1fr 92px 1fr;gap:6px}.story-scorebox.three{grid-template-columns:1fr 1fr 1fr}
+  .story-teamhead{grid-template-columns:38px 1fr 44px;padding:7px 8px;border-radius:14px}.story-teamhead.right{grid-template-columns:44px 1fr 38px}
+  .story-badge{width:38px;height:38px;font-size:17px}.story-teamname{font-size:14px}.story-teamscore{font-size:28px}
+  .story-centerclock{font-size:23px;padding:10px 6px 9px}.story-centerclock .sub{font-size:9px}
+  .story-meta{margin-top:8px;gap:6px}.story-chip{font-size:10px;padding:6px 8px}
+  .story-main{padding:8px 14px 12px;height:auto;gap:10px}.story-lists{gap:10px}.story-lists.three{grid-template-columns:1fr}
+  .story-listhead{padding:9px 10px}.story-listtitle{font-size:14px}.story-listsub{font-size:10px}.story-rows{padding:6px;gap:6px;min-height:180px}
+  .story-row{grid-template-columns:34px 1fr auto;padding:6px 8px;border-radius:12px}.story-avatar{width:34px;height:34px}.story-pname{font-size:12px}.story-psub{font-size:9px;margin-top:2px}.story-goals{font-size:18px}.story-assists{font-size:9px}
+  .story-pitchwrap{height:180px}.story-footer{padding:10px 14px 16px;align-items:flex-start;flex-direction:column}.story-footnote{font-size:10px}.story-btn{width:100%;padding:12px 14px}.story-actions{width:100%;display:grid;grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -1484,7 +1555,16 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <tbody id="rankYearTable"></tbody>
 </table>
 </div>
-</div><div class="panel" id="panelHelp">
+</div>
+<div class="panel" id="panelScoreStory">
+  <div class="card">
+    <h4 style="margin:0 0 8px;color:var(--green)">📣 Placar da Pelada</h4>
+    <div class="small" style="margin-bottom:10px">Visual de divulgação no formato Story. Usa a pelada carregada nesta mesma tela.</div>
+    <div id="scoreStoryMount"></div>
+  </div>
+</div>
+
+<div class="panel" id="panelHelp">
 <div class="card">
 <h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> ❓ Ajuda rápida (como usar do começo ao fim)</h4>
 <div class="help-note">Tudo fica salvo no seu navegador (celular/PC). Para usar em outro aparelho, use <strong>Backup</strong> e <strong>Restaurar</strong>.</div>
@@ -1667,6 +1747,7 @@ function showTab(id, btn) {
     if (id === 'panelFinance') view = 'finance';
     if (id === 'panelHelp') view = 'help';
     if (id === 'panelRank') view = 'rank';
+    if (id === 'panelScoreStory') view = 'scorestory';
 
     document.body.dataset.view = view;
 
@@ -1696,6 +1777,10 @@ function showTab(id, btn) {
     }
 
     // atualiza UI do ranking + sess�o (pelada/lan�amentos) quando abrir a aba
+    if (view === 'scorestory') {
+        try { renderScoreStoryPanel(); } catch(e) {}
+    }
+
     if (view === 'rank') {
         try { initFinanceUI(); } catch(e) {}
         try { renderFinance(); } catch(e) {}
@@ -6644,6 +6729,146 @@ function openScoreStory() {
     const url = 'https://tess-workflows-files.storage.googleapis.com/c16b091afcba1ff790c1e9138be7e8878ec7c94e/placar.html?session=' + encodeURIComponent(s.id || s.date || 'current');
     window.open(url, '_blank');
 }
+
+
+
+function formatBRDateScore(iso){
+  if(!iso) return '--/--/----';
+  const s = String(iso).slice(0,10);
+  const p = s.split('-');
+  if (p.length !== 3) return s;
+  return p[2] + '/' + p[1] + '/' + p[0];
+}
+function getStoryPlayerPhoto(p){
+  return (p && (p.photoUrl || p.foto || p.photo)) ? String(p.photoUrl || p.foto || p.photo) : FALLBACK;
+}
+function getSessionPlayerTeamStory(s, pid){
+  try{ return getSessionPlayerTeamSnapshot(s, pid); }catch(e){}
+  const p = (players||[]).find(x => String(x.id) === String(pid));
+  return p && p.team ? p.team : null;
+}
+function buildScorersStory(s, team){
+  return (players||[])
+    .filter(p => getSessionPlayerTeamStory(s, p.id) === team)
+    .map(p => {
+      let st = null;
+      try{ st = getSessionPlayerStats(s, p.id); }catch(e){ st = { goals:0, assists:0, rating:null, comment:'' }; }
+      return { player:p, stat:st||{goals:0,assists:0,rating:null,comment:''} };
+    })
+    .filter(x => Number(x.stat.goals)||0)
+    .sort((a,b) => ((Number(b.stat.goals)||0) - (Number(a.stat.goals)||0)) || ((Number(b.stat.assists)||0) - (Number(a.stat.assists)||0)) || String(a.player.name||'').localeCompare(String(b.player.name||'')));
+}
+function buildStoryMeta(s){
+  const arr = (players||[])
+    .filter(p => s.attendance && s.attendance[p.id])
+    .map(p => {
+      let st = null;
+      try{ st = getSessionPlayerStats(s, p.id); }catch(e){ st = { goals:0, assists:0, rating:null, comment:'' }; }
+      return { player:p, stat:st||{goals:0,assists:0,rating:null,comment:''} };
+    });
+  const totalGoals = arr.reduce((n,x)=>n+(Number(x.stat.goals)||0),0);
+  const totalAssists = arr.reduce((n,x)=>n+(Number(x.stat.assists)||0),0);
+  const artilheiro = arr.slice().sort((a,b)=>((Number(b.stat.goals)||0)-(Number(a.stat.goals)||0))||((Number(b.stat.assists)||0)-(Number(a.stat.assists)||0)))[0] || null;
+  const craque = arr.filter(x => x.stat.rating !== null && x.stat.rating !== undefined && x.stat.rating !== '').sort((a,b)=>((Number(b.stat.rating)||0)-(Number(a.stat.rating)||0))||((Number(b.stat.goals)||0)-(Number(a.stat.goals)||0)))[0] || null;
+  return { totalGoals, totalAssists, artilheiro, craque };
+}
+function renderStoryRows(items){
+  if (!items.length) return '<div class="story-empty">Ninguém marcou por este time.</div>';
+  return items.map(x => {
+    const p = x.player || {};
+    const st = x.stat || {};
+    const g = Number(st.goals)||0;
+    const a = Number(st.assists)||0;
+    return '<div class="story-row">'
+      + '<div class="story-avatar"><img src="'+ escapeHtml(getStoryPlayerPhoto(p)) +'" onerror="this.src=FALLBACK" alt="'+ escapeHtml(String(p.name||'')) +'"></div>'
+      + '<div><div class="story-pname">'+ escapeHtml(String(p.name||'')) +'</div><div class="story-psub">'+ (g + ' ' + (g===1?'gol':'gols') + (a>0 ? ' • 🅰️ ' + a + ' ' + (a===1?'assistência':'assistências') : '')) +'</div></div>'
+      + '<div class="story-nums"><div class="story-goals">'+ g +'⚽</div><div class="story-assists">'+ (a>0 ? ('🅰️ ' + a) : '&nbsp;') +'</div></div>'
+      + '</div>';
+  }).join('');
+}
+async function downloadScoreStoryImage(){
+  const node = document.getElementById('scoreStoryCard');
+  if (!node) return;
+  if (!window.html2canvas) {
+    alert('Biblioteca de imagem ainda carregando. Tente de novo em 1 segundo.');
+    return;
+  }
+  const canvas = await window.html2canvas(node, { backgroundColor:null, scale:4, useCORS:true });
+  const a = document.createElement('a');
+  const dt = (document.getElementById('storyDateSub')||{}).textContent || 'pelada';
+  a.href = canvas.toDataURL('image/png');
+  a.download = 'placar-story-' + String(dt).replaceAll('/','-') + '.png';
+  a.click();
+}
+function renderScoreStoryPanel(){
+  const mount = document.getElementById('scoreStoryMount');
+  if (!mount) return;
+  const s = getCurrentSession();
+  if (!s) {
+    mount.innerHTML = '<div class="small">Carregue uma pelada na aba Campo para visualizar o placar.</div>';
+    return;
+  }
+  try{ ensureSessionExtras(s); }catch(e){}
+  const teamAName = localStorage.getItem('ft_teamName_A') || 'Time A';
+  const teamBName = localStorage.getItem('ft_teamName_B') || 'Time B';
+  const teamCName = localStorage.getItem('ft_teamName_C') || 'Time C';
+  const scorersA = buildScorersStory(s, 'A');
+  const scorersB = buildScorersStory(s, 'B');
+  const scorersC = buildScorersStory(s, 'C');
+  const scoreA = Number((s.score&&s.score.A)||0);
+  const scoreB = Number((s.score&&s.score.B)||0);
+  const scoreC = Number((s.score&&s.score.C)||0);
+  const hasC = (config && Number(config.teamsCount)===3) || scoreC > 0 || scorersC.length > 0;
+  const meta = buildStoryMeta(s);
+  const chips = [];
+  chips.push('<div class="story-chip">Data: ' + formatBRDateScore(s.date || todayISO()) + '</div>');
+  chips.push('<div class="story-chip">Total de gols: ' + meta.totalGoals + '</div>');
+  if (meta.totalAssists > 0) chips.push('<div class="story-chip">Total de assistências: ' + meta.totalAssists + '</div>');
+  if (meta.artilheiro && (Number(meta.artilheiro.stat.goals)||0) > 0) chips.push('<div class="story-chip">Artilheiro: ' + escapeHtml(String(meta.artilheiro.player.name||'')) + ' (' + (Number(meta.artilheiro.stat.goals)||0) + ')</div>');
+  if (meta.craque && meta.craque.stat.rating !== null && meta.craque.stat.rating !== undefined && meta.craque.stat.rating !== '') chips.push('<div class="story-chip">Craque: ' + escapeHtml(String(meta.craque.player.name||'')) + ' • Nota ' + meta.craque.stat.rating + '</div>');
+
+  let scoreTop = '';
+  if (!hasC) {
+    scoreTop = '<div class="story-scorebox">'
+      + '<div class="story-teamhead"><div class="story-badge">A</div><div class="story-teamname">'+ escapeHtml(teamAName) +'</div><div class="story-teamscore">'+ scoreA +'</div></div>'
+      + '<div class="story-centerclock">FINAL<div class="sub" id="storyDateSub">'+ formatBRDateScore(s.date || todayISO()) +'</div></div>'
+      + '<div class="story-teamhead right"><div class="story-teamscore">'+ scoreB +'</div><div class="story-teamname">'+ escapeHtml(teamBName) +'</div><div class="story-badge">B</div></div>'
+      + '</div>';
+  } else {
+    scoreTop = '<div class="story-scorebox three">'
+      + '<div class="story-teamhead"><div class="story-badge">A</div><div class="story-teamname">'+ escapeHtml(teamAName) +'</div><div class="story-teamscore">'+ scoreA +'</div></div>'
+      + '<div class="story-teamhead"><div class="story-badge">B</div><div class="story-teamname">'+ escapeHtml(teamBName) +'</div><div class="story-teamscore">'+ scoreB +'</div></div>'
+      + '<div class="story-teamhead right"><div class="story-teamscore">'+ scoreC +'</div><div class="story-teamname">'+ escapeHtml(teamCName) +'</div><div class="story-badge">C</div></div>'
+      + '</div>'
+      + '<div class="story-meta"><div class="story-chip" id="storyDateSub">Data: '+ formatBRDateScore(s.date || todayISO()) +'</div><div class="story-chip">Final</div></div>';
+  }
+
+  mount.innerHTML = '<div class="score-story-wrap">'
+    + '<div class="score-story" id="scoreStoryCard">'
+    + '<div class="story-top">'
+    + '<div class="story-brand"><img src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Futebol de Terça"><div><div class="t1">Futebol de Terça</div><div class="t2">Placar da Pelada • Story 9:16</div></div></div>'
+    + scoreTop
+    + '<div class="story-meta">' + chips.join('') + '</div>'
+    + '</div>'
+    + '<div class="story-main">'
+    + '<div class="story-lists'+(hasC?' three':'')+'">'
+    + '<div class="story-listcard"><div class="story-listhead"><div class="story-listtitle">Gols do '+ escapeHtml(teamAName) +'</div><div class="story-listsub">Só aparece quem marcou gol</div></div><div class="story-rows">'+ renderStoryRows(scorersA) +'</div></div>'
+    + '<div class="story-listcard"><div class="story-listhead"><div class="story-listtitle">Gols do '+ escapeHtml(teamBName) +'</div><div class="story-listsub">Assistências aparecem se existirem</div></div><div class="story-rows">'+ renderStoryRows(scorersB) +'</div></div>'
+    + (hasC ? '<div class="story-listcard"><div class="story-listhead"><div class="story-listtitle">Gols do '+ escapeHtml(teamCName) +'</div><div class="story-listsub">Só aparece quem marcou gol</div></div><div class="story-rows">'+ renderStoryRows(scorersC) +'</div></div>' : '')
+    + '</div>'
+    + '<div class="story-pitchwrap"><div class="story-pitch"></div><svg viewBox="0 0 700 280" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="white" stroke-width="3" opacity="0.95"><rect x="24" y="18" width="652" height="244" rx="8"></rect><line x1="350" y1="18" x2="350" y2="262"></line><circle cx="350" cy="140" r="36"></circle><circle cx="350" cy="140" r="2" fill="white"></circle><rect x="24" y="74" width="94" height="132"></rect><rect x="582" y="74" width="94" height="132"></rect><rect x="24" y="102" width="34" height="76"></rect><rect x="642" y="102" width="34" height="76"></rect></g></svg></div>'
+    + '</div>'
+    + '<div class="story-footer"><div class="story-footnote">'+ escapeHtml(s.notes ? ('Observação: ' + s.notes) : 'Gerado automaticamente pelo Futebol de Terça.') +'</div><div class="story-actions"><button class="story-btn primary" type="button" onclick="downloadScoreStoryImage()">Baixar imagem</button></div></div>'
+    + '<div class="story-watermark">Futebol de Terça</div>'
+    + '</div></div>';
+}
+
+(function loadHtml2CanvasInline(){
+  if (window.html2canvas) return;
+  const sc = document.createElement('script');
+  sc.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+  document.head.appendChild(sc);
+})();
 
 </script></body>
 </html>
