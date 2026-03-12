@@ -1099,7 +1099,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="tab-btn active" onclick="showTab('panelField',this)">⚽ Campo</button>
 <button class="tab-btn" onclick="showTab('panelCSV',this)">📎 CSV</button>
 <button class="tab-btn" onclick="showTab('panelFinance',this)">💰 Financeiro</button><button class="tab-btn" id="tabRank" onclick="showTab('panelRank', this)" type="button">📊 Ranking / Artilharia</button>
-<button class="tab-btn" id="tabPlacar" onclick="showTab('panelPlacar', this)" type="button">📣 Placar</button><button class="tab-btn" id="tabHelp" onclick="showTab('panelHelp', this)" type="button">❓ Ajuda</button></div>
+<button class="tab-btn" id="tabPlacar" onclick="window.open('placar.html','_blank')" type="button">📣 Placar</button><button class="tab-btn" id="tabHelp" onclick="showTab('panelHelp', this)" type="button">❓ Ajuda</button></div>
 <div class="app-body">
 <!-- CADASTRO -->
 <div class="panel" id="panelCadastro">
@@ -1260,7 +1260,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="btn btn-lite-red" onclick="deleteCurrentSession()" type="button">Excluir pelada (teste)</button>
 <button class="btn btn-lite-green" onclick="confirmScheduledAttendance('confirmed', true)" type="button">Confirmados (Vem) → Presentes</button>
 <button class="btn btn-lite-green" onclick="sessionMarkAll(true)" type="button">Marcar todos presentes</button>
-<button class="btn btn-primary" onclick="openScoreStory()" type="button">📣 Placar</button>
+
 </div>
 <div class="small" id="sessionInfoField" style="margin:8px 0"></div>
 <div class="hr"></div>
