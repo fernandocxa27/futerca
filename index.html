@@ -1099,7 +1099,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="tab-btn active" onclick="showTab('panelField',this)">⚽ Campo</button>
 <button class="tab-btn" onclick="showTab('panelCSV',this)">📎 CSV</button>
 <button class="tab-btn" onclick="showTab('panelFinance',this)">💰 Financeiro</button><button class="tab-btn" id="tabRank" onclick="showTab('panelRank', this)" type="button">📊 Ranking / Artilharia</button>
-<button class="tab-btn" id="tabPlacar" onclick="window.open('placar.html','_blank')" type="button">📣 Placar</button><button class="tab-btn" id="tabHelp" onclick="showTab('panelHelp', this)" type="button">❓ Ajuda</button></div>
+<button class="tab-btn" id="tabPlacar" onclick="abrirPlacar()" type="button">📣 Placar</button><button class="tab-btn" id="tabHelp" onclick="showTab('panelHelp', this)" type="button">❓ Ajuda</button></div>
 <div class="app-body">
 <!-- CADASTRO -->
 <div class="panel" id="panelCadastro">
@@ -7038,89 +7038,7 @@ function embRenderRows(list) {
             +'</div>';
     }).join('');
 }
-function buildPlacarStory() {
-    var mount = document.getElementById('embPlacarMount');
-    if (!mount) return;
-    var s = null;
-    try { s = getCurrentSession(); } catch(e){}
-    if (!s) {
-        mount.innerHTML = '<div class="small" style="padding:20px;color:#8acbde;">Carregue uma pelada na aba Campo para ver o placar.</div>';
-        return;
-    }
-    try { ensureSessionExtras(s); } catch(e){}
 
-    var tA = localStorage.getItem('ft_teamName_A')||'Time A';
-    var tB = localStorage.getItem('ft_teamName_B')||'Time B';
-    var tC = localStorage.getItem('ft_teamName_C')||'Time C';
-    var scA = Number((s.score&&s.score.A)||0);
-    var scB = Number((s.score&&s.score.B)||0);
-    var scC = Number((s.score&&s.score.C)||0);
-    var lA = embGetScorers(s,'A');
-    var lB = embGetScorers(s,'B');
-    var lC = embGetScorers(s,'C');
-    var cfg2 = {}; try { cfg2 = config||{}; } catch(e){}
-    var hasC = Number(cfg2.teamsCount)===3 || scC>0 || lC.length>0;
-    var meta = embGetMeta(s);
-
-    var chips = '';
-    chips += '<div class="emb-chip">📅 '+embFmtDate(s.date)+'</div>';
-    chips += '<div class="emb-chip">⚽ '+meta.tg+' gol'+(meta.tg!==1?'s':'')+'</div>';
-    if (meta.ta>0) chips += '<div class="emb-chip">🅰️ '+meta.ta+'</div>';
-    if (meta.art&&(Number(meta.art.st.goals)||0)>0) chips += '<div class="emb-chip">🏅 '+embEsc(meta.art.p.name)+' ('+meta.art.st.goals+')</div>';
-    if (meta.cra&&meta.cra.st.rating!=null) chips += '<div class="emb-chip">⭐ '+embEsc(meta.cra.p.name)+' • '+meta.cra.st.rating+'</div>';
-
-    var scorebox = '';
-    if (!hasC) {
-        scorebox = '<div class="emb-scorebox">'
-            +'<div class="emb-teamcard">'
-              +'<div class="emb-team-badge">A</div>'
-              +'<div class="emb-team-name">'+embEsc(tA)+'</div>'
-              +'<div class="emb-team-score">'+scA+'</div>'
-            +'</div>'
-            +'<div class="emb-clock">FINAL<div class="emb-clock-sub">'+embFmtDate(s.date)+'</div></div>'
-            +'<div class="emb-teamcard right">'
-              +'<div class="emb-team-badge">B</div>'
-              +'<div class="emb-team-name">'+embEsc(tB)+'</div>'
-              +'<div class="emb-team-score">'+scB+'</div>'
-            +'</div>'
-            +'</div>';
-    } else {
-        scorebox = '<div class="emb-scorebox three">'
-            +'<div class="emb-teamcard"><div class="emb-team-badge">A</div><div class="emb-team-name">'+embEsc(tA)+'</div><div class="emb-team-score">'+scA+'</div></div>'
-            +'<div class="emb-teamcard"><div class="emb-team-badge">B</div><div class="emb-team-name">'+embEsc(tB)+'</div><div class="emb-team-score">'+scB+'</div></div>'
-            +'<div class="emb-teamcard"><div class="emb-team-badge">C</div><div class="emb-team-name">'+embEsc(tC)+'</div><div class="emb-team-score">'+scC+'</div></div>'
-            +'</div>';
-    }
-
-    var listsCls = 'emb-lists'+(hasC?' three':'');
-    var lists = '<div class="'+listsCls+'">'
-        +'<div class="emb-list"><div class="emb-list-hd"><div class="emb-list-title">Gols do '+embEsc(tA)+'</div><div class="emb-list-sub">Só aparece quem marcou</div></div><div class="emb-rows">'+embRenderRows(lA)+'</div></div>'
-        +'<div class="emb-list"><div class="emb-list-hd"><div class="emb-list-title">Gols do '+embEsc(tB)+'</div><div class="emb-list-sub">Assistências se existirem</div></div><div class="emb-rows">'+embRenderRows(lB)+'</div></div>'
-        +(hasC?'<div class="emb-list"><div class="emb-list-hd"><div class="emb-list-title">Gols do '+embEsc(tC)+'</div><div class="emb-list-sub">Só aparece quem marcou</div></div><div class="emb-rows">'+embRenderRows(lC)+'</div></div>':'')
-        +'</div>';
-
-    var pitch = '<div class="emb-pitch-wrap"><div class="emb-pitch-bg">'
-        +'<svg viewBox="0 0 700 200" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="white" stroke-width="3" opacity="0.9"><rect x="18" y="12" width="664" height="176" rx="7"/><line x1="350" y1="12" x2="350" y2="188"/><circle cx="350" cy="100" r="30"/><circle cx="350" cy="100" r="2.5" fill="white"/><rect x="18" y="56" width="82" height="88"/><rect x="600" y="56" width="82" height="88"/><rect x="18" y="72" width="28" height="56"/><rect x="654" y="72" width="28" height="56"/></g></svg>'
-        +'</div></div>';
-
-    var notes = s.notes ? embEsc(s.notes) : 'Gerado pelo Futebol de Terça';
-
-    var storyHTML = '<div class="emb-story" id="embStoryCard">'
-        +'<div class="emb-top">'
-          +'<div class="emb-brand">'
-            +'<img src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="" onerror="this.style.display=\'none\'">'
-            +'<div><div class="emb-brand-t1">Futebol de Terça</div><div class="emb-brand-t2">Placar da Pelada · Story 9:16</div></div>'
-          +'</div>'
-          +scorebox
-          +'<div class="emb-chips">'+chips+'</div>'
-        +'</div>'
-        +'<div class="emb-main">'+lists+pitch+'</div>'
-        +'<div class="emb-story-footer"><div class="emb-notes">'+notes+'</div><div class="emb-wm">⚽ futerca2024</div></div>'
-        +'</div>'
-        +'<div class="emb-dl-wrap"><button class="emb-dl-btn" type="button" onclick="downloadEmbStory()">📥 Baixar Story (Alta Qualidade)</button></div>';
-
-    mount.innerHTML = storyHTML;
-}
 
 async function downloadEmbStory() {
     var card = document.getElementById('embStoryCard');
@@ -7235,6 +7153,149 @@ async function downloadPlacarFixed() {
   a.download = `placar-story-pelada.png`;
   a.click();
 }
+
+
+
+/* === PLACAR FINAL === */
+function abrirPlacar() {
+  // coleta dados antes de abrir janela
+  var sess = null;
+  try { sess = getCurrentSession(); } catch(e) {}
+  if (!sess) { alert('Carregue uma pelada na aba Campo primeiro.'); return; }
+  try { ensureSessionExtras(sess); } catch(e) {}
+
+  var tA = localStorage.getItem('ft_teamName_A') || 'Time A';
+  var tB = localStorage.getItem('ft_teamName_B') || 'Time B';
+  var scA = Number((sess.score && sess.score.A) || 0);
+  var scB = Number((sess.score && sess.score.B) || 0);
+  var dataISO = sess.date || '';
+  var dataBR = dataISO ? dataISO.slice(0,10).split('-').reverse().join('/') : '';
+  var obs = sess.notes || 'Futebol de Terça • gerado automaticamente';
+  var LOGO = 'https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png';
+  var FAV = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='50' fill='%23122a36'/%3E%3Ccircle cx='50' cy='35' r='16' fill='%23cce0ec'/%3E%3Crect x='22' y='58' width='56' rx='12' height='24' fill='%23cce0ec'/%3E%3C/svg%3E";
+
+  function getStat(pid) {
+    try { return getSessionPlayerStats(sess, pid); } catch(e) {
+      var r = (sess.stats && sess.stats[pid]) || {};
+      return { goals: Number(r.goals)||0, assists: Number(r.assists)||0, rating: (r.rating===''||r.rating==null)?null:Number(r.rating) };
+    }
+  }
+  function getTeam(pid) {
+    try { return getSessionPlayerTeamSnapshot(sess, pid); } catch(e) {
+      var p = (players||[]).find(function(x){return String(x.id)===String(pid);});
+      return p && p.team ? p.team : null;
+    }
+  }
+  function foto(p) {
+    var u = (p && (p.photoUrl||p.foto||p.photo)) || '';
+    return u ? String(u).trim() : FAV;
+  }
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // calcula totais
+  var totalGols = 0, artilheiro = null, craque = null;
+  (players||[]).forEach(function(p) {
+    var st = getStat(p.id);
+    totalGols += Number(st.goals)||0;
+    if ((Number(st.goals)||0) > 0 && (!artilheiro || (Number(st.goals)||0) > (Number(artilheiro.g)||0)))
+      artilheiro = { nome: p.name, g: st.goals };
+    if (st.rating != null && st.rating !== '' && (!craque || Number(st.rating) > Number(craque.r||0)))
+      craque = { nome: p.name, r: st.rating };
+  });
+
+  // monta linhas de gols por time
+  function linhasTime(letra) {
+    var arr = (players||[])
+      .filter(function(p){ return getTeam(p.id) === letra; })
+      .map(function(p){ return { p:p, st:getStat(p.id) }; })
+      .filter(function(x){ return (Number(x.st.goals)||0) > 0; })
+      .sort(function(a,b){ return (b.st.goals - a.st.goals) || (b.st.assists - a.st.assists); });
+    if (!arr.length) return '<div style="padding:14px 8px;text-align:center;color:#5a92a4;font-size:11px;font-weight:700;">Nenhum gol marcado.</div>';
+    return arr.map(function(x) {
+      var g = Number(x.st.goals)||0, a = Number(x.st.assists)||0;
+      return '<div style="display:grid;grid-template-columns:34px 1fr auto;gap:6px;align-items:center;padding:5px 6px;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid rgba(140,215,255,.1);margin-bottom:5px;">'
+        + '<img src="'+esc(foto(x.p))+'" onerror="this.src=\''+FAV+'\'" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.2);">'
+        + '<div><div style="font-size:11px;font-weight:900;color:#fff;">'+esc(x.p.name||'')+'</div>'
+        + '<div style="font-size:9px;color:#8ecadb;font-weight:700;">'+g+(g===1?' gol':' gols')+(a>0?' · Ass '+a:'')+'</div></div>'
+        + '<div style="font-size:17px;font-weight:900;color:#fff;">'+g+'⚽</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // chips
+  var chips = '<span style="background:#0e4256;border:1px solid #2d738e;color:#d8eff8;border-radius:999px;padding:4px 10px;font-size:9px;font-weight:900;text-transform:uppercase;">📅 '+esc(dataBR)+'</span> '
+    + '<span style="background:#0e4256;border:1px solid #2d738e;color:#d8eff8;border-radius:999px;padding:4px 10px;font-size:9px;font-weight:900;text-transform:uppercase;">⚽ '+totalGols+' gol'+(totalGols!==1?'s':'')+'</span>';
+  if (artilheiro) chips += ' <span style="background:#0e4256;border:1px solid #2d738e;color:#d8eff8;border-radius:999px;padding:4px 10px;font-size:9px;font-weight:900;text-transform:uppercase;">🏅 '+esc(artilheiro.nome)+' ('+artilheiro.g+')</span>';
+  if (craque) chips += ' <span style="background:#0e4256;border:1px solid #2d738e;color:#d8eff8;border-radius:999px;padding:4px 10px;font-size:9px;font-weight:900;text-transform:uppercase;">⭐ '+esc(craque.nome)+' · '+craque.r+'</span>';
+
+  var htmlOut = '<!doctype html><html lang="pt-br"><head>'
+    + '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+    + '<title>Placar - Futebol de Terça</title>'
+    + '<style>'
+    + '*{box-sizing:border-box;margin:0;padding:0}'
+    + 'body{min-height:100vh;background:#0a1520;display:flex;flex-direction:column;align-items:center;padding:20px 10px 50px;font-family:system-ui,sans-serif}'
+    + '#card{width:min(100%,420px);aspect-ratio:9/16;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#041d2a 0%,#062636 40%,#051a25 100%);color:#fff;box-shadow:0 20px 50px rgba(0,0,0,.5);display:flex;flex-direction:column;position:relative}'
+    + '.glow{position:absolute;top:0;left:0;right:0;height:280px;background:radial-gradient(ellipse at top,rgba(50,180,255,.22),transparent);pointer-events:none}'
+    + '.btn{margin-top:20px;width:min(100%,420px);padding:15px;border-radius:999px;border:none;background:linear-gradient(135deg,#27c0ff,#0d8fd3);color:#fff;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 6px 20px rgba(0,120,200,.3)}'
+    + '</style></head><body>'
+    + '<div id="card">'
+    +   '<div class="glow"></div>'
+    +   '<div style="padding:18px 18px 12px;position:relative;z-index:1;">'
+    +     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">'
+    +       '<img src="'+LOGO+'" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.25);" onerror="this.style.display=\'none\'">'
+    +       '<div><div style="font-size:22px;font-weight:900;">Futebol de Terça</div>'
+    +       '<div style="font-size:10px;color:#8be7ff;font-weight:800;letter-spacing:1px;text-transform:uppercase;">Placar da Pelada · Story 9:16</div></div>'
+    +     '</div>'
+    +     '<div style="display:grid;grid-template-columns:1fr 90px 1fr;gap:8px;align-items:center;">'
+    +       '<div style="background:linear-gradient(180deg,#eef2f5,#d5dde4);color:#0f172a;border-radius:14px;padding:10px 8px;text-align:center;border:2px solid #a8b6c4;">'
+    +         '<div style="width:32px;height:32px;border-radius:50%;background:#1d4ed8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;margin:0 auto 4px;border:2px solid #fff;">A</div>'
+    +         '<div style="font-size:12px;font-weight:900;text-transform:uppercase;line-height:1;">'+esc(tA)+'</div>'
+    +         '<div style="font-size:36px;font-weight:900;line-height:1;margin-top:2px;">'+scA+'</div></div>'
+    +       '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">'
+    +         '<div style="background:linear-gradient(180deg,#2563eb,#1d4ed8);padding:10px 12px;border-radius:12px;font-size:18px;font-weight:900;border:1px solid rgba(255,255,255,.2);">FINAL</div>'
+    +         '<div style="font-size:11px;color:#9bc5ff;font-weight:700;">'+esc(dataBR)+'</div></div>'
+    +       '<div style="background:linear-gradient(180deg,#eef2f5,#d5dde4);color:#0f172a;border-radius:14px;padding:10px 8px;text-align:center;border:2px solid #a8b6c4;">'
+    +         '<div style="width:32px;height:32px;border-radius:50%;background:#1d4ed8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;margin:0 auto 4px;border:2px solid #fff;">B</div>'
+    +         '<div style="font-size:12px;font-weight:900;text-transform:uppercase;line-height:1;">'+esc(tB)+'</div>'
+    +         '<div style="font-size:36px;font-weight:900;line-height:1;margin-top:2px;">'+scB+'</div></div>'
+    +     '</div>'
+    +     '<div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:10px;">'+chips+'</div>'
+    +   '</div>'
+    +   '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;flex:1;min-height:0;position:relative;z-index:1;">'
+    +     '<div style="background:linear-gradient(180deg,rgba(8,52,70,.96),rgba(6,36,50,.92));border:1px solid #1d6278;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;">'
+    +       '<div style="padding:8px 10px;background:linear-gradient(180deg,rgba(80,210,255,.18),rgba(80,210,255,.05));border-bottom:1px solid #1d6278;">'
+    +         '<div style="font-size:12px;font-weight:900;text-transform:uppercase;color:#fff;">'+esc(tA)+'</div>'
+    +         '<div style="font-size:9px;color:#8acbde;font-weight:700;">Marcadores</div></div>'
+    +       '<div style="padding:6px;overflow-y:auto;flex:1;">'+linhasTime('A')+'</div></div>'
+    +     '<div style="background:linear-gradient(180deg,rgba(8,52,70,.96),rgba(6,36,50,.92));border:1px solid #1d6278;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;">'
+    +       '<div style="padding:8px 10px;background:linear-gradient(180deg,rgba(80,210,255,.18),rgba(80,210,255,.05));border-bottom:1px solid #1d6278;">'
+    +         '<div style="font-size:12px;font-weight:900;text-transform:uppercase;color:#fff;">'+esc(tB)+'</div>'
+    +         '<div style="font-size:9px;color:#8acbde;font-weight:700;">Marcadores</div></div>'
+    +       '<div style="padding:6px;overflow-y:auto;flex:1;">'+linhasTime('B')+'</div></div>'
+    +   '</div>'
+    +   '<div style="margin:10px 16px 0;border-radius:12px;overflow:hidden;border:1px solid #2a6035;height:75px;position:relative;flex-shrink:0;background:repeating-linear-gradient(90deg,#2c7519 0 40px,#5bae17 40px 80px);">'
+    +     '<svg viewBox="0 0 700 180" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;"><g fill="none" stroke="white" stroke-width="2.5" opacity="0.9"><rect x="16" y="10" width="668" height="160" rx="6"/><line x1="350" y1="10" x2="350" y2="170"/><circle cx="350" cy="90" r="28"/><circle cx="350" cy="90" r="2.5" fill="white"/><rect x="16" y="50" width="76" height="80"/><rect x="608" y="50" width="76" height="80"/></g></svg>'
+    +   '</div>'
+    +   '<div style="padding:6px 16px 12px;font-size:10px;color:#5b8799;font-weight:700;text-align:center;flex-shrink:0;position:relative;z-index:1;">'+esc(obs)+'</div>'
+    + '</div>'
+    + '<button class="btn" onclick="baixar()">📥 Baixar Story (Alta Qualidade)</button>'
+    + '<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"><\/script>'
+    + '<script>async function baixar(){'
+    +   'if(!window.html2canvas){setTimeout(baixar,600);return;}'
+    +   'var cv=await html2canvas(document.getElementById("card"),{scale:4,useCORS:true,backgroundColor:"#041d2a"});'
+    +   'var a=document.createElement("a");a.href=cv.toDataURL("image/png");a.download="placar.png";a.click();'
+    + '}<\/script>'
+    + '</body></html>';
+
+  var w = window.open('', '_blank');
+  if (!w) { alert('Permita pop-ups para abrir o placar.'); return; }
+  w.document.open();
+  w.document.write(htmlOut);
+  w.document.close();
+}
+/* === FIM PLACAR FINAL === */
 
 </script></body>
 </html>
