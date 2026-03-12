@@ -1649,13 +1649,28 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 </div>
 
 
-<div class="panel" id="panelPlacar">
-  <div class="card">
-    <h4 style="margin:0 0 6px;color:var(--green)">📣 Placar da Pelada</h4>
-    <div class="small" style="margin-bottom:10px">Arte Story gerada com os dados da pelada carregada.</div>
-    <div id="embPlacarMount" style="display:flex;justify-content:center;"></div>
+
+<div class="panel" id="panelPlacar" style="padding: 0; margin-top: 10px;">
+  <!-- Container que ignora o card e ocupa a largura total -->
+  <div style="width: 100%; display: flex; flex-direction: column; align-items: center; padding: 20px 10px;">
+
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h4 style="margin: 0 0 5px; color: var(--green); font-size: 1.2rem;">📣 Placar da Pelada</h4>
+      <div style="color: #666; font-size: 0.9rem;">Arte Story gerada com os dados da pelada.</div>
+    </div>
+
+    <!-- O Placar Renderizado -->
+    <div id="placarCardFixed"></div>
+
+    <!-- O Botão Embaixo -->
+    <div style="width: 100%; max-width: 420px; margin-top: 20px;">
+      <button onclick="downloadPlacarFixed()" style="width: 100%; padding: 15px; border-radius: 999px; border: none; background: linear-gradient(180deg, #27c0ff, #0d8fd3); color: #fff; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.15);">
+        📥 Baixar Story (Alta Qualidade)
+      </button>
+    </div>
   </div>
 </div>
+
 <div class="panel" id="panelHelp">
 <div class="card">
 <h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> ❓ Ajuda rápida (como usar do começo ao fim)</h4>
@@ -7125,6 +7140,101 @@ async function downloadEmbStory() {
         document.head.appendChild(sc);
     }
 })();
+
+
+function renderPlacarFixed() {
+  const mount = document.getElementById('placarCardFixed');
+  if(!mount) return;
+
+  let s = null; 
+  try { s = getCurrentSession(); } catch(e){}
+
+  if(!s){
+    mount.innerHTML = '<div style="padding:40px; text-align:center; color:#555; background:#fff; border-radius:12px; border:1px dashed #ccc;">Carregue uma pelada na aba Campo primeiro.</div>';
+    return;
+  }
+
+  const teamA = localStorage.getItem('ft_teamName_A') || 'Time A';
+  const teamB = localStorage.getItem('ft_teamName_B') || 'Time B';
+  const scA = Number((s.score && s.score.A) || 0);
+  const scB = Number((s.score && s.score.B) || 0);
+  const dateStr = s.date ? s.date.slice(0,10).split('-').reverse().join('/') : '--/--/----';
+
+  mount.innerHTML = `
+  <div id="capturePlacarNode" style="width: min(100vw - 40px, 420px); aspect-ratio: 9/16; background: linear-gradient(180deg, #041d2a 0%, #062636 40%, #051a25 100%); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); position: relative; overflow: hidden; color: #fff; display: flex; flex-direction: column;">
+
+    <!-- Efeito luminoso topo -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 300px; background: radial-gradient(ellipse at top, rgba(50,180,255,0.25), transparent); pointer-events: none;"></div>
+
+    <!-- Cabeçalho -->
+    <div style="padding: 20px; z-index: 1;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+        <img src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2);">
+        <div>
+          <div style="font-size: 22px; font-weight: 1000; line-height: 1;">Futebol de Terça</div>
+          <div style="color: #8be7ff; font-size: 10px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Placar da Pelada</div>
+        </div>
+      </div>
+
+      <!-- Box do Placar Central -->
+      <div style="display: grid; grid-template-columns: 1fr 100px 1fr; gap: 10px; align-items: center;">
+        <div style="background: linear-gradient(180deg, #f0f4f7, #e1e7ed); border-radius: 14px; padding: 10px; text-align: center; color: #1a2633; border: 2px solid #a8b6c4;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#1d4ed8; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:900; margin:0 auto 4px; border:2px solid #fff;">A</div>
+          <div style="font-weight: 800; font-size: 13px; text-transform: uppercase; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${teamA}</div>
+          <div style="font-size: 38px; font-weight: 1000; line-height: 1;">${scA}</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <div style="background: linear-gradient(180deg, #2563eb, #1d4ed8); padding: 10px 14px; border-radius: 12px; font-weight: 900; font-size: 18px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">FINAL</div>
+          <div style="font-size: 11px; color: #9bc5ff; margin-top: 6px; font-weight: 700;">${dateStr}</div>
+        </div>
+
+        <div style="background: linear-gradient(180deg, #f0f4f7, #e1e7ed); border-radius: 14px; padding: 10px; text-align: center; color: #1a2633; border: 2px solid #a8b6c4;">
+          <div style="width:32px; height:32px; border-radius:50%; background:#1d4ed8; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:900; margin:0 auto 4px; border:2px solid #fff;">B</div>
+          <div style="font-weight: 800; font-size: 13px; text-transform: uppercase; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${teamB}</div>
+          <div style="font-size: 38px; font-weight: 1000; line-height: 1;">${scB}</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex: 1; padding: 0 20px;">
+        <div style="width: 100%; height: 100%; background: rgba(0,0,0,0.1); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #7aa7b8; font-size: 12px;">⚽ Lista de Gols ficará aqui</div>
+    </div>
+
+    <!-- Campo / Footer -->
+    <div style="padding: 15px 20px;">
+      <div style="width: 100%; height: 90px; background: repeating-linear-gradient(90deg, #2c7519 0 40px, #5bae17 40px 80px); border-radius: 12px; border: 1px solid #1a4f26; position: relative;">
+          <div style="position:absolute; top:50%; left:50%; width:40px; height:40px; border:2px solid rgba(255,255,255,0.7); border-radius:50%; transform:translate(-50%,-50%);"></div>
+          <div style="position:absolute; top:0; bottom:0; left:50%; width:2px; background:rgba(255,255,255,0.7); transform:translateX(-50%);"></div>
+      </div>
+      <div style="text-align: center; font-size: 10px; color: #5b8799; font-weight: 700; margin-top: 10px;">${s.notes ? s.notes : 'Gerado automaticamente pelo sistema'}</div>
+    </div>
+  </div>`;
+}
+
+async function downloadPlacarFixed() {
+  const node = document.getElementById('capturePlacarNode');
+  if(!node){ alert('Gere o placar.'); return; }
+
+  if(!window.html2canvas) {
+      alert('Carregando biblioteca de imagem... tente novamente em 2 segundos.');
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+      document.head.appendChild(s);
+      return;
+  }
+
+  const canvas = await html2canvas(node, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: '#041d2a'
+  });
+
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `placar-story-pelada.png`;
+  a.click();
+}
 
 </script></body>
 </html>
