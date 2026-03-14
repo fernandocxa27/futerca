@@ -1062,6 +1062,35 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
   .emb-nums .emb-goals{font-size:19px}.emb-nums .emb-ast{font-size:9px}
 }
 
+
+/* ===== AO VIVO ===== */
+#panelLive .card{margin-bottom:12px}
+.live-score-strip{display:grid;grid-template-columns:1fr 160px 1fr;gap:10px;align-items:center;margin-top:12px}
+.live-score-strip .box{background:linear-gradient(180deg,#0b4f99,#083a75);color:#fff;border-radius:14px;padding:12px;text-align:center}
+.live-score-strip .lb{font-size:.78rem;font-weight:900;letter-spacing:.5px}
+.live-score-strip .sc{font-size:2.2rem;font-weight:1000;line-height:1;margin-top:4px}
+.live-score-strip .mid{background:#0f172a;color:#fff;border-radius:14px;padding:12px;text-align:center;font-size:1.8rem;font-weight:1000}
+.live-form-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.live-quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px;margin-bottom:10px}
+#liveTimeline{display:flex;flex-direction:column;gap:8px}
+.live-empty{padding:14px;border:1px dashed #cbd5e1;background:#f8fafc;border-radius:12px;color:#64748b;text-align:center}
+.live-item{display:grid;grid-template-columns:72px 44px 1fr auto;gap:10px;align-items:center;background:#0f1e2d;color:#fff;padding:10px 12px;border-radius:14px}
+.live-item .m{font-weight:1000;color:#93c5fd;text-align:center}
+.live-item img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.18)}
+.live-item .tp{font-size:.72rem;font-weight:900;color:#93c5fd;text-transform:uppercase}
+.live-item .ds{font-size:.96rem;font-weight:800;line-height:1.15}
+.live-item .nt{font-size:.78rem;color:#cbd5e1;margin-top:4px}
+.live-item .del{border:none;background:#7f1d1d;color:#fff;padding:8px 10px;border-radius:10px;cursor:pointer}
+.live-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:.75rem;font-weight:900}
+.live-pill.idle{background:#e2e8f0;color:#334155}.live-pill.running{background:#dcfce7;color:#166534}.live-pill.paused{background:#fef3c7;color:#92400e}.live-pill.ended{background:#fee2e2;color:#b91c1c}
+@media (max-width:767px){
+  .live-score-strip{grid-template-columns:1fr}
+  .live-form-grid{grid-template-columns:1fr 1fr}
+  .live-quick-grid{grid-template-columns:1fr 1fr}
+  .live-item{grid-template-columns:56px 40px 1fr}
+  .live-item .del{grid-column:1/-1}
+}
+
 </style>
 </head>
 <body>
@@ -1099,7 +1128,7 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
 <button class="tab-btn active" onclick="showTab('panelField',this)">⚽ Campo</button>
 <button class="tab-btn" onclick="showTab('panelCSV',this)">📎 CSV</button>
 <button class="tab-btn" onclick="showTab('panelFinance',this)">💰 Financeiro</button><button class="tab-btn" id="tabRank" onclick="showTab('panelRank', this)" type="button">📊 Ranking / Artilharia</button>
-<button class="tab-btn" id="tabPlacar" onclick="abrirPlacar()" type="button">📣 Placar</button><button class="tab-btn" id="tabHelp" onclick="showTab('panelHelp', this)" type="button">❓ Ajuda</button></div>
+<button class="tab-btn" id="tabPlacar" onclick="abrirPlacar()" type="button">📣 Placar</button><button class="tab-btn" id="tabLive" onclick="showTab('panelLive', this)" type="button">🔴 AO VIVO</button><button class="tab-btn" id="tabHelp" onclick="showTab('panelHelp', this)" type="button">❓ Ajuda</button></div>
 <div class="app-body">
 <!-- CADASTRO -->
 <div class="panel" id="panelCadastro">
@@ -1671,6 +1700,85 @@ label { font-size: 0.8rem; font-weight: 600; color: #555; display: block; margin
   </div>
 </div>
 
+<div class="panel" id="panelLive">
+<div class="card">
+  <h4>🔴 AO VIVO</h4>
+  <div class="small">Registre eventos em tempo real da pelada carregada.</div>
+  <div id="liveStatusBar" style="margin-top:10px"></div>
+  <div class="live-score-strip">
+    <div class="box"><div class="lb">TIME A</div><div class="sc" id="liveScoreA">0</div></div>
+    <div class="mid"><div id="liveClock">00:00</div></div>
+    <div class="box"><div class="lb">TIME B</div><div class="sc" id="liveScoreB">0</div></div>
+  </div>
+  <div class="btn-row" style="flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="liveStartGame()" type="button">▶ Iniciar</button>
+    <button class="btn btn-outline" onclick="livePauseGame()" type="button">⏸ Pausar</button>
+    <button class="btn btn-outline" onclick="liveResumeGame()" type="button">⏯ Retomar</button>
+    <button class="btn btn-danger" onclick="liveEndGame()" type="button">⛔ Encerrar</button>
+    <button class="btn btn-outline" onclick="liveResetGame()" type="button">🗑 Resetar</button>
+  </div>
+</div>
+
+<div class="card">
+  <h4>⚡ Registrar evento</h4>
+  <div class="live-form-grid">
+    <div class="form-group">
+      <label>Evento</label>
+      <select id="liveEventType" onchange="renderLiveFormExtras()">
+        <option value="goal">⚽ Gol</option>
+        <option value="assist">🎯 Assistência</option>
+        <option value="save">🧤 Defesa difícil</option>
+        <option value="owngoal">🥅 Gol contra</option>
+        <option value="nutmeg">🪄 Caneta</option>
+        <option value="rainbow">🎩 Chapéu</option>
+        <option value="yellow">🟨 Cartão amarelo</option>
+        <option value="red">🟥 Cartão vermelho</option>
+        <option value="foul">🚫 Falta</option>
+        <option value="skill">⭐ Jogada bonita</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Jogador</label>
+      <select id="livePlayer"></select>
+    </div>
+    <div class="form-group" id="liveTargetWrap" style="display:none">
+      <label>Contra / Para quem</label>
+      <select id="liveTarget"></select>
+    </div>
+    <div class="form-group" id="liveTeamWrap" style="display:none">
+      <label>Time</label>
+      <select id="liveTeam"><option value="A">Time A</option><option value="B">Time B</option></select>
+    </div>
+    <div class="form-group">
+      <label>Minuto</label>
+      <input id="liveMinute" type="number" min="0" max="60" placeholder="Auto"/>
+    </div>
+    <div class="form-group" style="grid-column:1/-1">
+      <label>Observação</label>
+      <input id="liveNote" type="text" placeholder="Opcional"/>
+    </div>
+  </div>
+  <div class="live-quick-grid">
+    <button class="btn btn-green" onclick="quickLiveEvent('goal')" type="button">⚽ Gol</button>
+    <button class="btn btn-primary" onclick="quickLiveEvent('assist')" type="button">🎯 Assist</button>
+    <button class="btn btn-outline" onclick="quickLiveEvent('save')" type="button">🧤 Defesa</button>
+    <button class="btn btn-outline" onclick="quickLiveEvent('yellow')" type="button">🟨 Amarelo</button>
+    <button class="btn btn-danger" onclick="quickLiveEvent('red')" type="button">🟥 Vermelho</button>
+    <button class="btn btn-outline" onclick="quickLiveEvent('nutmeg')" type="button">🪄 Caneta</button>
+    <button class="btn btn-outline" onclick="quickLiveEvent('rainbow')" type="button">🎩 Chapéu</button>
+    <button class="btn btn-outline" onclick="quickLiveEvent('skill')" type="button">⭐ Jogada</button>
+  </div>
+  <div class="btn-row" style="justify-content:flex-end">
+    <button class="btn btn-outline" onclick="liveSyncScoreFromSession()" type="button">🔄 Sincronizar placar</button>
+    <button class="btn btn-primary" onclick="addLiveEventFromForm()" type="button">➕ Adicionar evento</button>
+  </div>
+</div>
+
+<div class="card">
+  <h4>🕒 Linha do tempo</h4>
+  <div id="liveTimeline"></div>
+</div>
+</div>
 <div class="panel" id="panelHelp">
 <div class="card">
 <h4><img class="panel-logo-mini" src="https://cdn.tess.im/assets/uploads/0084ef06-7841-4192-bf7f-084cb90b3c7e.png" alt="Escudo Futebol de Terça" loading="lazy"/> ❓ Ajuda rápida (como usar do começo ao fim)</h4>
@@ -1856,6 +1964,7 @@ function showTab(id, btn) {
     if (id === 'panelRank') view = 'rank';
     if (id === 'panelPlacar') view = 'placar';
     if (id === 'panelScoreStory') view = 'scorestory';
+    if (id === 'panelLive') view = 'live';
 
     document.body.dataset.view = view;
 
@@ -1892,6 +2001,10 @@ function showTab(id, btn) {
     if (view === 'placar') {
         try { buildPlacarStory(); } catch(e) { console.error('placar error', e); } 
     }
+    if (view === 'live') {
+        try { renderLivePanel(); } catch(e) { console.error('live error', e); }
+    }
+
     if (view === 'rank') {
         try { initFinanceUI(); } catch(e) {}
         try { renderFinance(); } catch(e) {}
@@ -7339,6 +7452,136 @@ function abrirPlacar() {
   w.document.close();
 }
 /* === FIM PLACAR FINAL === */
+
+
+/* ===== AO VIVO ===== */
+let liveClockTimer = null;
+function ensureLiveState(s){
+  ensureSessionExtras(s);
+  if(!s.live || typeof s.live !== 'object') s.live = {};
+  if(!Array.isArray(s.live.events)) s.live.events = [];
+  if(typeof s.live.status !== 'string') s.live.status = 'idle';
+  if(typeof s.live.startAt !== 'number') s.live.startAt = 0;
+  if(typeof s.live.pauseAccumMs !== 'number') s.live.pauseAccumMs = 0;
+  if(typeof s.live.pauseAt !== 'number') s.live.pauseAt = 0;
+  if(typeof s.live.endedAt !== 'number') s.live.endedAt = 0;
+  return s.live;
+}
+function liveGetPlayer(pid){ return players.find(p => String(p.id)===String(pid)) || null; }
+function livePool(){ return players.filter(p => ['A','B','C','bench'].includes(p.team || 'bench')); }
+function liveElapsedMs(s){
+  const live = ensureLiveState(s);
+  if(!live.startAt) return 0;
+  if(live.status==='paused') return Math.max(0, live.pauseAt - live.startAt - live.pauseAccumMs);
+  if(live.status==='ended') return Math.max(0, (live.endedAt || Date.now()) - live.startAt - live.pauseAccumMs);
+  return Math.max(0, Date.now() - live.startAt - live.pauseAccumMs);
+}
+function liveClockText(ms){ const t=Math.floor((ms||0)/1000); const m=String(Math.floor(t/60)).padStart(2,'0'); const s=String(t%60).padStart(2,'0'); return m+':'+s; }
+function liveMinuteNow(s){ return Math.max(0, Math.min(60, Math.floor(liveElapsedMs(s)/60000))); }
+function liveTypeLabel(tp){ return ({goal:'Gol',assist:'Assistência',save:'Defesa difícil',owngoal:'Gol contra',nutmeg:'Caneta',rainbow:'Chapéu',yellow:'Cartão amarelo',red:'Cartão vermelho',foul:'Falta',skill:'Jogada bonita'})[tp] || 'Evento'; }
+function liveTypeIcon(tp){ return ({goal:'⚽',assist:'🎯',save:'🧤',owngoal:'🥅',nutmeg:'🪄',rainbow:'🎩',yellow:'🟨',red:'🟥',foul:'🚫',skill:'⭐'})[tp] || '•'; }
+function liveStatusHtml(st){ return '<span class="live-pill '+esc(st)+'">'+(st==='running'?'🟢 Em andamento':st==='paused'?'⏸ Pausado':st==='ended'?'⛔ Encerrado':'⚪ Não iniciado')+'</span>'; }
+function fillLiveSelects(){
+  const opts = livePool().map(p => '<option value="'+esc(p.id)+'">'+esc(p.name)+' ('+esc(p.team||'bench')+')</option>').join('');
+  const p1 = document.getElementById('livePlayer'); if(p1) p1.innerHTML = opts;
+  const p2 = document.getElementById('liveTarget'); if(p2) p2.innerHTML = '<option value="">Selecione</option>' + opts;
+}
+function renderLiveFormExtras(){
+  const tp = (document.getElementById('liveEventType')||{}).value || 'goal';
+  const tw = document.getElementById('liveTargetWrap');
+  const tm = document.getElementById('liveTeamWrap');
+  if(tw) tw.style.display = ['goal','assist','nutmeg','rainbow'].includes(tp) ? '' : 'none';
+  if(tm) tm.style.display = ['goal','owngoal'].includes(tp) ? '' : 'none';
+}
+function quickLiveEvent(tp){ const el=document.getElementById('liveEventType'); if(el){ el.value=tp; renderLiveFormExtras(); } }
+function liveStartGame(){ const s=getCurrentSession(); if(!s) return alert('Carregue uma pelada primeiro.'); const live=ensureLiveState(s); if(!live.startAt){ live.startAt=Date.now(); live.pauseAccumMs=0; live.pauseAt=0; live.endedAt=0; } if(live.status==='paused' && live.pauseAt){ live.pauseAccumMs += Math.max(0, Date.now()-live.pauseAt); live.pauseAt=0; } live.status='running'; saveFinance(); renderLivePanel(); }
+function livePauseGame(){ const s=getCurrentSession(); if(!s) return alert('Carregue uma pelada primeiro.'); const live=ensureLiveState(s); if(live.status!=='running') return; live.pauseAt=Date.now(); live.status='paused'; saveFinance(); renderLivePanel(); }
+function liveResumeGame(){ const s=getCurrentSession(); if(!s) return alert('Carregue uma pelada primeiro.'); const live=ensureLiveState(s); if(live.status!=='paused') return; if(live.pauseAt) live.pauseAccumMs += Math.max(0, Date.now()-live.pauseAt); live.pauseAt=0; live.status='running'; saveFinance(); renderLivePanel(); }
+function liveEndGame(){ const s=getCurrentSession(); if(!s) return alert('Carregue uma pelada primeiro.'); const live=ensureLiveState(s); if(live.status==='paused' && live.pauseAt){ live.pauseAccumMs += Math.max(0, Date.now()-live.pauseAt); live.pauseAt=0; } live.status='ended'; live.endedAt=Date.now(); saveFinance(); renderLivePanel(); }
+function liveResetGame(){ const s=getCurrentSession(); if(!s) return alert('Carregue uma pelada primeiro.'); if(!confirm('Resetar o AO VIVO desta pelada?')) return; s.live={status:'idle',startAt:0,pauseAccumMs:0,pauseAt:0,endedAt:0,events:[]}; saveFinance(); renderLivePanel(); }
+function liveSyncScoreFromSession(){ const s=getCurrentSession(); if(!s) return; ensureSessionExtras(s); const a=document.getElementById('liveScoreA'); const b=document.getElementById('liveScoreB'); if(a) a.textContent=String(Number((s.score&&s.score.A)||0)); if(b) b.textContent=String(Number((s.score&&s.score.B)||0)); }
+function liveEventDesc(ev){
+  const p=liveGetPlayer(ev.playerId); const t=liveGetPlayer(ev.targetId); const n=p?p.name:'Jogador'; const x=t?t.name:'';
+  if(ev.type==='goal') return n + (x ? ' (assist. ' + x + ')' : ' marcou gol');
+  if(ev.type==='assist') return n + (x ? ' assistiu ' + x : ' deu assistência');
+  if(ev.type==='save') return n + ' fez uma defesa difícil';
+  if(ev.type==='owngoal') return n + ' marcou contra';
+  if(ev.type==='nutmeg') return n + (x ? ' deu caneta em ' + x : ' deu uma caneta');
+  if(ev.type==='rainbow') return n + (x ? ' deu chapéu em ' + x : ' deu um chapéu');
+  if(ev.type==='yellow') return n + ' recebeu amarelo';
+  if(ev.type==='red') return n + ' recebeu vermelho';
+  if(ev.type==='foul') return n + ' cometeu falta';
+  if(ev.type==='skill') return n + ' fez uma jogada bonita';
+  return n + ' registrou evento';
+}
+function addLiveEventFromForm(){
+  const s=getCurrentSession(); if(!s) return alert('Carregue uma pelada primeiro.');
+  const live=ensureLiveState(s);
+  const type=(document.getElementById('liveEventType')||{}).value||'goal';
+  const playerId=(document.getElementById('livePlayer')||{}).value||'';
+  const targetId=(document.getElementById('liveTarget')||{}).value||'';
+  const team=(document.getElementById('liveTeam')||{}).value||'';
+  const note=((document.getElementById('liveNote')||{}).value||'').trim();
+  const raw=(document.getElementById('liveMinute')||{}).value;
+  if(!playerId) return alert('Selecione o jogador.');
+  const minute = raw!=='' ? Math.max(0,Math.min(60,parseInt(raw,10)||0)) : liveMinuteNow(s);
+  const ev={id:uuid(),type,playerId,targetId,team,note,minute,createdAt:Date.now()};
+  live.events.push(ev);
+  if(type==='goal'){
+    ensureSessionExtras(s);
+    if(team==='A' || team==='B') s.score[team] = Number(s.score[team]||0)+1;
+    const st = getSessionPlayerStats(s, playerId); st.goals = Number(st.goals||0)+1;
+    if(targetId){ const sa = getSessionPlayerStats(s, targetId); sa.assists = Number(sa.assists||0)+1; }
+  } else if(type==='assist'){
+    const sa = getSessionPlayerStats(s, playerId); sa.assists = Number(sa.assists||0)+1;
+  }
+  saveFinance();
+  renderLivePanel();
+  try{ renderSessionStatsField(); }catch(e){}
+  try{ renderFinance(); }catch(e){}
+}
+function deleteLiveEvent(id){
+  const s=getCurrentSession(); if(!s) return;
+  const live=ensureLiveState(s); const idx=live.events.findIndex(x => String(x.id)===String(id)); if(idx<0) return;
+  const ev=live.events[idx];
+  if(ev.type==='goal'){
+    if(s.score && (ev.team==='A' || ev.team==='B')) s.score[ev.team]=Math.max(0, Number(s.score[ev.team]||0)-1);
+    const st=getSessionPlayerStats(s, ev.playerId); st.goals=Math.max(0, Number(st.goals||0)-1);
+    if(ev.targetId){ const sa=getSessionPlayerStats(s, ev.targetId); sa.assists=Math.max(0, Number(sa.assists||0)-1); }
+  } else if(ev.type==='assist'){
+    const sa=getSessionPlayerStats(s, ev.playerId); sa.assists=Math.max(0, Number(sa.assists||0)-1);
+  }
+  live.events.splice(idx,1); saveFinance(); renderLivePanel();
+}
+function renderLiveTimeline(){
+  const wrap=document.getElementById('liveTimeline'); if(!wrap) return;
+  const s=getCurrentSession(); if(!s){ wrap.innerHTML='<div class="live-empty">Carregue uma pelada primeiro.</div>'; return; }
+  const live=ensureLiveState(s);
+  const arr=(live.events||[]).slice().sort((a,b)=> (Number(a.minute||0)-Number(b.minute||0)) || (Number(a.createdAt||0)-Number(b.createdAt||0)));
+  if(!arr.length){ wrap.innerHTML='<div class="live-empty">Nenhum evento ainda.</div>'; return; }
+  wrap.innerHTML = arr.map(ev => {
+    const p=liveGetPlayer(ev.playerId)||{}; const img=esc(p.photoUrl || FALLBACK);
+    return '<div class="live-item">'
+      + '<div class="m">'+esc(String(ev.minute||0))+"'"+'</div>'
+      + '<img src="'+img+'" alt="">'
+      + '<div><div class="tp">'+esc(liveTypeIcon(ev.type)+' '+liveTypeLabel(ev.type))+'</div><div class="ds">'+esc(liveEventDesc(ev))+'</div>' + (ev.note?'<div class="nt">'+esc(ev.note)+'</div>':'') + '</div>'
+      + '<button class="del" onclick="deleteLiveEvent(''+esc(ev.id)+'')">✕</button>'
+      + '</div>';
+  }).join('');
+}
+function renderLivePanel(){
+  const panel=document.getElementById('panelLive'); if(!panel) return;
+  fillLiveSelects(); renderLiveFormExtras();
+  const s=getCurrentSession();
+  const st=document.getElementById('liveStatusBar');
+  if(!s){ if(st) st.innerHTML=liveStatusHtml('idle'); const c=document.getElementById('liveClock'); if(c) c.textContent='00:00'; liveSyncScoreFromSession(); renderLiveTimeline(); return; }
+  const live=ensureLiveState(s);
+  if(st) st.innerHTML='Sessão: <strong>'+esc(s.date || todayISO())+'</strong> • ' + liveStatusHtml(live.status);
+  const c=document.getElementById('liveClock'); if(c) c.textContent=liveClockText(liveElapsedMs(s));
+  liveSyncScoreFromSession(); renderLiveTimeline();
+  if(liveClockTimer) clearInterval(liveClockTimer);
+  liveClockTimer = setInterval(function(){ const ss=getCurrentSession(); const cc=document.getElementById('liveClock'); if(ss && cc) cc.textContent = liveClockText(liveElapsedMs(ss)); }, 1000);
+}
 
 </script></body>
 </html>
